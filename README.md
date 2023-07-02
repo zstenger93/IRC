@@ -1,14 +1,13 @@
-<h1 align="center">
-	📖 IRC
 
-	Welcome To
+#	📖 IRC
+
+##	Welcome To
 	
-	Interdimensional Rickroll Conspiracy
-</h1>
+##	Interdimensional Rickroll Conspiracy
 
 Text-based communication protocol written in c++
 
-<table align="center">
+<table>
   <tr>
     <th>Orders</th>
     <th>Speculations of the meaning of these commands</th>
