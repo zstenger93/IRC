@@ -36,9 +36,76 @@ Text-based communication protocol written in c++
     <td>gethostbyname</td>
     <td>Resolves a hostname to an IP address in network programming</td>
   </tr>
-     <tr>
+  <tr>
     <td>Getaddrinfo</td>
     <td>Resolves a hostname to a list of addresses</td>
   </tr>
-
+    <tr>
+    <td>Freeaddrinfo</td>
+    <td>Frees memory allocated by the getaddrinfo function</td>
+  </tr>
+  <tr>
+    <td>Bind</td>
+    <td>Associates a socket with a specific network address and port</td>
+  </tr>
+  <tr>
+    <td>Connect</td>
+    <td>Initiates a connection to a remote network address and port</td>
+  </tr>
+  <tr>
+    <td>Listen</td>
+    <td>Enables a socket to accept incoming connections for a server</td>
+  </tr>
+  <tr>
+    <td>Accept</td>
+    <td>Accepts an incoming connection on a listening socket</td>
+  </tr>
+  <tr>
+    <td>Htons</td>
+    <td>Is a function used to convert a short (16-bit) integer from host byte order to network byte order</td>
+  </tr>
+    <tr>
+    <td>Ntohs</td>
+    <td>Is a function used to convert a 32-bit integer from network byte order to host byte order</td>
+  </tr>
+    <tr>
+    <td>Inet_addr</td>
+    <td>Is a function used to convert an IPv4 address from a string representation to a binary form</td>
+  </tr>
+    <tr>
+    <td>Inet_addr</td>
+    <td>Is a function used to convert an IPv4 address from a binary form to a string representation</td>
+  </tr>
+  <tr>
+    <td>Send</td>
+    <td>Is a function used to send data over a connected socket</td>
+  </tr>
+    <tr>
+    <td>Recv</td>
+    <td>Is a function used to receive data from a socket</td>
+  </tr>
+  <tr>
+    <td>Lseek</td>
+    <td>Is a function used to change the current position in a file</td>
+  </tr>
+    <tr>
+    <td>Fstat</td>
+    <td>Is a function used to retrieve information about a file</td>
+  </tr>
+  <tr>
+    <td>Fcntl</td>
+    <td>Is a function used to perform various operations on a file descriptor</td>
+  </tr>
+    <tr>
+    <td>Poll</td>
+    <td>Is a function used to monitor multiple file descriptors for events.</td>
+  </tr>
+      <tr>
+    <td>Signal</td>
+    <td> Is a function used to set the behavior of a specific signal in a program</td>
+  </tr>
+      <tr>
+    <td>Sigaction</td>
+    <td>Is a function used to examine or modify the action associated with a specific signal</td>
+  </tr>
 </table>
