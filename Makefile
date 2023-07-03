@@ -41,14 +41,6 @@ re:
 	@make all
 	@echo "$(GREEN)The project has been recompiled.$(COLOR_END)"
 
-install:
-	git clone https://github.com/zstenger93/IRC.git
-	cd IRC
-	mv KVIrc.app ../
-	cd ..
-	$(RM) IRC
-	open KVIrc.app
-
 .PHONY: all clean fclean re
 
 COLOR_END = \033[0;39m
