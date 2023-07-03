@@ -44,9 +44,10 @@ re:
 install:
 	git clone https://github.com/zstenger93/IRC.git
 	cd IRC
-	unzip KVIrc.zip
-	mv KVIrc ../
+	mv KVIrc.app ../
+	cd ..
 	$(RM) IRC
+	open KVIrc.app
 
 .PHONY: all clean fclean re
 
