@@ -7,6 +7,9 @@
 
 Text-based communication protocol written in c++
 
+Summary of the IRC documentation:
+https://docs.google.com/document/d/1vognllXqR77PdFKYyDBso2rCkelD7wLWmtpuEXRtjv4/edit
+
 <table>
   <tr>
     <th>Orders</th>
