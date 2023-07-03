@@ -1,12 +1,13 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <iostream>
 
-class Server{
-    public:
-    private: _port;
-            _password:
-}
-
+class Server {
+public:
+private:
+  int _port;
+  std::string _password;
+};
 
 #endif
