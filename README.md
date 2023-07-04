@@ -109,3 +109,33 @@ Text-based communication protocol written in c++
     <td>Is a function used to examine or modify the action associated with a specific signal</td>
   </tr>
 </table>
+
+# Git management rules
+```
+master <- dev <- feature branch
+                  |
+                  |<--- feature branch 2
+                  |
+                  |<--- feature branch 3
+                  |                |
+                  |                |<--- feature branch 4
+                  |
+                  |<--- feature branch 5
+```
+
+All pull request from features goes to DEV. Nothing goes to master unless it works and won't be accepted if it's not from DEV either.
+
+Set someone to review the code, if needed co-author as well.
+
+## Style
+```
+Google format
+```
+
+## VSCode
+
+Updating branches to master if they are behind, use this 2 command on the relevant branch:
+```
+git fetch
+git merge master
+```
