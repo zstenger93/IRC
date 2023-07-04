@@ -11,6 +11,7 @@ class Server {
 	bool isRunning();
 	void run();
 	void setPort(int portNum);
+	bool passwordCheck(std::string psswrd);
 	void setPassword(std::string psswrd);
 	int getPort();
 	std::string getPassword();
@@ -21,6 +22,16 @@ class Server {
 	};
 
 	class WrongPortException : public std::exception {
+	   public:
+		const char *what() const throw();
+	};
+
+	class LongPassException : public std::exception {
+	   public:
+		const char *what() const throw();
+	};
+
+	class WrongPassException : public std::exception {
 	   public:
 		const char *what() const throw();
 	};
