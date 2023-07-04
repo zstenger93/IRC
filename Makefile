@@ -8,7 +8,8 @@ USER	= $(shell whoami)
 
 SRC		= $(MAIN)
 
-MAIN	= main/Irc
+MAIN	= main/Irc \
+		  parsing/Parsing \
 
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))

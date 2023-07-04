@@ -1,10 +1,15 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
+// DEFAULT HEADERS
+
+#include <exception>
+#include <iostream>
+
 // INPUT HANDLING MESSAGES
 
 #define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
-#define WRONGPORT "The provided port is not valid, please use port: 6667"
+#define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
 #define WRONGPASS "The password is wrong, try again"
 
 // USER ERRORS
@@ -40,5 +45,12 @@
 
 #define MISSING_FILE "The file you are trying to send doesn't exist"
 #define HELP "help -c: list channels\nhelp -m display channel mode\nhelp -g: tell me a joke\n"
+
+// COLORS
+
+#define RED "\033[1;31m"
+#define END "\033[1;39m"
+#define BLUE "\033[1;34m"
+#define YELLOW "\033[1;33m"
 
 #endif
