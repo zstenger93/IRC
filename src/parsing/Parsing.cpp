@@ -20,13 +20,13 @@ void Server::inputParser(int argc, char **argv) {
 	std::cout << getPort() << std::endl;
 	setPassword(inputPass);
 	std::cout << getPassword() << std::endl;
-
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setPort(int portNum) { port = portNum; }
 void Server::setPassword(std::string psswrd) { password = psswrd; }
+void Server::setRunning(bool state) { serverState = state; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 

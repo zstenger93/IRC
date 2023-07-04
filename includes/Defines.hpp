@@ -1,8 +1,21 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
+
+#define MAX_CONNECTIONS 1024
 // DEFAULT HEADERS
 
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <signal.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <cstring>
 #include <exception>
 #include <iostream>
 
@@ -16,6 +29,11 @@
 
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
+//
+#define F_SET_SOCKET "Failed to create socket error"
+#define F_SOCKET_BIND "Failed to Bind the Socket"
+#define F_SOCKET_OPT "Failed to Set socket Options"
+#define F_TO_LISTEN "Failed to listen for connections"
 
 // ACTION MESSAGES
 
@@ -52,5 +70,8 @@
 #define END "\033[1;39m"
 #define BLUE "\033[1;34m"
 #define YELLOW "\033[1;33m"
+
+
+// DEFINES // should be in the config file
 
 #endif

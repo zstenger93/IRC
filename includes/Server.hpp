@@ -10,9 +10,13 @@ class Server {
 	void inputParser(int argc, char **Argv);
 	bool isRunning();
 	void run();
+	int setup();
 	void setPort(int portNum);
 	void setPassword(std::string psswrd);
+	void setRunning(bool state);
 	int getPort();
+	int getServerSocket();
+	void setServerSocket(int socket);
 	std::string getPassword();
 
 	class WrongArgCountException : public std::exception {
@@ -30,6 +34,7 @@ class Server {
 	bool serverState;
 	std::string password;
 	int port;
+	int serverSocketFd;
 };
 
 #endif
