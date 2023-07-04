@@ -113,14 +113,14 @@ Text-based communication protocol written in c++
 # Git management rules
 ```
 master <- dev <- feature branch
-                  |
-                  |<--- feature branch 2
-                  |
-                  |<--- feature branch 3
-                  |                |
-                  |                |<--- feature branch 4
-                  |
-                  |<--- feature branch 5
+            |
+            |<--- feature branch 2
+            |
+            |<--- feature branch 3
+            |                |
+            |                |<--- feature branch 4
+            |
+            |<--- feature branch 5
 ```
 
 All pull request from features goes to DEV. Nothing goes to master unless it works and won't be accepted if it's not from DEV either.
