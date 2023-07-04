@@ -18,12 +18,14 @@
 #include <cstring>
 #include <exception>
 #include <iostream>
+#include <algorithm>
 
 // INPUT HANDLING MESSAGES
 
 #define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
 #define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
-#define WRONGPASS "The password is wrong, try again"
+#define WRONGPASS "The password is wrong, try again.\nOnly numbers and letters are accepted."
+#define LONGPASS "The provided password is too long. It can't be longer than 8 charaters"
 
 // USER ERRORS
 
