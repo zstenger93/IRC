@@ -6,6 +6,8 @@
 
 const char *Server::WrongArgCountException::what() const throw() { return WRONGINPUT; }
 const char *Server::WrongPortException::what() const throw() { return WRONGPORT; }
+const char *Server::WrongPassException::what() const throw() { return WRONGPASS; }
+const char *Server::LongPassException::what() const throw() { return LONGPASS; }
 
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
@@ -18,9 +20,19 @@ void Server::inputParser(int argc, char **argv) {
 	else
 		throw(WrongPortException());
 	std::cout << getPort() << std::endl;
-	setPassword(inputPass);
+	if (passwordCheck(inputPass) == false) throw(WrongPassException());
+}
+
+static bool validCharacters(char c) { return (c < 48 || c > 57) && (c < 65 || c > 122); }
+
+bool Server::passwordCheck(std::string psswrd) {
+	if (psswrd.length() > 8) throw(LongPassException());
+	std::string::iterator iter = std::find_if(psswrd.begin(), psswrd.end(), validCharacters);
+	if (iter != psswrd.end()) return false;
+	setPassword(psswrd);
 	std::cout << getPassword() << std::endl;
 
+	return true;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
