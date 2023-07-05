@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -10,33 +11,24 @@
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
 int Server::setup() {
-	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-	int adress = 1;
+	int serverSocket = socket(AF_INET, SOCK_STREAM, 0), address = 1;
 	struct sockaddr_in serverInfo;
 	if (serverSocket == -1) {
 		return std::cerr << F_SET_SOCKET << std::endl, -1;
 	}
-	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &adress, sizeof(adress)) == -1) {
-		std::cerr << F_SOCKET_OPT << std::endl;
-		close(serverSocket);
-		return -1;
+	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &address, sizeof(address)) == -1) {
+		return std::cerr << F_SOCKET_OPT << std::endl, close(serverSocket), -1;
 	}
 	serverInfo.sin_family = AF_INET;
 	serverInfo.sin_addr.s_addr = INADDR_ANY;
 	serverInfo.sin_port = htons(getPort());
 	if (bind(serverSocket, (struct sockaddr *)&serverInfo, sizeof(serverInfo)) == -1) {
-		std::cerr << F_SOCKET_BIND << std::endl;
-		close(serverSocket);
-		return -1;
+		return std::cerr << F_SOCKET_BIND << std::endl, close(serverSocket), -1;
 	}
 	if (listen(serverSocket, MAX_CONNECTIONS) == -1) {
-		std::cerr << F_TO_LISTEN << std::endl;
-		close(serverSocket);
-		return -1;
+		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
 	}
-	setServerSocket(serverSocket);
-	setRunning(true);
-	return (0);
+	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
 void Server::run() {
@@ -58,25 +50,20 @@ static std::string extractWord(const std::string &line) {
 	std::string::size_type pos = line.find('=');
 	if (pos != std::string::npos) {
 		std::string word = line.substr(pos + 1);
-		std::string::size_type firstNonSpace = word.find_first_not_of(" \t");
-		std::string::size_type lastNonSpace = word.find_last_not_of(" \t");
+		std::string::size_type firstNonSpace = word.find_first_not_of(" \t"),
+							   lastNonSpace = word.find_last_not_of(" \t");
 		if (firstNonSpace != std::string::npos && lastNonSpace != std::string::npos) {
 			return word.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
 		}
 	}
-	return "";
+	return "";	// maybe throw an error as no username found or whatever
 }
 
 static std::string base64Decode(const std::string &encodedData) {
-	const std::string base64Chars =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	const std::string base64Chars = BASE64;
 	std::string decodedData;
-	std::string::size_type encodedLength = encodedData.length();
-	if (encodedLength % 4 != 0) {
-		return "";
-	}
+	std::string::size_type encodedLength = encodedData.length(), i = 0;
 	unsigned char buffer[3], temp[4];
-	std::string::size_type i = 0;
 	while (i < encodedLength) {
 		for (int j = 0; j < 4; ++j) {
 			temp[j] = static_cast<unsigned char>(base64Chars.find(encodedData[i++]));
@@ -92,11 +79,10 @@ static std::string base64Decode(const std::string &encodedData) {
 			decodedData += buffer[2];
 		}
 	}
-
 	return decodedData;
 }
 
-void Server::createAdmin() {
+void Server::setAdminDetails() {
 	std::string line, name;
 	std::ifstream file("conf/irc.conf");
 	while (std::getline(file, line)) {
@@ -114,16 +100,18 @@ void Server::createAdmin() {
 
 /*___________________________________________ SETTERS ___________________________________________*/
 
+// SERVER
 void Server::setServerSocket(int socket) { serverSocketFd = socket; }
-
 void Server::setRunning(bool state) { serverState = state; }
+// ADMIN
 void Server::setAdmin(std::string adminName) { operator_name = adminName; }
 void Server::setAdminPass(std::string adminPass) { operator_password = adminPass; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
+// SERVER
 int Server::getServerSocket() { return serverSocketFd; }
-
+// ADMIN
 std::string Server::getAdmin() { return operator_name; }
 std::string Server::getAdminPass() { return operator_password; }
 

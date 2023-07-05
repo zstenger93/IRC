@@ -2,6 +2,7 @@
 #define DEFINES_HPP
 
 #define MAX_CONNECTIONS 1024
+#define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
 // DEFAULT HEADERS
 

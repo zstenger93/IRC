@@ -20,6 +20,7 @@ class Server {
 	void setServerSocket(int socket);
 	std::string getPassword();
 
+	void setAdminDetails();
 	void createAdmin();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
