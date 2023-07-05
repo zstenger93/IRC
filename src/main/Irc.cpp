@@ -5,8 +5,12 @@ int main(int argc, char **argv) {
 
 	try {
 		server.inputParser(argc, argv);
-		server.setRunning(true);
-		while (server.isRunning()) server.run();
+		if (server.setup() != -1) {
+			server.createAdmin();
+			server.setRunning(true);
+			while (server.isRunning()) server.run();
+			close(server.getServerSocket());
+		}
 	} catch(const std::exception &error) {
 		std::cout << RED << error.what() << std::endl;
 	}
