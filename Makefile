@@ -10,6 +10,8 @@ SRC		= $(MAIN)
 
 MAIN	= main/Irc \
 		  parsing/Parsing \
+		  server/Server \
+		  client/Client \
 
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
