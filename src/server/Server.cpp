@@ -31,17 +31,19 @@ int Server::setup() {
 	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
-void Server::run() {
+void Server::acceptConnection() {
 	struct sockaddr_in clientAdress;
+	client.setSocAddr(clientAdress);
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-	if (clientSocket == -1) {
+	client.setClientSocket(clientSocket);
+}
+
+void Server::run() {
+	if (client.getClientSocket() == -1) {
 		std::cerr << NOCONNECTION << std::endl;
 	}
-	while (true) {
-	}
-	close(clientSocket);
 }
 
 //-----------------------------READ ADMIN DETAILS FROM CONFIG FILE ------------------------------
@@ -114,6 +116,8 @@ int Server::getServerSocket() { return serverSocketFd; }
 // ADMIN
 std::string Server::getAdmin() { return operator_name; }
 std::string Server::getAdminPass() { return operator_password; }
+const Client& Server::getClient() const {
+   return client;
+}
 
-/*___________________________________________ SETTERS ___________________________________________*/
-/*___________________________________________ GETTERS ___________________________________________*/
+
