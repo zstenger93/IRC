@@ -47,7 +47,6 @@ class Server {
 		const char *what() const throw();
 	};
 
-   protected:
    private:
 	bool serverState;
 	std::string password;
