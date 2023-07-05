@@ -5,7 +5,7 @@
 
 class Client {
    public:
-	int getClientSocket();
+	int getClientSocket() const;
 	void setClientSocket(int values);
 	struct sockaddr_in getSockAddr();
 	void setSocAddr(struct sockaddr_in values);
