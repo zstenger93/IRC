@@ -1,11 +1,29 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
+#define MAX_CONNECTIONS 1024
+
 // DEFAULT HEADERS
 
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <signal.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <setjmp.h>
+
+#include <cstring>
 #include <exception>
 #include <iostream>
 #include <algorithm>
+
+#include <fstream>
+#include <sstream>
+#include <string>
 
 // INPUT HANDLING MESSAGES
 
@@ -18,6 +36,14 @@
 
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
+
+// SOCKET ERRORS
+
+#define F_SET_SOCKET "Failed to create socket error"
+#define F_SOCKET_BIND "Failed to Bind the Socket"
+#define F_SOCKET_OPT "Failed to Set socket Options"
+#define F_TO_LISTEN "Failed to listen for connections"
+#define NOCONNECTION "Failed to accept the connection"
 
 // ACTION MESSAGES
 

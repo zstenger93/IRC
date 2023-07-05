@@ -5,8 +5,8 @@ int main(int argc, char **argv) {
 
 	try {
 		server.inputParser(argc, argv);
-		while (true) {}
-		// while (server.isRunning()) server.run();
+		server.setRunning(true);
+		while (server.isRunning()) server.run();
 	} catch(const std::exception &error) {
 		std::cout << RED << error.what() << std::endl;
 	}
