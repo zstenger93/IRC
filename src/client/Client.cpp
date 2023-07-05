@@ -12,4 +12,4 @@ void Client::setSocAddr(struct sockaddr_in values) { clientAdress = values; }
 /*___________________________________________ GETTERS ___________________________________________*/
 
 struct sockaddr_in Client::getSockAddr() { return clientAdress; }
-int Client::getClientSocket() { return clientSocket; }
+int Client::getClientSocket() const { return clientSocket; }

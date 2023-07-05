@@ -8,6 +8,7 @@ int main(int argc, char **argv) {
 		if (server.setup() != -1) {
 			server.setAdminDetails();
 			while (server.isRunning()) server.run();
+			close(server.getClient().getClientSocket());
 			close(server.getServerSocket());
 		}
 	} catch(const std::exception &error) {
