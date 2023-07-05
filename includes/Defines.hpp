@@ -24,6 +24,10 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <poll.h>
+#include <vector>
+#include <netinet/in.h>
+
 
 // INPUT HANDLING MESSAGES
 

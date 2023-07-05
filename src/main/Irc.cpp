@@ -7,11 +7,13 @@ int main(int argc, char **argv) {
 		server.inputParser(argc, argv);
 		if (server.setup() != -1) {
 			server.setAdminDetails();
-			while (server.isRunning()) server.run();
-			close(server.getClient().getClientSocket());
+			while (server.isRunning()) {
+				server.acceptConnection();
+				server.run();
+			}
 			close(server.getServerSocket());
 		}
-	} catch(const std::exception &error) {
+	} catch (const std::exception &error) {
 		std::cout << RED << error.what() << std::endl;
 	}
 	return 0;
