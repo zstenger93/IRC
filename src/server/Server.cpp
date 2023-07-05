@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -37,6 +38,8 @@ int Server::setup() {
 	setRunning(true);
 	return (0);
 }
+
+
 
 void Server::run() {
 	struct sockaddr_in clientAdress;
