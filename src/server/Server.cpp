@@ -1,7 +1,5 @@
 #include "../../includes/Server.hpp"
 
-#include "../../includes/Client.hpp"
-
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 // Server::Server() : serverState(true) {}
 // Server::~Server(){}
@@ -39,22 +37,21 @@ int Server::setup() {
 	return (0);
 }
 
-
-
-void Server::run() {
+void Server::acceptConnection() {
 	createAdmin();
 	struct sockaddr_in clientAdress;
+	client.setSocAddr(clientAdress);
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-	if (clientSocket == -1) {
-		std::cerr << NOCONNECTION << std::endl;
-	}
-	while (true) {
-	}
-	close(clientSocket);
+	client.setClientSocket(clientSocket);
 }
 
+void Server::run() {
+	if (client.getClientSocket() == -1) {
+		std::cerr << NOCONNECTION << std::endl;
+	}
+}
 
 //-----------------------------READ ADMIN DETAILS FROM CONFIG FILE ------------------------------
 
@@ -129,3 +126,7 @@ int Server::getServerSocket() { return (serverSocketFd); }
 
 std::string Server::getAdmin() { return operator_name; }
 std::string Server::getAdminPass() { return operator_password; }
+
+const Client& Server::getClient() const {
+   return client;
+}

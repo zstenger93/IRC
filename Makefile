@@ -11,6 +11,7 @@ SRC		= $(MAIN)
 MAIN	= main/Irc \
 		  parsing/Parsing \
 		  server/Server \
+		  client/Client
 
 
 

@@ -2,6 +2,8 @@
 #define SERVER_HPP
 
 #include <string>
+
+#include "Client.hpp"
 #include "Defines.hpp"
 
 class Server {
@@ -19,6 +21,7 @@ class Server {
 	int getPort();
 	int getServerSocket();
 	void setServerSocket(int socket);
+	void acceptConnection();
 	std::string getPassword();
 
 	void createAdmin();
@@ -26,7 +29,7 @@ class Server {
 	void setAdminPass(std::string adminPass);
 	std::string getAdmin();
 	std::string getAdminPass();
-
+	const Client &getClient() const;
 
 	class WrongArgCountException : public std::exception {
 	   public:
@@ -56,6 +59,7 @@ class Server {
 	int serverSocketFd;
 	std::string operator_name;
 	std::string operator_password;
+	Client client;
 };
 
 #endif
