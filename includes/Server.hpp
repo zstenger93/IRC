@@ -1,14 +1,14 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Defines.hpp"
 #include "Client.hpp"
+#include "Defines.hpp"
 
 class Server {
    public:
-	// Server();
-	// ~Server();
-	void inputParser(int argc, char **Argv);
+	Server(int argc, char **argv);
+	~Server();
+	void inputParser(int argc, char **argv);
 	bool isRunning();
 	void run();
 	int setup();
@@ -21,43 +21,42 @@ class Server {
 	void setServerSocket(int socket);
 	std::string getPassword();
 
+	bool shouldReset();
+
 	void setAdminDetails();
 	void createAdmin();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
 	std::string getAdmin();
 	std::string getAdminPass();
-	const Client &getClient() const;
+	const Client &getClient(int clientNumb) const;
 	void acceptConnection();
-	
-	class WrongArgCountException : public std::exception {
-	   public:
-		const char *what() const throw();
-	};
+	void setupPoll();
 
-	class WrongPortException : public std::exception {
-	   public:
-		const char *what() const throw();
-	};
+	class CustomException : public std::exception {
+	   private:
+		std::string message;
 
-	class LongPassException : public std::exception {
 	   public:
+		CustomException(const std::string &word);
 		const char *what() const throw();
-	};
-
-	class WrongPassException : public std::exception {
-	   public:
-		const char *what() const throw();
+		virtual ~CustomException() throw();
 	};
 
    private:
+	// sockets
 	bool serverState;
-	std::string password;
-	int port;
 	int serverSocketFd;
+	pollfd userPoll[MAX_CONNECTIONS];
+	int onlineUserCount;
+	// setup user info
 	std::string operator_name;
 	std::string operator_password;
-	Client client;
+	// Setup info
+	std::string password;
+	int port;
+
+	bool reset;
 };
 
 #endif

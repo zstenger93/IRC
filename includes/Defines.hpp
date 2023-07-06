@@ -13,6 +13,7 @@
 #include <poll.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <sys/poll.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,6 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // INPUT HANDLING MESSAGES
 
@@ -44,6 +46,7 @@
 #define F_SOCKET_OPT "Failed to Set socket Options"
 #define F_TO_LISTEN "Failed to listen for connections"
 #define NOCONNECTION "Failed to accept the connection"
+#define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
 
