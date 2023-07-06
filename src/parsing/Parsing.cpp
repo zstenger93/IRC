@@ -4,10 +4,6 @@
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 
-// const char *Server::WrongArgCountException::what() const throw() { return WRONGINPUT; }
-// const char *Server::WrongPortException::what() const throw() { return WRONGPORT; }
-// const char *Server::WrongPassException::what() const throw() { return WRONGPASS; }
-// const char *Server::LongPassException::what() const throw() { return LONGPASS; }
 const char *Server::CustomException::what() const throw() { return message.c_str(); }
 Server::CustomException::CustomException(const std::string &word) : message(word) {}
 Server::CustomException::~CustomException() throw() {}

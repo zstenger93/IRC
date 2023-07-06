@@ -1,18 +1,14 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <sys/poll.h>
-
-#include <exception>
-
 #include "Client.hpp"
 #include "Defines.hpp"
 
 class Server {
    public:
-	// Server();
-	// ~Server();
-	void inputParser(int argc, char **Argv);
+	Server(int argc, char **argv);
+	~Server();
+	void inputParser(int argc, char **argv);
 	bool isRunning();
 	void run();
 	int setup();
@@ -25,6 +21,8 @@ class Server {
 	void setServerSocket(int socket);
 	std::string getPassword();
 
+	bool shouldReset();
+
 	void setAdminDetails();
 	void createAdmin();
 	void setAdmin(std::string adminName);
@@ -34,26 +32,6 @@ class Server {
 	const Client &getClient(int clientNumb) const;
 	void acceptConnection();
 	void setupPoll();
-
-	// class WrongArgCountException : public std::exception {
-	//    public:
-	// 	const char *what() const throw();
-	// };
-
-	// class WrongPortException : public std::exception {
-	//    public:
-	// 	const char *what() const throw();
-	// };
-
-	// class LongPassException : public std::exception {
-	//    public:
-	// 	const char *what() const throw();
-	// };
-
-	// class WrongPassException : public std::exception {
-	//    public:
-	// 	const char *what() const throw();
-	// };
 
 	class CustomException : public std::exception {
 	   private:
@@ -77,6 +55,8 @@ class Server {
 	// Setup info
 	std::string password;
 	int port;
+
+	bool reset;
 };
 
 #endif

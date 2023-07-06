@@ -13,6 +13,7 @@
 #include <poll.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <sys/poll.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,10 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <poll.h>
 #include <vector>
-#include <netinet/in.h>
-
 
 // INPUT HANDLING MESSAGES
 
