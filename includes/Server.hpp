@@ -2,6 +2,9 @@
 #define SERVER_HPP
 
 #include <sys/poll.h>
+
+#include <exception>
+
 #include "Client.hpp"
 #include "Defines.hpp"
 
@@ -30,37 +33,48 @@ class Server {
 	std::string getAdminPass();
 	const Client &getClient(int clientNumb) const;
 	void acceptConnection();
+	void setupPoll();
 
-	class WrongArgCountException : public std::exception {
-	   public:
-		const char *what() const throw();
-	};
+	// class WrongArgCountException : public std::exception {
+	//    public:
+	// 	const char *what() const throw();
+	// };
 
-	class WrongPortException : public std::exception {
-	   public:
-		const char *what() const throw();
-	};
+	// class WrongPortException : public std::exception {
+	//    public:
+	// 	const char *what() const throw();
+	// };
 
-	class LongPassException : public std::exception {
-	   public:
-		const char *what() const throw();
-	};
+	// class LongPassException : public std::exception {
+	//    public:
+	// 	const char *what() const throw();
+	// };
 
-	class WrongPassException : public std::exception {
+	// class WrongPassException : public std::exception {
+	//    public:
+	// 	const char *what() const throw();
+	// };
+
+	class CustomException : public std::exception {
+	   private:
+		std::string message;
+
 	   public:
+		CustomException(const std::string &word);
 		const char *what() const throw();
+		virtual ~CustomException() throw();
 	};
 
    private:
-    // sockets
+	// sockets
 	bool serverState;
 	int serverSocketFd;
 	pollfd userPoll[MAX_CONNECTIONS];
-	int activeFds;
+	int onlineUserCount;
 	// setup user info
 	std::string operator_name;
 	std::string operator_password;
-	//Setup info
+	// Setup info
 	std::string password;
 	int port;
 };

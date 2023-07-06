@@ -28,6 +28,10 @@ int Server::setup() {
 	if (listen(serverSocket, MAX_CONNECTIONS) == -1) {
 		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
 	}
+	onlineUserCount = 1;
+	userPoll[0].fd = serverSocket;
+	userPoll[0].events = 0;
+	userPoll[0].revents = POLLIN;
 	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
@@ -38,7 +42,13 @@ void Server::acceptConnection() {
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
 }
 
-void Server::run() { acceptConnection(); }
+void Server::run() {
+	if (poll(userPoll, onlineUserCount, 5000) == -1);
+	for (int i = 0; i < onlineUserCount; i++)
+	{
+		acceptConnection();
+	}
+}
 
 //-----------------------------READ ADMIN DETAILS FROM CONFIG FILE ------------------------------
 

@@ -48,6 +48,7 @@
 #define F_SOCKET_OPT "Failed to Set socket Options"
 #define F_TO_LISTEN "Failed to listen for connections"
 #define NOCONNECTION "Failed to accept the connection"
+#define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
 
