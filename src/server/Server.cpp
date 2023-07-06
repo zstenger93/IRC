@@ -1,10 +1,13 @@
 #include "../../includes/Server.hpp"
 
+#include <exception>
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
-// Server::Server() : serverState(true) {}
-// Server::~Server(){}
+
+Server::Server(int argc, char **argv) : reset(true) { Server::inputParser(argc, argv); }
+Server::~Server() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
 /*_______________________________________ NESTED CLASSES ________________________________________*/
@@ -28,21 +31,34 @@ int Server::setup() {
 	if (listen(serverSocket, MAX_CONNECTIONS) == -1) {
 		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
 	}
+	onlineUserCount = 1;
+	userPoll[0].fd = serverSocket;
+	userPoll[0].events = 0;
+	userPoll[0].revents = POLLIN;
 	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
 void Server::acceptConnection() {
 	struct sockaddr_in clientAdress;
-	client.setSocAddr(clientAdress);
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-	client.setClientSocket(clientSocket);
+	onlineUserCount++;
 }
 
 void Server::run() {
-	if (client.getClientSocket() == -1) {
-		std::cerr << NOCONNECTION << std::endl;
+	while (Server::isRunning()) {
+		// if (poll(userPoll, onlineUserCount, 5000) == -1)
+		// 	;
+		// for (int i = 0; i < onlineUserCount; i++) {
+		// 	try {
+		// 		if (whatever) addUser();
+		// 		acceptConnection();
+		// 		else do_command
+		// 	} catch (const std::exception &error) {
+		// 		;
+		// 	}
+		// }
 	}
 }
 
@@ -113,11 +129,7 @@ void Server::setAdminPass(std::string adminPass) { operator_password = adminPass
 
 // SERVER
 int Server::getServerSocket() { return serverSocketFd; }
+bool Server::shouldReset() { return reset; }
 // ADMIN
 std::string Server::getAdmin() { return operator_name; }
 std::string Server::getAdminPass() { return operator_password; }
-const Client& Server::getClient() const {
-   return client;
-}
-
-
