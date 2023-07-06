@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <sys/poll.h>
 #include "Client.hpp"
 #include "Defines.hpp"
 
@@ -51,13 +52,17 @@ class Server {
 	};
 
    private:
+    // sockets
 	bool serverState;
-	std::string password;
-	int port;
 	int serverSocketFd;
+	pollfd userPoll[MAX_CONNECTIONS];
+	int activeFds;
+	// setup user info
 	std::string operator_name;
 	std::string operator_password;
-	std::vector<Client> client;
+	//Setup info
+	std::string password;
+	int port;
 };
 
 #endif

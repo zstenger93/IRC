@@ -33,22 +33,12 @@ int Server::setup() {
 
 void Server::acceptConnection() {
 	struct sockaddr_in clientAdress;
-	const char *command = "Your message here";
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-	client.push_back(Client(clientSocket, clientAdress));
 }
 
-void Server::run() {
-	for (std::vector<Client>::iterator it = client.begin(); it != client.end(); ++it) {
-		if ((*it).getClientSocket() == -1) {
-			std::cerr << NOCONNECTION << std::endl;
-			continue;
-		}
-		const char *command = "Your command here";
-	}
-}
+void Server::run() { acceptConnection(); }
 
 //-----------------------------READ ADMIN DETAILS FROM CONFIG FILE ------------------------------
 
@@ -120,4 +110,3 @@ int Server::getServerSocket() { return serverSocketFd; }
 // ADMIN
 std::string Server::getAdmin() { return operator_name; }
 std::string Server::getAdminPass() { return operator_password; }
-const Client &Server::getClient(int clientNumb) const { return client[clientNumb]; }
