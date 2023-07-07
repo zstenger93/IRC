@@ -4,7 +4,13 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Server::Server(int argc, char **argv) : reset(true) { Server::inputParser(argc, argv); }
+Server::Server(int argc, char **argv) : reset(true) {
+	Server::setServerPassword();
+	Server::setAdminDetails();	// kinda extra, not needed will decide later
+	Server::setConnectionLimits();
+	Server::inputParser(argc, argv);
+}
+
 Server::~Server() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -29,10 +35,10 @@ int Server::setup() {
 	if (listen(serverSocket, MAX_CONNECTIONS) == -1) {
 		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
 	}
-	onlineUserCount = 1;
 	userPoll[0].fd = serverSocket;
-	userPoll[0].events = 0;
-	userPoll[0].revents = POLLIN;
+	userPoll[0].events = POLLIN;
+	userPoll[0].revents = 0;
+	onlineUserCount = 1;
 	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
@@ -41,15 +47,48 @@ void Server::acceptConnection() {
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
+	
+	userPoll[onlineUserCount].fd = clientSocket;
+	userPoll[onlineUserCount].events = POLLIN;
+	userPoll[onlineUserCount].revents = 0;
 	onlineUserCount++;
 }
 
+// User 1 User 2 User 3 // 3
+// User 1 User 3 // 2
+
+void Server::removeUser(int pollId) {}
+
+int Server::processInput(int pollId) {
+	char buffer[40];
+	memset(buffer, 0, 40);
+	int cmd = recv(userPoll[pollId].fd, buffer, 40, 0);
+	if (cmd == 0) {
+		removeUser(pollId);
+		onlineUserCount--;
+		return (USERDISCONECTED);
+	}
+	std::cout << cmd << std::endl;
+	std::cout << buffer << std::endl;
+	return (0);
+}
+
 void Server::run() {
+	// std::cout << "Inside run" << std::endl;
 	while (Server::isRunning()) {
-		// if (poll(userPoll, onlineUserCount, 5000) == -1)
-		// 	;
-		// for (int i = 0; i < onlineUserCount; i++) {
+		if (poll(userPoll, onlineUserCount, 5000) == -1) throw CustomException("except");
+		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
+			if (userPoll[pollId].revents & POLLIN) {
+				if (userPoll[pollId].fd == serverSocketFd) {
+					acceptConnection();
+					std::cout << onlineUserCount << std::endl;
+				} else {
+					if (processInput(pollId) == USERDISCONECTED) pollId--;
+				}
+			}
+		}
 		// 	try {
+
 		// 		if (whatever) addUser();
 		// 		acceptConnection();
 		// 		else do_command

@@ -14,8 +14,8 @@ class Server {
 	int getPort();
 	void setPort(int portNum);
 	std::string getPassword();
-	void setPassword(std::string psswrd);
 	bool passwordCheck(std::string psswrd);
+	void removeUser(int pollId);
 
 	void run();
 	bool shouldReset();
@@ -27,6 +27,7 @@ class Server {
 
 	void setupPoll();  // do we need this?
 	void acceptConnection();
+	int processInput(int pollId);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
@@ -44,6 +45,9 @@ class Server {
 	void setAdminPass(std::string adminPass);
 
 	std::string extractWord(const std::string &line);
+	std::string base64Decode(const std::string &encodedData);
+	void setServerPassword();
+	void setPassword(std::string serverPassword);
 
 	class CustomException : public std::exception {
 	   private:
