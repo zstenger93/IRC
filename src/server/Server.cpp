@@ -67,45 +67,54 @@ void Server::removeUser(int pollId) {
 	userPoll[pollId].fd = 0;
 }
 
+void Server::CommandExecutionChecker(int stringLength, std::string message, std::string command)
+{
+}
+
+void Server::commandParser(int stringLength, std::string message) {
+	int pos = message.find_first_of(" \t\n");
+	std::string command;
+	if (pos != NOT_FOUND)
+		command = message.substr(0, pos);
+	else
+		command = message;
+	std::cout <<command<<" "<< message.length() <<" "<<stringLength<<std::endl;
+}
+
 int Server::processInput(int pollId) {
 	std::string message = "";
 	char buffer[512];
-	int cmd;
+	int buffer_len;
 	int stringLength = 0;
 
 	memset(buffer, 0, 512);
-	cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
+	buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
 	message = buffer;
-	stringLength += cmd;
-	while (message.find("\r\n") == -1 && cmd != 0) {
-		memset(buffer, 0, 512);
-		cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
-		stringLength += cmd;
-		message += buffer;
-	}
-	std::cout << message << std::endl;
-	if (cmd == 0) {
+	stringLength += buffer_len;
+	if (buffer_len == 0) {
 		removeUser(pollId);
 		onlineUserCount--;
 		return (USERDISCONECTED);
-	} else if (cmd == -1)
+	} else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
-	else {
+	while (message.find("\r\n") == NOT_FOUND && buffer_len != 0) {
+		memset(buffer, 0, 512);
+		buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
+		stringLength += buffer_len;
+		message += buffer;
 	}
+	commandParser(stringLength, message);
 	return (0);
 }
 
 void Server::run() {
-	// std::cout << "Inside run" << std::endl;
 	while (Server::isRunning()) {
 		if (poll(userPoll, onlineUserCount, 5000) == -1) throw CustomException("except");
 		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
 			try {
 				if (userPoll[pollId].revents & POLLIN) {
-					std::cout << pollId;
 					if (userPoll[pollId].fd == serverSocketFd) {
 						acceptConnection();
-						std::cout << onlineUserCount << std::endl;
 					} else {
 						if (processInput(pollId) == USERDISCONECTED) pollId--;
 					}

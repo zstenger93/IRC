@@ -17,6 +17,10 @@ class Server {
 	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
 
+	//MESAGE PARSER
+	void commandParser(int stringLength, std::string message);
+	void CommandExecutionChecker(int stringLength, std::string message, std::string command);
+
 	void run();
 	bool shouldReset();
 	int setup();
