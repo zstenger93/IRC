@@ -32,7 +32,7 @@ int Server::setup() {
 	if (bind(serverSocket, (struct sockaddr *)&serverInfo, sizeof(serverInfo)) == -1) {
 		return std::cerr << F_SOCKET_BIND << std::endl, close(serverSocket), -1;
 	}
-	if (listen(serverSocket, MAX_CONNECTIONS) == -1) {
+	if (listen(serverSocket, allowed_connections) == -1) {
 		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
 	}
 	userPoll[0].fd = serverSocket;

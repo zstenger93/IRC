@@ -43,6 +43,7 @@ class Server {
 	std::string getAdminPass();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
+	void shutdown();
 
 	std::string extractWord(const std::string &line);
 	std::string base64Decode(const std::string &encodedData);
@@ -63,7 +64,7 @@ class Server {
 	// sockets
 	bool serverState;
 	int serverSocketFd;
-	pollfd userPoll[MAX_CONNECTIONS];
+	pollfd userPoll[CONNECTIONS];
 	int onlineUserCount;
 	// Server info
 	std::string password;

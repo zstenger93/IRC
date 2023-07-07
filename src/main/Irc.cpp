@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 			close(server.getServerSocket());
 
 			// if (command == SHUTDOWN) // only admin can do this
-			// 	server.quit();
+			// 	server.shutdown();
 		}
 	} catch (const std::exception &error) {
 		std::cout << RED << error.what() << std::endl;
