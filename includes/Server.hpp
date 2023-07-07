@@ -16,6 +16,7 @@ class Server {
 	std::string getPassword();
 	void setPassword(std::string psswrd);
 	bool passwordCheck(std::string psswrd);
+	void removeUser();
 
 	void run();
 	bool shouldReset();
@@ -27,7 +28,7 @@ class Server {
 
 	void setupPoll();  // do we need this?
 	void acceptConnection();
-	void processInput(int user);
+	int processInput(int user);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();

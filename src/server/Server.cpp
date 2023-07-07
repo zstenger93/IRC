@@ -48,12 +48,23 @@ void Server::acceptConnection() {
 	onlineUserCount++;
 }
 
-void Server::processInput(int user) {
+// User 1 User 2 User 3 // 3
+// User 1 User 3 // 2
+
+void Server::removeUser() {}
+
+int Server::processInput(int user) {
 	char buffer[512];
 	memset(buffer, 0, 512);
 	int cmd = recv(userPoll[user].fd, buffer, 512, 0);
+	if (cmd == 0) {
+		removeUser();
+		onlineUserCount--;
+		return (USERDISCONECTED);
+	}
 	std::cout << cmd << std::endl;
 	std::cout << buffer << std::endl;
+	return (0);
 }
 
 void Server::run() {
@@ -67,7 +78,7 @@ void Server::run() {
 					std::cout << onlineUserCount << std::endl;
 					send(userPoll[i].fd, "test", 5, 1);
 				} else {
-					processInput(i);
+					if (processInput(i) == USERDISCONECTED) i--;
 				}
 			}
 		}
