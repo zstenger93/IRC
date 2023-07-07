@@ -1,5 +1,4 @@
 #include "../../includes/Server.hpp"
-
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -69,6 +68,7 @@ void Server::removeUser(int pollId) {
 
 void Server::CommandExecutionChecker(int stringLength, std::string message, std::string command)
 {
+	std::cout <<command<<" "<< message.length() <<" "<<stringLength<<std::endl;
 }
 
 void Server::commandParser(int stringLength, std::string message) {
@@ -78,7 +78,11 @@ void Server::commandParser(int stringLength, std::string message) {
 		command = message.substr(0, pos);
 	else
 		command = message;
-	std::cout <<command<<" "<< message.length() <<" "<<stringLength<<std::endl;
+	//TODO
+	//CHECK FOR THE COMMAND IN THE ARRAY OF THE COMMANDS
+	//SEND IN THE SPECIFIC STRUCT from the struct list depending from the command, wirh a void pointer execute the command that is rquired
+	//
+	CommandExecutionChecker(stringLength, message, command);
 }
 
 int Server::processInput(int pollId) {

@@ -3,6 +3,7 @@
 
 #include "Client.hpp"
 #include "Defines.hpp"
+#include "Commands.hpp"
 
 class Server {
    public:
@@ -20,7 +21,6 @@ class Server {
 	//MESAGE PARSER
 	void commandParser(int stringLength, std::string message);
 	void CommandExecutionChecker(int stringLength, std::string message, std::string command);
-
 	void run();
 	bool shouldReset();
 	int setup();
