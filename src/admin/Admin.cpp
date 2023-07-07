@@ -5,7 +5,7 @@
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
-static std::string extractWord(const std::string &line) {
+std::string Server::extractWord(const std::string &line) {
 	std::string::size_type pos = line.find('=');
 	if (pos != std::string::npos) {
 		std::string word = line.substr(pos + 1);

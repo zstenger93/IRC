@@ -28,6 +28,13 @@ class Server {
 	void setupPoll();  // do we need this?
 	void acceptConnection();
 
+	// CONNECTION LIMITS
+	void setConnectionLimits();
+	void setMaxLimit(int maxLimit);
+	void setAllowedLimit(int allowedLimit);
+	int getMaxlimit();
+	int getAllowedLimit();
+
 	// ADMIN
 	void createAdmin();	 // needs to be written
 	void setAdminDetails();
@@ -35,6 +42,8 @@ class Server {
 	std::string getAdminPass();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
+
+	std::string extractWord(const std::string &line);
 
 	class CustomException : public std::exception {
 	   private:
@@ -57,6 +66,10 @@ class Server {
 	int port;
 
 	bool reset;	 // first loop. always true
+
+	// Connection limits
+	int max_connections;
+	int allowed_connections;
 
 	// Server admin info
 	std::string operator_name;
