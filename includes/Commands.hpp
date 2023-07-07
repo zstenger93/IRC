@@ -21,4 +21,16 @@ class Commands {
    private:
 };
 
+
+struct t_params
+{
+	bool is_admin;
+	bool is_in_chanal;
+	bool is_oppperator;
+	bool is_required;
+	bool do_need_params;
+	bool do_need_flags;
+	bool do_need_nick;
+};
+
 #endif
