@@ -18,6 +18,8 @@ class Client {
 
    protected:
    private:
+	std::string nick;
+	std::string name;
 	int clientSocket;
 	struct sockaddr_in clientAdress;
 	pollfd pollFd;

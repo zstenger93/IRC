@@ -27,6 +27,7 @@ class Server {
 
 	void setupPoll();  // do we need this?
 	void acceptConnection();
+	void processInput(int user);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
