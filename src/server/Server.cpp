@@ -21,19 +21,19 @@ int Server::setup() {
 	int serverSocket = socket(AF_INET, SOCK_STREAM, 0), address = 1;
 	struct sockaddr_in serverInfo;
 	if (serverSocket == -1) {
-		return std::cerr << F_SET_SOCKET << std::endl, -1;
+		return CustomException(F_SET_SOCKET), -1;
 	}
 	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &address, sizeof(address)) == -1) {
-		return std::cerr << F_SOCKET_OPT << std::endl, close(serverSocket), -1;
+		return throw CustomException(F_SOCKET_OPT), -1;
 	}
 	serverInfo.sin_family = AF_INET;
 	serverInfo.sin_addr.s_addr = INADDR_ANY;
 	serverInfo.sin_port = htons(getPort());
 	if (bind(serverSocket, (struct sockaddr *)&serverInfo, sizeof(serverInfo)) == -1) {
-		return std::cerr << F_SOCKET_BIND << std::endl, close(serverSocket), -1;
+		return throw CustomException(F_SOCKET_BIND), close(serverSocket), -1;
 	}
 	if (listen(serverSocket, allowed_connections) == -1) {
-		return std::cerr << F_TO_LISTEN << std::endl, close(serverSocket), -1;
+		return throw CustomException(F_TO_LISTEN), close(serverSocket), -1;
 	}
 	userPoll[0].fd = serverSocket;
 	userPoll[0].events = POLLIN;
@@ -54,19 +54,19 @@ void Server::acceptConnection() {
 	onlineUserCount++;
 }
 
-// User 1 User 2 User 3 // 3
-// User 1 User 3 // 2
-
 void Server::removeUser(int pollId) {}
 
 int Server::processInput(int pollId) {
-	char buffer[40];
-	memset(buffer, 0, 40);
-	int cmd = recv(userPoll[pollId].fd, buffer, 40, 0);
+	char buffer[512];
+	memset(buffer, 0, 512);
+	int cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
 	if (cmd == 0) {
 		removeUser(pollId);
 		onlineUserCount--;
 		return (USERDISCONECTED);
+	}
+	else if (cmd == -1) {
+		throw CustomException(COMMAND_FD_ERROR);
 	}
 	std::cout << cmd << std::endl;
 	std::cout << buffer << std::endl;
