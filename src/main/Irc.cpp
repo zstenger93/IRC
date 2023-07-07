@@ -4,6 +4,7 @@ int main(int argc, char **argv) {
 	try {
 		Server server(argc, argv);
 		server.setAdminDetails();  // kinda extra, not needed will decide later
+		server.setConnectionLimits();
 		while (server.shouldReset()) {
 			server.setup();
 			server.run();

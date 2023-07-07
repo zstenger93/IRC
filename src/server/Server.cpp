@@ -62,13 +62,11 @@ void Server::run() {
 
 /*___________________________________________ SETTERS ___________________________________________*/
 
-// SERVER
 void Server::setRunning(bool state) { serverState = state; }
 void Server::setServerSocket(int socket) { serverSocketFd = socket; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
-// SERVER
 bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 int Server::getServerSocket() { return serverSocketFd; }

@@ -13,6 +13,7 @@ MAIN	= main/Irc \
 		  server/Server \
 		  client/Client \
 		  admin/Admin \
+		  config/Config \
 
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
