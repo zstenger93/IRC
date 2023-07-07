@@ -21,9 +21,24 @@ void Server::setConnectionLimits() {
 	std::cout << "allowed connections: " << allowed_connections << std::endl;
 }
 
+void Server::setServerPassword() {
+	std::string line, limitType;
+	std::ifstream file("conf/irc.conf");
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		if (line.find("server_password") != std::string::npos) {
+			setPassword(base64Decode(extractWord(line)));
+		}
+	}
+	std::cout << "server password: " << password << std::endl;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
+void Server::setPassword(std::string serverPassword) { password = serverPassword; }
 void Server::setMaxLimit(int maxLimit) { max_connections = maxLimit; }
 void Server::setAllowedLimit(int allowedLimit) { allowed_connections = allowedLimit; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
+
+std::string Server::getPassword() { return password; }

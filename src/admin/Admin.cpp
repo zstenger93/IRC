@@ -18,7 +18,7 @@ std::string Server::extractWord(const std::string &line) {
 	return "";	// maybe throw an error as no username found or whatever
 }
 
-static std::string base64Decode(const std::string &encodedData) {
+std::string Server::base64Decode(const std::string &encodedData) {
 	const std::string base64Chars = BASE64;
 	std::string decodedData;
 	std::string::size_type encodedLength = encodedData.length(), i = 0;
@@ -56,6 +56,8 @@ void Server::setAdminDetails() {
 	std::cout << "operator: " << operator_name << std::endl;
 	std::cout << "password: " << operator_password << std::endl;
 }
+
+void Server::shutdown() { reset = false; }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 

@@ -1,7 +1,8 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
-#define MAX_CONNECTIONS 1024
+#define CONNECTIONS 100
+#define USERDISCONECTED 1
 #define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
 // DEFAULT HEADERS
@@ -31,7 +32,7 @@
 
 #define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
 #define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
-#define WRONGPASS "The password is wrong, try again.\nOnly numbers and letters are accepted."
+#define WRONGPASS "The password is wrong, try again."
 #define LONGPASS "The provided password is too long. It can't be longer than 8 charaters"
 
 // USER ERRORS
