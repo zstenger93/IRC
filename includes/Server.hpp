@@ -44,6 +44,7 @@ class Server {
 	std::string getAdminPass();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
+	void shutdown();
 
 	std::string extractWord(const std::string &line);
 

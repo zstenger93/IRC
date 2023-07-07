@@ -13,6 +13,7 @@ enum CommandList {
 	MODE_OPER,
 	KICK,
 	INVITE,
+	SHUTDOWN
 };
 
 class Commands {
