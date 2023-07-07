@@ -41,7 +41,7 @@
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
 
 // SOCKET ERRORS
-
+#define F_FAILED_MESSAGE "Client failed to communicate with the server"
 #define F_SET_SOCKET "Failed to create socket error"
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"

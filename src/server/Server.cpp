@@ -1,5 +1,7 @@
 #include "../../includes/Server.hpp"
 
+#include <cstddef>
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -47,7 +49,7 @@ void Server::acceptConnection() {
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-	
+
 	userPoll[onlineUserCount].fd = clientSocket;
 	userPoll[onlineUserCount].events = POLLIN;
 	userPoll[onlineUserCount].revents = 0;
@@ -60,16 +62,30 @@ void Server::acceptConnection() {
 void Server::removeUser(int pollId) {}
 
 int Server::processInput(int pollId) {
-	char buffer[40];
-	memset(buffer, 0, 40);
-	int cmd = recv(userPoll[pollId].fd, buffer, 40, 0);
+	std::string message = "";
+	char buffer[512];
+	int cmd;
+	int stringLength = 0;
+
+	memset(buffer, 0, 512);
+	cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
+	message = buffer;
+	stringLength += cmd;
+	while (message.find("\r\n") == -1) {
+		memset(buffer, 0, 512);
+		cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
+		stringLength += cmd;
+		message += buffer;
+	}
+	std::cout << message << std::endl;
 	if (cmd == 0) {
 		removeUser(pollId);
 		onlineUserCount--;
 		return (USERDISCONECTED);
+	} else if (cmd == -1)
+		throw CustomException(F_FAILED_MESSAGE);
+	else {
 	}
-	std::cout << cmd << std::endl;
-	std::cout << buffer << std::endl;
 	return (0);
 }
 
