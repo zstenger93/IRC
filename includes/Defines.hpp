@@ -40,6 +40,9 @@
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
 
+//MESAGE ERRORS
+#define COMMAND_FD_ERROR "Error in reciving message from the client"
+
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"
 #define F_SET_SOCKET "Failed to create socket error"
