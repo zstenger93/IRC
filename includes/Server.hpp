@@ -14,7 +14,6 @@ class Server {
 	int getPort();
 	void setPort(int portNum);
 	std::string getPassword();
-	void setPassword(std::string psswrd);
 	bool passwordCheck(std::string psswrd);
 
 	void run();
@@ -44,6 +43,9 @@ class Server {
 	void setAdminPass(std::string adminPass);
 
 	std::string extractWord(const std::string &line);
+	std::string base64Decode(const std::string &encodedData);
+	void setServerPassword();
+	void setPassword(std::string serverPassword);
 
 	class CustomException : public std::exception {
 	   private:

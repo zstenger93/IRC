@@ -4,7 +4,13 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Server::Server(int argc, char **argv) : reset(true) { Server::inputParser(argc, argv); }
+Server::Server(int argc, char **argv) : reset(true) {
+	Server::setServerPassword();
+	Server::setAdminDetails();	// kinda extra, not needed will decide later
+	Server::setConnectionLimits();
+	Server::inputParser(argc, argv);
+}
+
 Server::~Server() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/

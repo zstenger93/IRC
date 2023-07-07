@@ -28,18 +28,16 @@ bool Server::passwordCheck(std::string psswrd) {
 	if (psswrd.length() > 8) throw(CustomException(LONGPASS));
 	std::string::iterator iter = std::find_if(psswrd.begin(), psswrd.end(), validCharacters);
 	if (iter != psswrd.end()) return false;
-	setPassword(psswrd);
-	std::cout << getPassword() << std::endl;
-
+		if (getPassword().compare(psswrd) != 0)
+			throw(CustomException(WRONGPASS));
+	std::cout << "provided password: " << getPassword() << std::endl;
 	return true;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setPort(int portNum) { port = portNum; }
-void Server::setPassword(std::string psswrd) { password = psswrd; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
 int Server::getPort() { return port; }
-std::string Server::getPassword() { return password; }
