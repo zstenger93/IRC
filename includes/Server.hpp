@@ -8,30 +8,33 @@ class Server {
    public:
 	Server(int argc, char **argv);
 	~Server();
+	// INPUT PARSING
 	void inputParser(int argc, char **argv);
 	bool isRunning();
-	void run();
-	int setup();
-	void setPort(int portNum);
-	bool passwordCheck(std::string psswrd);
-	void setPassword(std::string psswrd);
-	void setRunning(bool state);
 	int getPort();
-	int getServerSocket();
-	void setServerSocket(int socket);
+	void setPort(int portNum);
 	std::string getPassword();
+	void setPassword(std::string psswrd);
+	bool passwordCheck(std::string psswrd);
 
+	void run();
 	bool shouldReset();
+	int setup();
+	int getServerSocket();
+	void setRunning(bool state);
+	void setServerSocket(int socket);
+	const Client &getClient(int clientNumb) const;
 
+	void setupPoll();  // do we need this?
+	void acceptConnection();
+
+	// ADMIN
+	void createAdmin();	 // needs to be written
 	void setAdminDetails();
-	void createAdmin();
-	void setAdmin(std::string adminName);
-	void setAdminPass(std::string adminPass);
 	std::string getAdmin();
 	std::string getAdminPass();
-	const Client &getClient(int clientNumb) const;
-	void acceptConnection();
-	void setupPoll();
+	void setAdmin(std::string adminName);
+	void setAdminPass(std::string adminPass);
 
 	class CustomException : public std::exception {
 	   private:
@@ -49,14 +52,15 @@ class Server {
 	int serverSocketFd;
 	pollfd userPoll[MAX_CONNECTIONS];
 	int onlineUserCount;
-	// setup user info
-	std::string operator_name;
-	std::string operator_password;
-	// Setup info
+	// Server info
 	std::string password;
 	int port;
 
-	bool reset;
+	bool reset;	 // first loop. always true
+
+	// Server admin info
+	std::string operator_name;
+	std::string operator_password;
 };
 
 #endif

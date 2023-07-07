@@ -1,5 +1,3 @@
-#include <exception>
-
 #include "../../includes/Server.hpp"
 
 int main(int argc, char **argv) {
@@ -10,7 +8,7 @@ int main(int argc, char **argv) {
 			server.setup();
 			server.run();
 			close(server.getServerSocket());
-			
+
 			// if (command == SHUTDOWN) // only admin can do this
 			// 	server.quit();
 		}
