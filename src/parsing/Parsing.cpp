@@ -41,6 +41,5 @@ void Server::setPassword(std::string psswrd) { password = psswrd; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
-bool Server::isRunning() { return serverState; }
 int Server::getPort() { return port; }
 std::string Server::getPassword() { return password; }
