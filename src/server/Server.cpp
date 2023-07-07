@@ -1,7 +1,5 @@
 #include "../../includes/Server.hpp"
 
-#include <cstddef>
-
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -49,14 +47,25 @@ void Server::acceptConnection() {
 	socklen_t clientAdressLen = sizeof(clientAdress);
 	int clientSocket =
 		accept(getServerSocket(), (struct sockaddr *)&clientAdress, &clientAdressLen);
-
 	userPoll[onlineUserCount].fd = clientSocket;
 	userPoll[onlineUserCount].events = POLLIN;
 	userPoll[onlineUserCount].revents = 0;
 	onlineUserCount++;
 }
 
-void Server::removeUser(int pollId) {}
+void Server::removeUser(int pollId) {
+	close(userPoll[pollId].fd);
+	while (pollId < onlineUserCount) {
+		userPoll[pollId].events = userPoll[pollId + 1].events;
+		userPoll[pollId].revents = userPoll[pollId + 1].revents;
+		userPoll[pollId].fd = userPoll[pollId + 1].fd;
+		userPoll[pollId] = userPoll[pollId + 1];
+		pollId++;
+	}
+	userPoll[pollId].events = 0;
+	userPoll[pollId].revents = 0;
+	userPoll[pollId].fd = 0;
+}
 
 int Server::processInput(int pollId) {
 	std::string message = "";
@@ -68,7 +77,7 @@ int Server::processInput(int pollId) {
 	cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
 	message = buffer;
 	stringLength += cmd;
-	while (message.find("\r\n") == -1) {
+	while (message.find("\r\n") == -1 && cmd != 0) {
 		memset(buffer, 0, 512);
 		cmd = recv(userPoll[pollId].fd, buffer, 512, 0);
 		stringLength += cmd;
@@ -91,24 +100,20 @@ void Server::run() {
 	while (Server::isRunning()) {
 		if (poll(userPoll, onlineUserCount, 5000) == -1) throw CustomException("except");
 		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
-			if (userPoll[pollId].revents & POLLIN) {
-				if (userPoll[pollId].fd == serverSocketFd) {
-					acceptConnection();
-					std::cout << onlineUserCount << std::endl;
-				} else {
-					if (processInput(pollId) == USERDISCONECTED) pollId--;
+			try {
+				if (userPoll[pollId].revents & POLLIN) {
+					std::cout << pollId;
+					if (userPoll[pollId].fd == serverSocketFd) {
+						acceptConnection();
+						std::cout << onlineUserCount << std::endl;
+					} else {
+						if (processInput(pollId) == USERDISCONECTED) pollId--;
+					}
 				}
+			} catch (const std::exception &error) {
+				std::cout << RED << error.what() << std::endl;
 			}
 		}
-		// 	try {
-
-		// 		if (whatever) addUser();
-		// 		acceptConnection();
-		// 		else do_command
-		// 	} catch (const std::exception &error) {
-		// 		;
-		// 	}
-		// }
 	}
 }
 
