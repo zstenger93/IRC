@@ -1,7 +1,7 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
-#define MAX_CONNECTIONS 1024
+#define CONNECTIONS 100
 #define USERDISCONECTED 1
 #define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 

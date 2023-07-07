@@ -61,7 +61,7 @@ class Server {
 	// sockets
 	bool serverState;
 	int serverSocketFd;
-	pollfd userPoll[MAX_CONNECTIONS];
+	pollfd userPoll[CONNECTIONS];
 	int onlineUserCount;
 	// Server info
 	std::string password;
