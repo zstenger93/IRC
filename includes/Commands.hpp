@@ -1,6 +1,8 @@
 #ifndef COMMANDS_HPP
 #define COMMANDS_HPP
 
+#include "Defines.hpp"
+
 enum CommandList {
 	JOIN,
 	LEAVE,
@@ -20,5 +22,7 @@ class Commands {
    public:
    private:
 };
+
+void send_message_to_server(int fd, int count, ...);
 
 #endif

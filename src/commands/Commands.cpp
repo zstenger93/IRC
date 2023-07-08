@@ -48,7 +48,6 @@ bool Server::getPass(std::string& msg) {
 			std::string recievedPass = secondWord.substr(0, lastCharPos + 1);
 
 			std::cout << "secw: \"" << recievedPass << "\"" << std::endl;
-
 			if (recievedPass.compare(password) == 0) return true;
 		}
 	}
@@ -62,9 +61,11 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 		if (pass == true) {
 			it->second.connectUser(true);
 			std::cout << "OK" << std::endl;
+			send_message_to_server(it->first, 1, CONNECTED);
 			return;
 		}
 	} else {
+		send_message_to_server(it->first, 1, NOCONNECTION);
 		throw(CustomException(WRONGPASS));
 	}
 	std::cout << "KO" << std::endl;

@@ -16,7 +16,7 @@ MAIN	= main/Irc \
 		  config/Config \
 		  user/User \
 		  commands/Commands \
-
+		  commands/Communicate \
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
 OBJS	= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
