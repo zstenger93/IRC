@@ -15,6 +15,7 @@ MAIN	= main/Irc \
 		  admin/Admin \
 		  config/Config \
 		  user/User \
+		  commands/Commands \
 
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))

@@ -2,7 +2,8 @@
 #define DEFINES_HPP
 
 #define CONNECTIONS 100
-#define USERDISCONECTED 1
+#define USERDISCONECTED 0
+#define NOT_FOUND 1
 #define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
 // DEFAULT HEADERS
@@ -40,8 +41,11 @@
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
 
-// SOCKET ERRORS
+//MESAGE ERRORS
+#define COMMAND_FD_ERROR "Error in reciving message from the client"
 
+// SOCKET ERRORS
+#define F_FAILED_MESSAGE "Client failed to communicate with the server"
 #define F_SET_SOCKET "Failed to create socket error"
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"
