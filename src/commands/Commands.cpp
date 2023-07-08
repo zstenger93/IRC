@@ -30,9 +30,33 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-// void Server::CommandExecutionChecker(int stringLength, std::string message, std::string command) {
-// 	std::cout << command << " " << message.length() << " " << stringLength << std::endl;
+// void Server::CommandExecutionChecker(int stringLength, std::string message, std::string command)
+// { 	std::cout << command << " " << message.length() << " " << stringLength << std::endl;
 // }
+
+void Server::message() {}
+
+void Server::joinChannel() {}
+
+void Server::leaveChannel() {}
+
+void Server::kick() {}
+
+void Server::invite() {}
+
+void Server::quitServer() {}
+
+void Server::nick() {}
+
+void Server::listChannels() {std::cout << "test" << std::endl; }
+
+void Server::modeUser() {}
+
+void Server::modeOper() {}
+
+void Server::topicUser() {}
+
+void Server::topicOper() {}
 
 void Server::commandParser(int stringLength, std::string message) {
 	int caseId;
@@ -40,13 +64,21 @@ void Server::commandParser(int stringLength, std::string message) {
 	std::string commands[12] = {"MESSAGE",	 "JOIN",	  "LEAVE",		"KICK",
 								"INVITE",	 "QUIT",	  "NICK",		"LIST",
 								"MODE_USER", "MODE_OPER", "TOPIC_USER", "TOPIC_OPER"};
+	void (Server::*functions[12])() = {
+
+		functions[0] = &Server::message,	  functions[1] = &Server::joinChannel,
+		functions[2] = &Server::leaveChannel, functions[3] = &Server::kick,
+		functions[4] = &Server::invite,		  functions[5] = &Server::quitServer,
+		functions[6] = &Server::nick,		  functions[7] = &Server::listChannels,
+		functions[8] = &Server::modeUser,	  functions[9] = &Server::modeOper,
+		functions[10] = &Server::topicUser,	  functions[11] = &Server::topicOper};
+		
 	for (int i = 0; i < 12; i++) {
 		if (command.compare(commands[i]) == 0) {
-			caseId = i;
+			(this->*functions[i])();
 			break;
 		}
 	}
-	
 	// CommandExecutionChecker(stringLength, message, command);
 }
 

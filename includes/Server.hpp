@@ -37,7 +37,20 @@ class Server {
 
 	// void CommandExecutionChecker(int stringLength, std::string message, std::string command);
 
-
+	//COMMAND TO EXECUTE
+	void message();
+	void joinChannel();
+	void leaveChannel();
+	void kick();
+	void invite();
+	void quitServer();
+	void nick();
+	void listChannels();
+	void modeUser();
+	void modeOper();
+	void topicUser();
+	void topicOper();
+	
 	// CONNECTION LIMITS
 	void setConnectionLimits();
 	void setMaxLimit(int maxLimit);
