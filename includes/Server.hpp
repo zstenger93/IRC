@@ -1,9 +1,11 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <map>
 #include "Client.hpp"
 #include "Defines.hpp"
 #include "Commands.hpp"
+#include "User.hpp"
 
 class Server {
    public:
@@ -17,6 +19,12 @@ class Server {
 	std::string getPassword();
 	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
+
+	// USER
+	std::map<int, User> users;
+	void addUser(int userFd);
+	void authenticate(std::string message, std::map<int, User>::iterator it);
+	bool getPass(std::string &msg);
 
 	// MAIN LOOPS
 	void run();

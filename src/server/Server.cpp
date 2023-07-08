@@ -55,7 +55,7 @@ void Server::run() {
 					}
 				}
 			} catch (const std::exception &error) {
-				std::cout << RED << error.what() << std::endl;
+				std::cout << RED << error.what() << END << std::endl;
 			}
 		}
 	}
@@ -70,7 +70,10 @@ void Server::acceptConnection() {
 	userPoll[onlineUserCount].events = POLLIN;
 	userPoll[onlineUserCount].revents = 0;
 	onlineUserCount++;
+	addUser(clientSocket);
 }
+
+void Server::addUser(int userFd) { users.insert(std::make_pair(userFd, User(userFd))); }
 
 void Server::removeUser(int pollId) {
 	close(userPoll[pollId].fd);

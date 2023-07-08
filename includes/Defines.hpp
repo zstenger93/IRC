@@ -19,6 +19,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <utility>
 
 #include <algorithm>
 #include <cstring>
@@ -54,6 +55,8 @@
 #define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
+
+#define CONNECTED "You have been successfully connected to the server."
 
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
