@@ -18,9 +18,7 @@ class Server {
 	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
 
-	//MESAGE PARSER
-	void commandParser(int stringLength, std::string message);
-	void CommandExecutionChecker(int stringLength, std::string message, std::string command);
+	// MAIN LOOPS
 	void run();
 	bool shouldReset();
 	int setup();
@@ -31,7 +29,14 @@ class Server {
 
 	void setupPoll();  // do we need this?
 	void acceptConnection();
-	int processInput(int pollId);
+
+	// COMMAND HANDLING
+	int processCommands(int pollId);
+	void commandParser(int stringLength, std::string message);
+	std::string getCommand(std::string message);
+
+	// void CommandExecutionChecker(int stringLength, std::string message, std::string command);
+
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();

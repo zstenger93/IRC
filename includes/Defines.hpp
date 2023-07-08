@@ -2,7 +2,7 @@
 #define DEFINES_HPP
 
 #define CONNECTIONS 100
-#define USERDISCONECTED 1
+#define USERDISCONECTED 0
 #define NOT_FOUND 1
 #define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 

@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -41,6 +42,25 @@ int Server::setup() {
 	return setServerSocket(serverSocket), setRunning(true), 0;
 }
 
+void Server::run() {
+	while (Server::isRunning()) {
+		if (poll(userPoll, onlineUserCount, 5000) == -1) throw CustomException("except");
+		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
+			try {
+				if (userPoll[pollId].revents & POLLIN) {
+					if (userPoll[pollId].fd == serverSocketFd) {
+						acceptConnection();
+					} else {
+						if (processCommands(pollId) == USERDISCONECTED) pollId--;
+					}
+				}
+			} catch (const std::exception &error) {
+				std::cout << RED << error.what() << std::endl;
+			}
+		}
+	}
+}
+
 void Server::acceptConnection() {
 	struct sockaddr_in clientAdress;
 	socklen_t clientAdressLen = sizeof(clientAdress);
@@ -64,70 +84,6 @@ void Server::removeUser(int pollId) {
 	userPoll[pollId].events = 0;
 	userPoll[pollId].revents = 0;
 	userPoll[pollId].fd = 0;
-}
-
-void Server::CommandExecutionChecker(int stringLength, std::string message, std::string command)
-{
-	std::cout <<command<<" "<< message.length() <<" "<<stringLength<<std::endl;
-}
-
-void Server::commandParser(int stringLength, std::string message) {
-	int pos = message.find_first_of(" \t\n");
-	std::string command;
-	if (pos != NOT_FOUND)
-		command = message.substr(0, pos);
-	else
-		command = message;
-	//TODO
-	//CHECK FOR THE COMMAND IN THE ARRAY OF THE COMMANDS
-	//SEND IN THE SPECIFIC STRUCT from the struct list depending from the command, wirh a void pointer execute the command that is rquired
-	//
-	CommandExecutionChecker(stringLength, message, command);
-}
-
-int Server::processInput(int pollId) {
-	std::string message = "";
-	char buffer[512];
-	int buffer_len;
-	int stringLength = 0;
-
-	memset(buffer, 0, 512);
-	buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
-	message = buffer;
-	stringLength += buffer_len;
-	if (buffer_len == 0) {
-		removeUser(pollId);
-		onlineUserCount--;
-		return (USERDISCONECTED);
-	} else if (buffer_len == -1)
-		throw CustomException(F_FAILED_MESSAGE);
-	while (message.find("\r\n") == NOT_FOUND && buffer_len != 0) {
-		memset(buffer, 0, 512);
-		buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
-		stringLength += buffer_len;
-		message += buffer;
-	}
-	commandParser(stringLength, message);
-	return (0);
-}
-
-void Server::run() {
-	while (Server::isRunning()) {
-		if (poll(userPoll, onlineUserCount, 5000) == -1) throw CustomException("except");
-		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
-			try {
-				if (userPoll[pollId].revents & POLLIN) {
-					if (userPoll[pollId].fd == serverSocketFd) {
-						acceptConnection();
-					} else {
-						if (processInput(pollId) == USERDISCONECTED) pollId--;
-					}
-				}
-			} catch (const std::exception &error) {
-				std::cout << RED << error.what() << std::endl;
-			}
-		}
-	}
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
