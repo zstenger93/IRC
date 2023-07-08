@@ -32,7 +32,7 @@ int Server::processCommands(int pollId) {
 		stringLength += buffer_len;
 		message += buffer;
 	}
-	commandParser(stringLength, message);
+	commandParser(stringLength, message, it->first);
 	return 1;
 }
 
@@ -99,27 +99,31 @@ void Server::topicUser() {}
 
 void Server::topicOper() {}
 
-void Server::commandParser(int stringLength, std::string message) {
-	int caseId;
+void Server::userLoginMessage() {}
+
+void Server::commandParser(int stringLength, std::string message, int fd) {
+	int i = 0;
 	std::string command = getCommand(message);
-	std::string commands[12] = {"MESSAGE",	 "JOIN",	  "LEAVE",		"KICK",
-								"INVITE",	 "QUIT",	  "NICK",		"LIST",
-								"MODE_USER", "MODE_OPER", "TOPIC_USER", "TOPIC_OPER"};
-	void (Server::*functions[12])() = {
+	std::string commands[13] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
+								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
+								"TOPIC_USER", "TOPIC_OPER", "CAP"};
+	void (Server::*functions[13])() = {
 
 		functions[0] = &Server::message,	  functions[1] = &Server::joinChannel,
 		functions[2] = &Server::leaveChannel, functions[3] = &Server::kick,
 		functions[4] = &Server::invite,		  functions[5] = &Server::quitServer,
 		functions[6] = &Server::nick,		  functions[7] = &Server::listChannels,
 		functions[8] = &Server::modeUser,	  functions[9] = &Server::modeOper,
-		functions[10] = &Server::topicUser,	  functions[11] = &Server::topicOper};
+		functions[10] = &Server::topicUser,	  functions[11] = &Server::topicOper,
+		functions[12] = &Server::userLoginMessage};
 
-	for (int i = 0; i < 12; i++) {
+	for (i = 0; i < 13; i++) {
 		if (command.compare(commands[i]) == 0) {
 			(this->*functions[i])();
 			break;
 		}
 	}
+	if (i == 13) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
 	// CommandExecutionChecker(stringLength, message, command);
 }
 

@@ -40,7 +40,7 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(int stringLength, std::string message);
+	void commandParser(int stringLength, std::string message, int fd);
 	std::string getCommand(std::string message);
 
 	// void CommandExecutionChecker(int stringLength, std::string message, std::string command);
@@ -58,7 +58,8 @@ class Server {
 	void modeOper();
 	void topicUser();
 	void topicOper();
-	
+	void userLoginMessage();
+
 	// CONNECTION LIMITS
 	void setConnectionLimits();
 	void setMaxLimit(int maxLimit);

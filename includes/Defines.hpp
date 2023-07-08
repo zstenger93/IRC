@@ -44,6 +44,7 @@
 
 //MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
+#define COMMAND_NOT_FOUND "Command not found"
 
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"
@@ -57,7 +58,7 @@
 // ACTION MESSAGES
 
 #define CONNECTED "You have been successfully connected to the server."
-
+#define LOGIN_REQUIRED "You have connected to the server please login"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
