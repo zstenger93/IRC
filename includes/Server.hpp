@@ -3,6 +3,7 @@
 
 #include "Client.hpp"
 #include "Defines.hpp"
+#include "Commands.hpp"
 
 class Server {
    public:
@@ -17,6 +18,7 @@ class Server {
 	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
 
+	// MAIN LOOPS
 	void run();
 	bool shouldReset();
 	int setup();
@@ -27,8 +29,28 @@ class Server {
 
 	void setupPoll();  // do we need this?
 	void acceptConnection();
-	int processInput(int pollId);
 
+	// COMMAND HANDLING
+	int processCommands(int pollId);
+	void commandParser(int stringLength, std::string message);
+	std::string getCommand(std::string message);
+
+	// void CommandExecutionChecker(int stringLength, std::string message, std::string command);
+
+	//COMMAND TO EXECUTE
+	void message();
+	void joinChannel();
+	void leaveChannel();
+	void kick();
+	void invite();
+	void quitServer();
+	void nick();
+	void listChannels();
+	void modeUser();
+	void modeOper();
+	void topicUser();
+	void topicOper();
+	
 	// CONNECTION LIMITS
 	void setConnectionLimits();
 	void setMaxLimit(int maxLimit);
