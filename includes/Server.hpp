@@ -58,7 +58,7 @@ class Server {
 	void modeOper();
 	void topicUser();
 	void topicOper();
-	void userLoginMessage();
+	void emptyFunction();
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();

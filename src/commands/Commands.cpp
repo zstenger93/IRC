@@ -64,6 +64,8 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 			send_message_to_server(it->first, 1, CONNECTED);
 			return;
 		}
+	} else if (command.compare("CAP") == 0) {
+		send_message_to_server(it->first, 1, LOGIN_REQUIRED);
 	} else {
 		send_message_to_server(it->first, 1, NOCONNECTION);
 		throw(CustomException(WRONGPASS));
@@ -99,15 +101,15 @@ void Server::topicUser() {}
 
 void Server::topicOper() {}
 
-void Server::userLoginMessage() {}
+void Server::emptyFunction() {}
 
 void Server::commandParser(int stringLength, std::string message, int fd) {
 	int i = 0;
 	std::string command = getCommand(message);
-	std::string commands[13] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
+	std::string commands[14] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
 								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP"};
-	void (Server::*functions[13])() = {
+								"TOPIC_USER", "TOPIC_OPER", "CAP", "PASS"};
+	void (Server::*functions[14])() = {
 
 		functions[0] = &Server::message,	  functions[1] = &Server::joinChannel,
 		functions[2] = &Server::leaveChannel, functions[3] = &Server::kick,
@@ -115,15 +117,15 @@ void Server::commandParser(int stringLength, std::string message, int fd) {
 		functions[6] = &Server::nick,		  functions[7] = &Server::listChannels,
 		functions[8] = &Server::modeUser,	  functions[9] = &Server::modeOper,
 		functions[10] = &Server::topicUser,	  functions[11] = &Server::topicOper,
-		functions[12] = &Server::userLoginMessage};
+		functions[12] = &Server::emptyFunction, functions[13] = &Server::emptyFunction};
 
-	for (i = 0; i < 13; i++) {
+	for (i = 0; i < 14; i++) {
 		if (command.compare(commands[i]) == 0) {
 			(this->*functions[i])();
 			break;
 		}
 	}
-	if (i == 13) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+	if (i == 14) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
 	// CommandExecutionChecker(stringLength, message, command);
 }
 
