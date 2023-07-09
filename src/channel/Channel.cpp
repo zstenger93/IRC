@@ -1,5 +1,6 @@
 #include "../../includes/Channel.hpp"
 
+#include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -10,6 +11,11 @@ Channel::~Channel() {}
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
+
+void Server::createChannel(std::string name) {
+	channels.insert(std::make_pair(name, Channel(name)));
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Channel::setChannelMode(ChannelMode _mode) { mode = _mode; }

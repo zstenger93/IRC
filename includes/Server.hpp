@@ -28,7 +28,7 @@ class Server {
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
-	void addChannel();
+	void createChannel(std::string name);
 
 	// MAIN LOOPS
 	void run();
