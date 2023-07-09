@@ -3,7 +3,7 @@
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
 User::User() : userName(""), nickName(""), connected(false) {}
-User::User(int inputFd) : userName(""), nickName(""), connected(false), userFd(inputFd) {}
+User::User(int inputFd, std::string name) : userName(name), nickName(""), connected(false), userFd(inputFd) {}
 User::~User() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/

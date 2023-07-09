@@ -16,11 +16,11 @@ int Server::processCommands(int pollId) {
 	message = buffer;
 	stringLength += buffer_len;
 
-	std::map<int, User>::iterator it = users.find(pollId);
+	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
+	
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
-
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
 		onlineUserCount--;
@@ -44,14 +44,14 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 		if (pass == true) {
 			it->second.connectUser(true);
 			std::cout << "OK" << std::endl;
-			send_message_to_server(it->first, 1, CONNECTED);
+			send_message_to_server(it->first, 2, it->second.getUserName().c_str(), CONNECTED);
 			return;
+		} else {
+			send_message_to_server(it->first, 1, NOCONNECTION);
+			throw(CustomException(WRONGPASS));
 		}
 	} else if (command.compare("CAP") == 0) {
 		send_message_to_server(it->first, 1, LOGIN_REQUIRED);
-	} else {
-		send_message_to_server(it->first, 1, NOCONNECTION);
-		throw(CustomException(WRONGPASS));
 	}
 	std::cout << "KO" << std::endl;
 }

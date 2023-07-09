@@ -1,5 +1,8 @@
 #include "../../includes/Server.hpp"
+
 #include <netdb.h>
+
+#include <string>
 
 #include "../../includes/Client.hpp"
 
@@ -74,7 +77,10 @@ void Server::acceptConnection() {
 	addUser(clientSocket);
 }
 
-void Server::addUser(int userFd) { users.insert(std::make_pair(userFd, User(userFd))); }
+void Server::addUser(int userFd) {
+	static int i = 1;
+	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++))));
+}
 
 void Server::removeUser(int pollId) {
 	close(userPoll[pollId].fd);

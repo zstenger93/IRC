@@ -52,13 +52,13 @@
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"
 #define F_TO_LISTEN "Failed to listen for connections"
-#define NOCONNECTION "Failed to accept the connection"
+#define NOCONNECTION "\0034Failed to accept the connection. Wrong password."
 #define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
 
-#define CONNECTED "You have been successfully connected to the server."
-#define LOGIN_REQUIRED "You have established the connection to the server.lease login with /PASS <password>"
+#define CONNECTED "\0033You have been successfully connected to the server."
+#define LOGIN_REQUIRED "You have established the connection to the server. \0038Please login with /PASS <password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
@@ -94,21 +94,21 @@
 #define GREEN "\033[1;32m"
 #define YELLOW "\033[1;33m"
 
-// ^C0: White
-// ^C1: Black
-// ^C2: Blue (navy)
-// ^C3: Green
-// ^C4: Red
-// ^C5: Brown (maroon)
-// ^C6: Purple
-// ^C7: Orange (olive)
-// ^C8: Yellow
-// ^C9: Light green (lime)
-// ^C10: Teal (aqua)
-// ^C11: Light cyan (aqua)
-// ^C12: Light blue (royal)
-// ^C13: Pink (light purple)
-// ^C14: Grey (light grey)
-// ^C15: Light grey (silver)
+// \0030: White
+// \0031: Black
+// \0032: Blue (navy)
+// \0033: Green
+// \0034: Red
+// \0035: Brown (maroon)
+// \0036: Purple
+// \0037: Orange (olive)
+// \0038: Yellow
+// \0039: Light green (lime)
+// \00310: Teal (aqua)
+// \00311: Light cyan (aqua)
+// \00312: Light blue (royal)
+// \00313: Pink (light purple)
+// \00314: Grey (light grey)
+// \00315: Light grey (silver)
 
 #endif

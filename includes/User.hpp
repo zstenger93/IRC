@@ -8,7 +8,7 @@ class Server;
 class User {
    public:
 	User();
-	User(int inputFd);
+	User(int inputFd, std::string name);
 	~User();
 	void setUserName(std::string uName);
 	void setNickName(std::string nName);
