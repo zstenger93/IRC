@@ -83,6 +83,8 @@ void Server::addUser(int userFd) {
 }
 
 void Server::removeUser(int pollId) {
+	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
+    if (it != users.end()) users.erase(it);
 	close(userPoll[pollId].fd);
 	while (pollId < onlineUserCount) {
 		userPoll[pollId].events = userPoll[pollId + 1].events;

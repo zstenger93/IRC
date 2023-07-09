@@ -40,7 +40,7 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(int stringLength, std::string message, int fd);
+	void commandParser(std::map<int, User>::iterator it, std::string message, int fd);
 	std::string getCommand(std::string message);
 
 	

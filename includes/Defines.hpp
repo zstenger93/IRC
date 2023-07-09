@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <utility>
+#include <map>
 
 #include <algorithm>
 #include <cstring>
@@ -57,6 +58,7 @@
 
 // ACTION MESSAGES
 
+#define NICKCHANGED "\0033Your nickname has been changed."
 #define CONNECTED "\0033You have been successfully connected to the server."
 #define LOGIN_REQUIRED "You have established the connection to the server. \0038Please login with /PASS <password>"
 #define INVITED " has been invited to the server"

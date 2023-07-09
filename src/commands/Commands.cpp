@@ -1,4 +1,5 @@
 #include <netdb.h>
+
 #include "../../includes/Server.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -17,7 +18,7 @@ int Server::processCommands(int pollId) {
 	stringLength += buffer_len;
 
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-	
+
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
@@ -33,7 +34,7 @@ int Server::processCommands(int pollId) {
 		stringLength += buffer_len;
 		message += buffer;
 	}
-	commandParser(stringLength, message, it->first);
+	commandParser(it, message, it->first);
 	return 1;
 }
 
@@ -74,32 +75,25 @@ bool Server::getPass(std::string& msg) {
 	return false;
 }
 
-void Server::commandParser(int stringLength, std::string message, int fd) {
-	User *user; // switch it with stringlength when we have an actual user
-	int i = 0;
+void Server::commandParser(std::map<int, User>::iterator it, std::string message, int fd) {
+	int caseId = 0;
 	std::string command = getCommand(message);
 	std::string commands[14] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
 								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP", "PASS"};
-	void (User::*functions[14])() = {
-
-		functions[0] = &User::message,	  functions[1] = &User::joinChannel,
-		functions[2] = &User::leaveChannel, functions[3] = &User::kick,
-		functions[4] = &User::invite,		  functions[5] = &User::quitServer,
-		functions[6] = &User::nick,		  functions[7] = &User::listChannels,
-		functions[8] = &User::modeUser,	  functions[9] = &User::modeOper,
-		functions[10] = &User::topicUser,	  functions[11] = &User::topicOper,
-		functions[12] = &User::emptyFunction, functions[13] = &User::emptyFunction};
-
-	for (i = 0; i < 14; i++) {
+								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS"};
+	for (int i = 0; i < 14; i++) {
 		if (command.compare(commands[i]) == 0) {
-			(user->*functions[i])();
+			caseId = i;
 			break;
 		}
 	}
-	if (i == 14) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+	switch (caseId) {
+		case 6:
+			it->second.setNick(it, "JOHN");
+			break;
+	}
+	// if (i == 14) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
 }
-
 
 void User::message() {}
 
@@ -113,7 +107,10 @@ void User::invite() {}
 
 void User::quitServer() {}
 
-void User::nick() {}
+void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
+	nickName = newNickname;
+	send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+}
 
 void User::listChannels() { std::cout << "test" << std::endl; }
 

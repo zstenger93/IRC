@@ -25,7 +25,7 @@ class User {
 	void kick();
 	void invite();
 	void quitServer();
-	void nick();
+	void setNick(std::map<int, User>::iterator it, std::string newNickname);
 	void listChannels();
 	void modeUser();
 	void modeOper();
