@@ -2,6 +2,7 @@
 #define USER_HPP
 
 #include "Defines.hpp"
+#include "Channel.hpp"
 
 class Server;
 
@@ -17,6 +18,9 @@ class User {
 	std::string getUserName();
 	std::string getNickName();
 	int getUserFd();
+
+	// CHANNELS
+	std::map<std::string, bool> channels;
 
 	//COMMAND TO EXECUTE
 	void message();
@@ -38,7 +42,6 @@ class User {
 	std::string nickName;
 	bool connected;
 	int userFd;
-
 };
 
 #endif

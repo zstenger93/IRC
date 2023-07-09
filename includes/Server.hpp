@@ -26,6 +26,10 @@ class Server {
 	void authenticate(std::string message, std::map<int, User>::iterator it);
 	bool getPass(std::string &msg);
 
+	// CHANNEL
+	std::map<std::string, Channel> channels;
+	void addChannel();
+
 	// MAIN LOOPS
 	void run();
 	bool shouldReset();

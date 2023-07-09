@@ -1,7 +1,9 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Server.hpp"
+#include "Defines.hpp"
+
+class Server;
 
 enum ChannelMode {
 	TOPIC,
@@ -16,6 +18,10 @@ class Channel {
    public:
 	Channel(std::string name);
 	~Channel();
+
+	void setChannelMode(ChannelMode _mode);
+	ChannelMode getChannelMode();
+	std::string getChannelName();
 
    private:
 	std::string channelName;
