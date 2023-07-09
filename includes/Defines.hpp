@@ -41,9 +41,9 @@
 
 // USER ERRORS
 
-#define USEREXIST "This username already exist, please provide another one"
-#define NICKNAMEEXIST "This nickname already exist, please provide another one"
-#define NICKEMPTYSTR "\0034The nickname cannot be an empty string."
+// #define USEREXIST "This username already exist, please provide another one" not used
+#define NICKNAMEEXIST "\0034This nickname already exist, please provide another one\0030"
+#define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
 
 // MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
@@ -55,13 +55,13 @@
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"
 #define F_TO_LISTEN "Failed to listen for connections"
-#define NOCONNECTION "\0034Failed to accept the connection. Wrong password."
+#define NOCONNECTION "Failed to accept the connection. Wrong password."
 #define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
 
-#define NICKCHANGED "\0033Your nickname has been changed."
-#define CONNECTED "\0033You have been successfully connected to the server."
+#define NICKCHANGED "\0033Your nickname has been changed.\0030"
+#define CONNECTED "\0033You have been successfully connected to the server.\0030"
 #define LOGIN_REQUIRED \
 	"\0037You\0030 have established the connection to the server. \0038Please login with /PASS <password>"
 #define INVITED " has been invited to the server"
@@ -119,5 +119,10 @@
 // \00314: Grey (light grey)
 // \00315: Light grey (silver)
 // \0030: end color
+
+// MOTD
+
+#define MOTD "When I was young I used to think that USB is a country next to USA"
+
 
 #endif

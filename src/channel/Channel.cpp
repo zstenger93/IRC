@@ -17,6 +17,10 @@ void Server::createChannel(std::string name) {
 		std::cout << it->second.getChannelName() << std::endl;
 }
 
+void Server::addToGeneral(User &user) {
+	
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Channel::setChannelMode(ChannelMode _mode) { mode = _mode; }
