@@ -91,8 +91,10 @@ void Server::commandParser(std::map<int, User>::iterator it, std::string message
 		case 6:
 			it->second.setNick(it, "JOHN");
 			break;
+		default:
+			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+			break;
 	}
-	// if (i == 14) send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
 }
 
 void User::message() {}
