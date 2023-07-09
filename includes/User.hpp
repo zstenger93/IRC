@@ -18,6 +18,21 @@ class User {
 	std::string getNickName();
 	int getUserFd();
 
+	//COMMAND TO EXECUTE
+	void message();
+	void joinChannel();
+	void leaveChannel();
+	void kick();
+	void invite();
+	void quitServer();
+	void nick();
+	void listChannels();
+	void modeUser();
+	void modeOper();
+	void topicUser();
+	void topicOper();
+	void emptyFunction();
+
    private:
 	std::string userName;
 	std::string nickName;

@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+#include <netdb.h>
 
 #include "../../includes/Client.hpp"
 
