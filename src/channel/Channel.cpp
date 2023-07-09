@@ -1,7 +1,5 @@
 #include "../../includes/Channel.hpp"
-
 #include "../../includes/Server.hpp"
-#include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -14,6 +12,9 @@ Channel::~Channel() {}
 
 void Server::createChannel(std::string name) {
 	channels.insert(std::make_pair(name, Channel(name)));
+	std::map<std::string, Channel>::iterator it = channels.find(name);
+	if (it != channels.end())
+		std::cout << it->second.getChannelName() << std::endl;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

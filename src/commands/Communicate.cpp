@@ -1,13 +1,17 @@
-#include "../../includes/Defines.hpp"
+#include "../../includes/Server.hpp"
 
 void send_message_to_server(int fd, int count, ...) {
-	std::string message = ":RickRoll.de ";
+	std::string message = RICK;
 	int i = 0;
 	va_list arguments;
 	va_start(arguments, count);
 	while (i < count) {
 		message = message + va_arg(arguments, const char*);
 		i++;
+		if (i == 1 && count > 2)
+			message = message + " \00310[";
+		if (i == 2 && count > 2)
+			message = message + " ]\0030";
 		if (i != count) message = message + " ";
 	}
 	va_end(arguments);
@@ -30,10 +34,10 @@ std::vector<std::string> splitString(const std::string& message) {
 
 std::string extractArgument(int specificArg, const std::string& message, int aCount) {
 	std::vector<std::string> tokens = splitString(message);
+	if (tokens.size() - 1 > aCount && aCount != -1) return std::string();
 	if (specificArg >= 0 && specificArg < static_cast<int>(tokens.size())) {
 		return tokens[specificArg];
 		std::cout << tokens.size() << std::endl;
-		if (tokens.size() > aCount && aCount != -1) return std::string();
 	}
 	return std::string();
 }

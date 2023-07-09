@@ -2,7 +2,8 @@
 #define USER_HPP
 
 #include "Defines.hpp"
-#include "Channel.hpp"
+
+class Channel;
 
 class Server;
 
@@ -22,9 +23,9 @@ class User {
 	// CHANNELS
 	std::map<std::string, bool> channels;
 
-	//COMMAND TO EXECUTE
+	// COMMAND TO EXECUTE
 	void message();
-	void joinChannel();
+	void joinChannel(std::string name);
 	void leaveChannel();
 	void kick();
 	void invite();

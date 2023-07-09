@@ -1,6 +1,8 @@
-#include <netdb.h>
-
+#include "../../includes/Commands.hpp"
+#include <utility>
 #include "../../includes/Server.hpp"
+#include "../../includes/User.hpp"
+#include "../../includes/Channel.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -88,8 +90,17 @@ void Server::commandParser(std::map<int, User>::iterator it, std::string message
 		}
 	}
 	switch (caseId) {
+		case 1:
+			handleJoin(it->second, extractArgument(1, message, 2));
+			break;
 		case 6:
-			it->second.setNick(it, "JOHN");
+			it->second.setNick(it, extractArgument(1, message, 2));
+			break;
+		case 12:
+			;
+			break;
+		case 13:
+			;
 			break;
 		default:
 			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
@@ -97,9 +108,36 @@ void Server::commandParser(std::map<int, User>::iterator it, std::string message
 	}
 }
 
+void	Server::handleJoin(User &user, std::string name)
+{
+	if (name.length() == 0)
+		std::cout << "no channels" << std::endl;
+	std::map<std::string, Channel>::iterator it = channels.find(name);
+	if (it == channels.end()) {
+	
+		createChannel(name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(), CREATEDCHANNEL);
+		user.joinChannel(name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(), JOINEDCHANNEL);
+		return ;
+	}
+	user.joinChannel(name);
+		
+}
+
 void User::message() {}
 
-void User::joinChannel() {}
+void User::joinChannel(std::string name) {
+	std::map<std::string, bool>::iterator it = channels.find(name);
+	// std::cout << it->second << std::endl;
+	if (it == channels.end()) {
+		channels.insert(std::make_pair(name, true));
+		std::map<std::string, bool>::iterator it = channels.find(name);
+		// std::cout << it->second << std::endl;
+		return ;
+	}
+	// return you are already on the channel
+}
 
 void User::leaveChannel() {}
 
@@ -110,8 +148,12 @@ void User::invite() {}
 void User::quitServer() {}
 
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
-	nickName = newNickname;
-	send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+	if (newNickname.length() != 0) {
+		nickName = "\0037" + newNickname + "\0030";
+		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+	} else {
+		send_message_to_server(it->first, 2, nickName.c_str(), NICKEMPTYSTR);
+	}
 }
 
 void User::listChannels() { std::cout << "test" << std::endl; }
