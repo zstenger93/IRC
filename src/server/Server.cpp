@@ -1,5 +1,9 @@
 #include "../../includes/Server.hpp"
 
+#include <netdb.h>
+
+#include <string>
+
 #include "../../includes/Client.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -55,7 +59,7 @@ void Server::run() {
 					}
 				}
 			} catch (const std::exception &error) {
-				std::cout << RED << error.what() << std::endl;
+				std::cout << RED << error.what() << END << std::endl;
 			}
 		}
 	}
@@ -70,9 +74,17 @@ void Server::acceptConnection() {
 	userPoll[onlineUserCount].events = POLLIN;
 	userPoll[onlineUserCount].revents = 0;
 	onlineUserCount++;
+	addUser(clientSocket);
+}
+
+void Server::addUser(int userFd) {
+	static int i = 1;
+	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++))));
 }
 
 void Server::removeUser(int pollId) {
+	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
+    if (it != users.end()) users.erase(it);
 	close(userPoll[pollId].fd);
 	while (pollId < onlineUserCount) {
 		userPoll[pollId].events = userPoll[pollId + 1].events;

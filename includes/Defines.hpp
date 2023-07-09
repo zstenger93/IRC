@@ -21,12 +21,15 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstring>
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // INPUT HANDLING MESSAGES
@@ -41,8 +44,9 @@
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
 
-//MESAGE ERRORS
+// MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
+#define COMMAND_NOT_FOUND "Command not found"
 
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"
@@ -50,11 +54,15 @@
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"
 #define F_TO_LISTEN "Failed to listen for connections"
-#define NOCONNECTION "Failed to accept the connection"
+#define NOCONNECTION "\0034Failed to accept the connection. Wrong password."
 #define F_POOL "Failed to make a poll"
 
 // ACTION MESSAGES
 
+#define NICKCHANGED "\0033Your nickname has been changed."
+#define CONNECTED "\0033You have been successfully connected to the server."
+#define LOGIN_REQUIRED \
+	"You have established the connection to the server. \0038Please login with /PASS <password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
@@ -87,6 +95,24 @@
 #define RED "\033[1;31m"
 #define END "\033[1;39m"
 #define BLUE "\033[1;34m"
+#define GREEN "\033[1;32m"
 #define YELLOW "\033[1;33m"
+
+// \0030: White
+// \0031: Black
+// \0032: Blue (navy)
+// \0033: Green
+// \0034: Red
+// \0035: Brown (maroon)
+// \0036: Purple
+// \0037: Orange (olive)
+// \0038: Yellow
+// \0039: Light green (lime)
+// \00310: Teal (aqua)
+// \00311: Light cyan (aqua)
+// \00312: Light blue (royal)
+// \00313: Pink (light purple)
+// \00314: Grey (light grey)
+// \00315: Light grey (silver)
 
 #endif

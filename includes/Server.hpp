@@ -1,9 +1,11 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <map>
 #include "Client.hpp"
 #include "Defines.hpp"
 #include "Commands.hpp"
+#include "User.hpp"
 
 class Server {
    public:
@@ -17,6 +19,16 @@ class Server {
 	std::string getPassword();
 	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
+
+	// USER
+	std::map<int, User> users;
+	void addUser(int userFd);
+	void authenticate(std::string message, std::map<int, User>::iterator it);
+	bool getPass(std::string &msg);
+
+	// CHANNEL
+	std::map<std::string, Channel> channels;
+	void createChannel(std::string name);
 
 	// MAIN LOOPS
 	void run();
@@ -32,25 +44,11 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(int stringLength, std::string message);
+	void commandParser(std::map<int, User>::iterator it, std::string message, int fd);
 	std::string getCommand(std::string message);
 
-	// void CommandExecutionChecker(int stringLength, std::string message, std::string command);
-
-	//COMMAND TO EXECUTE
-	void message();
-	void joinChannel();
-	void leaveChannel();
-	void kick();
-	void invite();
-	void quitServer();
-	void nick();
-	void listChannels();
-	void modeUser();
-	void modeOper();
-	void topicUser();
-	void topicOper();
 	
+
 	// CONNECTION LIMITS
 	void setConnectionLimits();
 	void setMaxLimit(int maxLimit);

@@ -1,23 +1,26 @@
+#include "../../includes/Channel.hpp"
+
+#include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-User::User() : userName(""), nickName(""), connected(false) {}
-User::User(int inputFd, std::string name) : userName(name), nickName(""), connected(false), userFd(inputFd) {}
-User::~User() {}
+Channel::Channel(std::string name) : channelName(name), mode(NORMAL) {}
+Channel::~Channel() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
+
+void Server::createChannel(std::string name) {
+	channels.insert(std::make_pair(name, Channel(name)));
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
-void User::connectUser(bool isConnected) { connected = isConnected; }
-void User::setUserName(std::string uName) { userName = uName; }
-void User::setNickName(std::string nName) { nickName = nName; }
+void Channel::setChannelMode(ChannelMode _mode) { mode = _mode; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
-int User::getUserFd() { return userFd; }
-bool User::isConnected() { return connected; }
-std::string User::getUserName() { return userName; }
-std::string User::getNickName() { return nickName; }
+ChannelMode Channel::getChannelMode() { return mode; }
+std::string Channel::getChannelName() { return channelName; }
