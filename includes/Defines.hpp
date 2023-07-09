@@ -58,7 +58,7 @@
 // ACTION MESSAGES
 
 #define CONNECTED "You have been successfully connected to the server."
-#define LOGIN_REQUIRED "You have connected to the server please login"
+#define LOGIN_REQUIRED "You have established the connection to the server.lease login with /PASS <password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
@@ -91,6 +91,24 @@
 #define RED "\033[1;31m"
 #define END "\033[1;39m"
 #define BLUE "\033[1;34m"
+#define GREEN "\033[1;32m"
 #define YELLOW "\033[1;33m"
+
+// ^C0: White
+// ^C1: Black
+// ^C2: Blue (navy)
+// ^C3: Green
+// ^C4: Red
+// ^C5: Brown (maroon)
+// ^C6: Purple
+// ^C7: Orange (olive)
+// ^C8: Yellow
+// ^C9: Light green (lime)
+// ^C10: Teal (aqua)
+// ^C11: Light cyan (aqua)
+// ^C12: Light blue (royal)
+// ^C13: Pink (light purple)
+// ^C14: Grey (light grey)
+// ^C15: Light grey (silver)
 
 #endif
