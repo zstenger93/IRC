@@ -19,16 +19,17 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <utility>
-#include <map>
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstring>
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // INPUT HANDLING MESSAGES
@@ -43,7 +44,7 @@
 #define USEREXIST "This username already exist, please provide another one"
 #define NICKNAMEEXIST "This nickname already exist, please provide another one"
 
-//MESAGE ERRORS
+// MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define COMMAND_NOT_FOUND "Command not found"
 
@@ -60,7 +61,8 @@
 
 #define NICKCHANGED "\0033Your nickname has been changed."
 #define CONNECTED "\0033You have been successfully connected to the server."
-#define LOGIN_REQUIRED "You have established the connection to the server. \0038Please login with /PASS <password>"
+#define LOGIN_REQUIRED \
+	"You have established the connection to the server. \0038Please login with /PASS <password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "

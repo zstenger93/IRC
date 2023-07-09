@@ -24,5 +24,6 @@ class Commands {
 };
 
 void send_message_to_server(int fd, int count, ...);
+std::string extractArgument(int specificArg, const std::string& message, int aCount);
 
 #endif
