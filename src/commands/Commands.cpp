@@ -50,15 +50,18 @@ void User::quitServer() {
 	// disconnect the user myb? idk.
 }
 
+// need to add parsing, parameter should be admin password
 void Server::shutdown() {
 	// this is only server admin function
 	// shut down the server
+	serverState = false; // not sure if this is needed
 	reset = false;
 }
 
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
+		// check if someone is already using this nick ??
 		nickName = "\0037" + newNickname + "\0030";
 		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
 	} else {

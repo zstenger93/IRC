@@ -42,9 +42,9 @@ int Server::processCommands(int pollId) {
 void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
+	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
 								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "SHUTDOWN"};
+								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "ADMIN"};
 	for (int i = 0; i < 15; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
