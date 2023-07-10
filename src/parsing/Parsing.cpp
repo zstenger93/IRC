@@ -18,7 +18,6 @@ void Server::inputParser(int argc, char **argv) {
 		setPort(port);
 	else
 		throw(CustomException(WRONGPORT));
-	std::cout << getPort() << std::endl;
 	if (passwordCheck(inputPass) == false) throw(CustomException(WRONGPASS));
 }
 
@@ -30,7 +29,6 @@ bool Server::passwordCheck(std::string psswrd) {
 	if (iter != psswrd.end()) return false;
 		if (getPassword().compare(psswrd) != 0)
 			throw(CustomException(WRONGPASS));
-	std::cout << "provided password: " << getPassword() << std::endl;
 	return true;
 }
 

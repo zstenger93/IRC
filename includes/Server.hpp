@@ -2,15 +2,11 @@
 #define SERVER_HPP
 
 #include "Defines.hpp"
-// #include "Client.hpp"
-// #include "Commands.hpp"
-// #include "User.hpp"
 
 class User;
 class Commands;
 class Client;
 class Channel;
-// #include "Channel.hpp"
 
 class Server {
    public:
@@ -33,9 +29,8 @@ class Server {
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
-	void createChannel(std::string name);
+	void createChannel(User& user, std::string name);
 	void handleJoin(User &user, std::string name);
-	void addToGeneral(User &user);
 
 	// MAIN LOOPS
 	void run();
@@ -51,7 +46,7 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(std::map<int, User>::iterator it, std::string message, int fd);
+	void commandParser(std::map<int, User>::iterator it, std::string message, int fd, int pollId);
 	std::string getCommand(std::string message);
 
 	// CONNECTION LIMITS
@@ -70,6 +65,7 @@ class Server {
 	void setAdminPass(std::string adminPass);
 	void shutdown();
 
+	// PASS
 	std::string extractWord(const std::string &line);
 	std::string base64Decode(const std::string &encodedData);
 	void setServerPassword();
