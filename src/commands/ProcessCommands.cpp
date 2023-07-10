@@ -42,6 +42,8 @@ int Server::processCommands(int pollId) {
 void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd) {
 	int caseId = 0;
 	std::string command = getCommand(message);
+	// MODE_USER?? TOPIC_USER ?? TOPUC_OPER?? ADMIN??
+	// MISSING COMMANDS PING, WHO, TOPIC, OPER. MOTD
 	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
 								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
 								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "ADMIN"};
@@ -76,10 +78,10 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.setNick(user, extractArgument(1, message, 2));
 			break;
 		case 7:
-			user->second.listChannels();
+			user->second.listChannels(); 
 			break;
 		case 8:
-			user->second.modeUser();
+			user->second.modeUser(); 
 			break;
 		case 9:
 			user->second.modeOper();
