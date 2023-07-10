@@ -57,8 +57,6 @@ void Server::setAdminDetails() {
 	std::cout << "password: " << operator_password << std::endl;
 }
 
-void Server::shutdown() { reset = false; }
-
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setAdmin(std::string adminName) { operator_name = adminName; }
