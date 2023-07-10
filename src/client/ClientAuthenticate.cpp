@@ -1,5 +1,5 @@
-#include "../../includes/Commands.hpp"
 #include "../../includes/Channel.hpp"
+#include "../../includes/Commands.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -15,7 +15,8 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 		if (pass == true) {
 			it->second.connectUser(true);
 			std::cout << "OK" << std::endl;
-			send_message_to_server(it->first, 2, it->second.getUserName().c_str(), CONNECTED);
+			send_message_to_server(it->first, 5, "001", it->second.getNickName().c_str(), ":",
+								   it->second.getUserName().c_str(), CONNECTED);
 			it->second.motd(it->second);
 			return;
 		} else {
@@ -23,7 +24,7 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 			throw(CustomException(WRONGPASS));
 		}
 	} else if (command.compare("CAP") == 0) {
-		send_message_to_server(it->first, 1, LOGIN_REQUIRED);
+		send_message_to_server(it->first, 2, "462 : ", LOGIN_REQUIRED);
 	}
 	std::cout << "KO" << std::endl;
 }

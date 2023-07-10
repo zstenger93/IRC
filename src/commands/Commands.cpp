@@ -64,6 +64,7 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 		// check if someone is already using this nick ??
 		nickName = "\0037" + newNickname + "\0030";
 		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+		// do we send msg to other users that one changed it's nickname?
 	} else {
 		send_message_to_server(it->first, 2, nickName.c_str(), NICKEMPTYSTR);
 	}

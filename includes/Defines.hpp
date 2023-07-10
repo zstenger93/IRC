@@ -64,7 +64,7 @@
 #define NICKCHANGED "\0033Your nickname has been changed.\0030"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
 #define LOGIN_REQUIRED                                                                           \
-	"\0037You\0030 have established the connection to the server. \0038Please login with /PASS " \
+	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
