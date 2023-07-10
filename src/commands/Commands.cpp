@@ -1,9 +1,4 @@
 #include "../../includes/Commands.hpp"
-
-#include <cstring>
-#include <string>
-#include <utility>
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
@@ -13,6 +8,16 @@
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
+// tf it is doing: JOINING creating channals, storing them localy
+// command sent from client JOIN
+// code: 999 or no specific code
+// must have: <channel> 
+// optional: key
+// error: 403 no such chanal
+// error: 405 err too many chanells
+// error: 473 invite only channel
+// error 474 banned from channel
+// error 475 bad channel password
 void Server::handleJoin(User& user, std::string name) {
 	if (name.length() == 0) std::cout << "Cannot pass empty string as argument" << std::endl;
 	std::map<std::string, Channel>::iterator it = channels.find(name);
@@ -29,6 +34,14 @@ void Server::handleJoin(User& user, std::string name) {
 	user.joinChannel(user, name);
 }
 
+// tf it is doing: sending a bloody message
+// command sent from the client: PRIVMSG
+// code: no code
+// must have: target,  <channel> or <nick>
+// optional: 
+// error: 401 no such nick
+// error: 404 client is not a members of the target channel
+// error: 412 client did not provide any text to send
 void User::sendMessage() {
 	// where to? channel or user?
 	// hash at start of 2nd arg -> channel
@@ -38,6 +51,15 @@ void User::sendMessage() {
 	// else error
 }
 
+// tf it is doing: leaves the channal
+// command sent from the client: PART
+// code: not specified can use 999
+// must have: channel
+// optional: 
+// error:  403 channel dose not exist
+// error 442 client is not a mmbers of specific client
+// error 461 need more params
+// error 421 the PART command is not recognised as a part of the server
 void User::leaveChannel(std::string channelName) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
@@ -52,6 +74,15 @@ bool User::isInChannel(std::string channelName) {
 	return (channels.find(channelName) == channels.end());
 }
 
+// tf it is doing: Kicks user from the channal
+// command sent from the client: KICK
+// code: KICK
+// must have: <user that kicks> KICK <channal> <user that is kicked>
+// optional:
+// error: 461 need more params
+// error 403 nosuchchannel
+// error 442 notonchannel
+// error 476 badchanmask 
 void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 					std::string channelName) {	// users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
@@ -78,6 +109,17 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 	// SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
 }
 
+// tf it is doing: invite to the channal
+// command sent from the client: INVITE
+// code: INVITE
+// must have: :<user who invited> INVITE <invited user> :<channel>
+// optional:
+// error::
+// :<server> <error code> <client nickname> <channel> :<error message>
+// error: 461 need more params 
+// error: 401 nickname dose not exist
+// error 442 user already on channel
+// error 482 dose not have invite privilages
 void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 					  std::string channelName) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
@@ -103,13 +145,13 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 	userIt->second.channels.insert(std::make_pair(channelName, false));
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
+
 void User::quitServer() {
 	
 	// disconnect the user myb? idk.
 
 }
 
-// need to add parsing, parameter should be admin password
 void Server::shutdown() {
 	// this is only server admin function
 	// shut down the server
@@ -117,6 +159,14 @@ void Server::shutdown() {
 	reset = false;
 }
 
+// tf it is doing:
+// command sent from the client: change NICK of the user
+// code: 001
+// must have: <code> <nick>
+// optional:
+// error: 431 nickname not given
+// error 432 nickname is invalid
+// error 433 nickname already taken
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
@@ -129,26 +179,66 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	}
 }
 
+// tf it is doing: displays all aviable channels
+// command sent from the client:
+// code: 321 322 323 321 indicates the start of the list 322 is middle elements in the list and 323 indicates end of the list (CONUFSION)
+// must have: <code> <nick> : <channel> 
+// optional: <user count> <topic>
+// error: 402 NOSERVER so no list
+// error: 481 no priviliages
+// error: 416 too many matches for the list command???
+// error 437 list command not aviable??
+// error 451 user nor registered
 void User::listChannels() {
 	// list the available channels? or what you have joined to?
 }
 
+// tf it is doing:
+// command sent from the client:
+// code: 
+// must have:
+// optional:
+// error:
 void User::modeUser() {
 	// show the mode of the channel. i guess it should take the channel name as arg
 }
 
+// tf it is doing:
+// command sent from the client:
+// code: 
+// must have:
+// optional:
+// error:
 void User::modeOper() {
 	// change the mode of the channel
 }
 
+// tf it is doing:
+// command sent from the client:
+// code: 
+// must have:
+// optional:
+// error:
 void User::topicUser() {
 	// show the topic of the channel
 }
 
+// tf it is doing:
+// command sent from the client:
+// code: 
+// must have:
+// optional:
+// error:
 void User::topicOper() {
 	// change the topic of the channel
 }
 
+// // tf it is doing:
+// // command sent from the client:
+// // code: 
+// // must have:
+// // optional:
+// // error:
 void User::motd(User& user) {
 	// std::ifstream file("conf/motd.txt");
 	// std::string line;
@@ -159,6 +249,62 @@ void User::motd(User& user) {
 	// }
 	// file.close();
 }
+
+// tf it is doing:
+// command sent from the client: WHO
+// code: 352
+// must have: <code> <Nickname of requesting user> : <chanal> <username> <hostname> <nick of requested user> <name> 
+// optional:
+// error: 402 no such server
+// 403 no such chanal
+// 421 unknown command
+// 451 not registered
+// error 431 nonick given
+// error :server.example.com 402 Alice :No such server
+
+// MISSING COMMANDS NOTICE, OPER
+
+// void User::WHO
+// {
+
+// }
+
+
+// // tf it is doing: PONG
+// // command sent from the client: PING
+// // code: 999 or PING
+// // must have: PING: PONG
+// // optional:
+// // error:
+//void User:: Ping
+// {
+
+// }
+
+
+// // tf it is doing: sends s
+// // command sent from the client: PING
+// // code: 999 or PING
+// // must have: PING: PONG
+// // optional:
+// // error:
+//void User:: Ping
+// {
+
+// }
+
+
+// // tf it is doing: OPER
+// // command sent from the client: OPER <username> <password>
+// // code: 381
+// // must have: <code> <nick>
+// // optional:
+// // error 461 not enought parameters
+// error 464 password incorrect
+//void User:: Ping
+// {
+
+// }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/
