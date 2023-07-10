@@ -44,6 +44,7 @@
 // #define USEREXIST "This username already exist, please provide another one" not used
 #define NICKNAMEEXIST "\0034This nickname already exist, please provide another one\0030"
 #define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
+#define ALREADYJOINED "\0034You have already joined to this server.\0030"
 
 // MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
@@ -62,14 +63,18 @@
 
 #define NICKCHANGED "\0033Your nickname has been changed.\0030"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
-#define LOGIN_REQUIRED \
-	"\0037You\0030 have established the connection to the server. \0038Please login with /PASS <password>"
+#define LOGIN_REQUIRED                                                                           \
+	"\0030You have established the connection to the server. \0038Please login with /PASS " \
+	"<password>"
 #define INVITED " has been invited to the server"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
 #define TOPIC_CHANGE " channel topic has been changed to "
 #define NOCHANNEL "The channel you are trying to connect doesn't exist"
 #define CANNOTMSG "Message cannot be sent because the targeted user doesn't exist"
+#define INVALID_C_NAME "\0034Invalid channel name.\0030"
+#define CANTLEAVE_C "\0034No such channel.\0030"
+#define LEFTCHANNEL "has left the channel."
 
 // DEFAULT MESSAGES
 
@@ -123,6 +128,5 @@
 // MOTD
 
 #define MOTD "When I was young I used to think that USB is a country next to USA"
-
 
 #endif

@@ -5,27 +5,18 @@
 
 class Server;
 
-enum ChannelMode {
-	TOPIC,
-	NORMAL,
-	INVITE,
-	PASSWORD,
-	USERLIMIT,
-	OPERATORPRIV,
-};
-
 class Channel {
    public:
 	Channel(std::string name);
 	~Channel();
 
-	void setChannelMode(ChannelMode _mode);
-	ChannelMode getChannelMode();
 	std::string getChannelName();
+	void addMode(std::string mode, bool value);
+	bool checkMode(std::string mode);
 
    private:
 	std::string channelName;
-	enum ChannelMode mode;
+	std::map<std::string, bool> modes;
 };
 
 #endif

@@ -10,7 +10,7 @@ SRC		= $(MAIN) $(PARSING) \
 		  $(CLIENT) $(SERVER) \
 		  $(CONFIG) $(ADMIN) \
 		  $(CHANNEL) $(USER) \
-		  $(COMMANDS) \
+		  $(MESSAGES) $(COMMANDS) \
 
 MAIN		= main/Irc \
 
@@ -18,7 +18,7 @@ PARSING		= parsing/Parsing \
 
 SERVER		= server/Server \
 
-CLIENT		= client/Client \
+CLIENT		= client/ClientAuthenticate \
 
 ADMIN		= admin/Admin \
 
@@ -27,7 +27,9 @@ CONFIG		= config/Config \
 USER		= user/User \
 
 COMMANDS	= commands/Commands \
-			  commands/Communicate \
+			  commands/ProcessCommands \
+
+MESSAGES	= chat/Messages \
 
 CHANNEL		= channel/Channel \
 
