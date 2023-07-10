@@ -72,6 +72,9 @@
 #define TOPIC_CHANGE " channel topic has been changed to "
 #define NOCHANNEL "The channel you are trying to connect doesn't exist"
 #define CANNOTMSG "Message cannot be sent because the targeted user doesn't exist"
+#define INVALID_C_NAME "\0034Invalid channel name.\0030"
+#define CANTLEAVE_C "\0034No such channel.\0030"
+#define LEFTCHANNEL "has left the channel."
 
 // DEFAULT MESSAGES
 

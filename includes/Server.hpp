@@ -29,7 +29,7 @@ class Server {
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
-	void createChannel(std::string name);
+	void createChannel(User& user, std::string name);
 	void handleJoin(User &user, std::string name);
 
 	// MAIN LOOPS

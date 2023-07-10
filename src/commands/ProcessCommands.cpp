@@ -61,7 +61,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			handleJoin(user->second, extractArgument(1, message, 2));
 			break;
 		case 2:
-			user->second.leaveChannel(extractArgument(1, message, 2));
+			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
 			break;
 		case 3:
 			user->second.kickUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));

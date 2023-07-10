@@ -17,8 +17,6 @@ void Server::setConnectionLimits() {
 			setAllowedLimit(std::atoi(extractWord(line).c_str()));
 		}
 	}
-	std::cout << "max connections: " << max_connections << std::endl;
-	std::cout << "allowed connections: " << allowed_connections << std::endl;
 }
 
 void Server::setServerPassword() {
@@ -30,7 +28,6 @@ void Server::setServerPassword() {
 			setPassword(base64Decode(extractWord(line)));
 		}
 	}
-	std::cout << "server password: " << password << std::endl;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

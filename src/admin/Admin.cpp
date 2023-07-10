@@ -53,8 +53,6 @@ void Server::setAdminDetails() {
 			setAdminPass(base64Decode(extractWord(line)));
 		}
 	}
-	std::cout << "operator: " << operator_name << std::endl;
-	std::cout << "password: " << operator_password << std::endl;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
