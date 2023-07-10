@@ -1,4 +1,7 @@
 #include "../../includes/Commands.hpp"
+
+#include <string>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
@@ -32,12 +35,51 @@ void User::sendMessage() {
 	// else error
 }
 
-void User::leaveChannel() {
+void User::leaveChannel(std::string channelName) {
+	std::map<std::string, bool>::iterator channel = channels.find(channelName);
+	if (channel == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	channels.erase(channel);
 	// find the channel and disconnect the user from it
 	// else error
 }
 
-void User::kickUser() {
+bool	User::isInChannel(std::string channelName)
+{
+	return (channels.find(channelName) == channels.end());
+}
+
+void User::kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName) { //users
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	if (channelIt->second == false)
+	{
+		// THE USER IS NOT OPERATOR ERROR
+	}
+
+	std::map<int, User>::iterator userIt;
+	for (userIt = users.begin(); userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(kickUserName) == 0)
+			break;
+	}
+	if (userIt == users.end())
+	{
+		// NO SUCH USER ERROR
+	}
+
+	if (userIt->second.isInChannel(channelName) == false)
+	{
+		// KICKUSER IS NOT IN THE CHANNEL
+	}
+
+	userIt->second.leaveChannel(channelName);
+	//SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+
+	// CAN THE USER REMOVE OTHERS
+
 	// find the user and kick it from the channel
 	// else error
 }
@@ -54,7 +96,7 @@ void User::quitServer() {
 void Server::shutdown() {
 	// this is only server admin function
 	// shut down the server
-	serverState = false; // not sure if this is needed
+	serverState = false;  // not sure if this is needed
 	reset = false;
 }
 
