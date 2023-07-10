@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 			// 	server.shutdown();
 		}
 	} catch (const std::exception &error) {
-		std::cout << RED << error.what() << std::endl;
+		std::cout << RED << error.what() << END << std::endl;
 	}
 	return 0;
 }

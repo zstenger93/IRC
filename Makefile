@@ -6,17 +6,30 @@ SRC_DIR	= src/
 OBJ_DIR	= objects/
 USER	= $(shell whoami)
 
-SRC		= $(MAIN)
+SRC		= $(MAIN) $(PARSING) \
+		  $(CLIENT) $(SERVER) \
+		  $(CONFIG) $(ADMIN) \
+		  $(CHANNEL) $(USER) \
+		  $(COMMANDS) \
 
-MAIN	= main/Irc \
-		  parsing/Parsing \
-		  server/Server \
-		  client/Client \
-		  admin/Admin \
-		  config/Config \
-		  user/User \
-		  commands/Commands \
+MAIN		= main/Irc \
 
+PARSING		= parsing/Parsing \
+
+SERVER		= server/Server \
+
+CLIENT		= client/Client \
+
+ADMIN		= admin/Admin \
+
+CONFIG		= config/Config \
+
+USER		= user/User \
+
+COMMANDS	= commands/Commands \
+			  commands/Communicate \
+
+CHANNEL		= channel/Channel \
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
 OBJS	= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
@@ -27,6 +40,7 @@ $(NAME): $(OBJS)
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
+# @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
@@ -48,8 +62,6 @@ re:
 	@make all
 	@echo "$(GREEN)The project has been recompiled.$(COLOR_END)"
 
-.PHONY: all clean fclean re
-
 COLOR_END = \033[0;39m
 CYAN3 = \033[1;4;96m
 YELLOW = \033[1;33m
@@ -59,3 +71,7 @@ RED = \033[1;91m
 GREEN = \033[1;92m
 CYAN2 = \x1B[1;36m
 CYAN = \033[1;96m
+
+RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+.PHONY: all clean fclean re
