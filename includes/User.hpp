@@ -2,7 +2,8 @@
 #define USER_HPP
 
 #include "Defines.hpp"
-#include "Channel.hpp"
+
+class Channel;
 
 class Server;
 
@@ -22,12 +23,12 @@ class User {
 	// CHANNELS
 	std::map<std::string, bool> channels;
 
-	//COMMAND TO EXECUTE
-	void message();
-	void joinChannel();
+	// COMMAND TO EXECUTE
+	void sendMessage();
+	void joinChannel(std::string name);
 	void leaveChannel();
-	void kick();
-	void invite();
+	void kickUser();
+	void inviteUser();
 	void quitServer();
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
 	void listChannels();
@@ -36,6 +37,7 @@ class User {
 	void topicUser();
 	void topicOper();
 	void emptyFunction();
+	void motd(User &user);
 
    private:
 	std::string userName;

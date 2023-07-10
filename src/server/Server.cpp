@@ -1,10 +1,7 @@
 #include "../../includes/Server.hpp"
 
-#include <netdb.h>
-
-#include <string>
-
-#include "../../includes/Client.hpp"
+#include "../../includes/Channel.hpp"
+#include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -79,12 +76,12 @@ void Server::acceptConnection() {
 
 void Server::addUser(int userFd) {
 	static int i = 1;
-	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++))));
+	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) + "\0030")));
 }
 
 void Server::removeUser(int pollId) {
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-    if (it != users.end()) users.erase(it);
+	if (it != users.end()) users.erase(it);
 	close(userPoll[pollId].fd);
 	while (pollId < onlineUserCount) {
 		userPoll[pollId].events = userPoll[pollId + 1].events;

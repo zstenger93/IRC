@@ -1,6 +1,11 @@
-#include <netdb.h>
+#include "../../includes/Commands.hpp"
 
+#include <fstream>
+#include <utility>
+
+#include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
+#include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -46,6 +51,7 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 			it->second.connectUser(true);
 			std::cout << "OK" << std::endl;
 			send_message_to_server(it->first, 2, it->second.getUserName().c_str(), CONNECTED);
+			it->second.motd(it->second);
 			return;
 		} else {
 			send_message_to_server(it->first, 1, NOCONNECTION);
@@ -75,7 +81,7 @@ bool Server::getPass(std::string& msg) {
 	return false;
 }
 
-void Server::commandParser(std::map<int, User>::iterator it, std::string message, int fd) {
+void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd) {
 	int caseId = 0;
 	std::string command = getCommand(message);
 	std::string commands[14] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
@@ -88,8 +94,47 @@ void Server::commandParser(std::map<int, User>::iterator it, std::string message
 		}
 	}
 	switch (caseId) {
+		case 0:
+			user->second.sendMessage();
+			break;
+		case 1:
+			handleJoin(user->second, extractArgument(1, message, 2));
+			break;
+		case 2:
+			user->second.leaveChannel();
+			break;
+		case 3:
+			user->second.kickUser();
+			break;
+		case 4:
+			user->second.inviteUser();
+			break;
+		case 5:
+			// don't have to handle quit, it's automatic
+			break;
 		case 6:
-			it->second.setNick(it, "JOHN");
+			user->second.setNick(user, extractArgument(1, message, 2));
+			break;
+		case 7:
+			user->second.listChannels();
+			break;
+		case 8:
+			user->second.modeUser();
+			break;
+		case 9:
+			user->second.modeOper();
+			break;
+		case 10:
+			user->second.topicUser();
+			break;
+		case 11:
+			user->second.topicOper();
+			break;
+		case 12:;
+			// just for silence the error, handled in authentication
+			break;
+		case 13:;
+			handleJoin(user->second, "#General");
 			break;
 		default:
 			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
@@ -97,21 +142,51 @@ void Server::commandParser(std::map<int, User>::iterator it, std::string message
 	}
 }
 
-void User::message() {}
+void Server::handleJoin(User& user, std::string name) {
+	if (name.length() == 0) std::cout << "no channels" << std::endl;
+	std::map<std::string, Channel>::iterator it = channels.find(name);
+	if (it == channels.end()) {
+		createChannel(name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
+							   CREATEDCHANNEL);
+		user.joinChannel(name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
+							   JOINEDCHANNEL);
+		return;
+	}
+	user.joinChannel(name);
+}
 
-void User::joinChannel() {}
+void User::sendMessage() {}
+
+void User::joinChannel(std::string name) {
+	std::map<std::string, bool>::iterator it = channels.find(name);
+	// std::cout << it->second << std::endl;
+	if (it == channels.end()) {
+		channels.insert(std::make_pair(name, true));
+		std::map<std::string, bool>::iterator it = channels.find(name);
+		// std::cout << it->second << std::endl;
+		return;
+	}
+	// return you are already on the channel
+}
 
 void User::leaveChannel() {}
 
-void User::kick() {}
+void User::kickUser() {}
 
-void User::invite() {}
+void User::inviteUser() {}
 
 void User::quitServer() {}
 
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
-	nickName = newNickname;
-	send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+	// needs channel name after username
+	if (newNickname.length() != 0) {
+		nickName = "\0037" + newNickname + "\0030";
+		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+	} else {
+		send_message_to_server(it->first, 2, nickName.c_str(), NICKEMPTYSTR);
+	}
 }
 
 void User::listChannels() { std::cout << "test" << std::endl; }
@@ -125,6 +200,17 @@ void User::topicUser() {}
 void User::topicOper() {}
 
 void User::emptyFunction() {}
+
+void User::motd(User& user) {
+	// std::ifstream file("conf/motd.txt");
+	// std::string line;
+	// send_message_to_server(user.getUserFd(), 1, MOTD);
+	// while (std::getline(file, line)) {
+	// 	std::cout << line << std::endl;
+	// 	send_message_to_server(user.getUserFd(), 1, line.c_str());
+	// }
+	// file.close();
+}
 
 /*___________________________________________ SETTERS ___________________________________________*/
 
