@@ -19,6 +19,10 @@
 // error: 473 invite only channel
 // error 474 banned from channel
 // error 475 bad channel password
+
+// std::string successfulJoin = ":" + msg.getSenderUser().getNick() + "!" + msg.getSenderUser().getName() \
+			// 	+ "@" + msg.getSenderUser().getHostmask() + " JOIN :" + *it;
+//
 void Server::handleJoin(User& user, std::string name) {
 	if (name.length() == 0) {
 		send_message_to_server(user.getUserFd(), 6, "461", user.getNickName().c_str(), "JOIN", ":",
@@ -28,18 +32,21 @@ void Server::handleJoin(User& user, std::string name) {
 	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if (it == channels.end()) {
 		createChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", user.getNickName().c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), CREATEDCHANNEL);
+		std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask() +
+							  " JOIN :" + name + "\r\n";
+		send(user.getUserFd(), message.c_str(), message.length(), 0);
 		user.joinChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", name.c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), JOINEDCHANNEL);
-		std::cout << name << std::endl;
+		send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
+							   JOINEDCHANNEL);
+		// send_message_to_server(user.getUserFd(), 7, user.getNickName().c_str(), "!",
+		// 					   user.getUserName().c_str(), "@", getHostMask().c_str(),
+		// 					   "JOIN :", name.c_str());
+		// send_message_to_server(user.getUserFd(), 3, "JOIN", name.c_str(), JOINEDCHANNEL);
 		return;
 	}
 	// if channel is invite only
+	// should chec if the user is already joined in this particular stuff
 	user.joinChannel(user, name);
-	send_message_to_server(user.getUserFd(), 5, name.c_str(), ":", user.getNickName().c_str(),
-						   name.c_str(), JOINEDCHANNEL);
 }
 
 // tf it is doing: sending a bloody message

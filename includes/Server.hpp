@@ -16,6 +16,7 @@ class Server {
 	void inputParser(int argc, char **argv);
 	bool isRunning();
 	int getPort();
+	std::string getHostMask();
 	void setPort(int portNum);
 	std::string getPassword();
 	bool passwordCheck(std::string psswrd);
@@ -87,6 +88,7 @@ class Server {
 	int serverSocketFd;
 	pollfd userPoll[CONNECTIONS];
 	int onlineUserCount;
+	std::string hostmask;
 	// Server info
 	std::string password;
 	int port;

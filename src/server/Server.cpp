@@ -4,7 +4,7 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Server::Server(int argc, char **argv) : reset(true) {
+Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
 	Server::setConnectionLimits();
@@ -104,3 +104,4 @@ void Server::setServerSocket(int socket) { serverSocketFd = socket; }
 bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 int Server::getServerSocket() { return serverSocketFd; }
+std::string Server::getHostMask() {return hostmask; }
