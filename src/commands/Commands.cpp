@@ -1,5 +1,4 @@
 #include "../../includes/Commands.hpp"
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
@@ -31,6 +30,7 @@ void Server::handleJoin(User& user, std::string name) {
 							   JOINEDCHANNEL);
 		return;
 	}
+	// if channel is invite only
 	user.joinChannel(user, name);
 }
 
@@ -60,10 +60,20 @@ void User::sendMessage() {
 // error 442 client is not a mmbers of specific client
 // error 461 need more params
 // error 421 the PART command is not recognised as a part of the server
-void User::leaveChannel() {
+void User::leaveChannel(std::string channelName) {
+	std::map<std::string, bool>::iterator channel = channels.find(channelName);
+	if (channel == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	channels.erase(channel);
 	// find the channel and disconnect the user from it
 	// else error
 }
+
+bool User::isInChannel(std::string channelName) {
+	return (channels.find(channelName) == channels.end());
+}
+
 // tf it is doing: Kicks user from the channal
 // command sent from the client: KICK
 // code: KICK
@@ -73,10 +83,30 @@ void User::leaveChannel() {
 // error 403 nosuchchannel
 // error 442 notonchannel
 // error 476 badchanmask 
+void User::kickUser(std::map<int, User>& users, std::string kickUserName,
+					std::string channelName) {	// users
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	if (channelIt->second == false) {
+		// THE USER IS NOT OPERATOR ERROR
+	}
 
-void User::kickUser() {
-	// find the user and kick it from the channel
-	// else error
+	std::map<int, User>::iterator userIt;
+	for (userIt = users.begin(); userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
+	}
+	if (userIt == users.end()) {
+		// NO SUCH USER ERROR
+	}
+
+	if (userIt->second.isInChannel(channelName) == false) {
+		// KICKUSER IS NOT IN THE CHANNEL
+	}
+
+	userIt->second.leaveChannel(channelName);
+	// SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
 }
 
 // tf it is doing: invite to the channal
@@ -90,26 +120,38 @@ void User::kickUser() {
 // error: 401 nickname dose not exist
 // error 442 user already on channel
 // error 482 dose not have invite privilages
-void User::inviteUser() {
-	// dunno howtf this supposed to work
+void User::inviteUser(std::map<int, User>& users, std::string addUserName,
+					  std::string channelName) {  // users
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	if (channelIt->second == false) {
+		// THE USER IS NOT OPERATOR ERROR
+	}
+
+	std::map<int, User>::iterator userIt;
+	for (userIt = users.begin(); userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(addUserName) == 0) break;
+	}
+	if (userIt == users.end()) {
+		// NO SUCH USER ERROR
+	}
+
+	if (userIt->second.isInChannel(channelName) == true) {
+		// USER ALREADY IN THE CHANNEL
+	}
+
+	userIt->second.channels.insert(std::make_pair(channelName, false));
+	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
 
-// tf it is doing: QUIT SHOULD NOT BE HERE SINCE IT SENDS CODE 0, from WHAT I HAVE TESTED
-// code:
-// must have:
-// optional:
-// error:
 void User::quitServer() {
+	
 	// disconnect the user myb? idk.
+
 }
 
-// tf it is doing: invite to the channal
-// command sent from the client: INVITE
-// code: INVITE
-// must have: :<user who invited> INVITE <invited user> :<channel>
-// optional:
-// error::
-// need to add parsing, parameter should be admin password
 void Server::shutdown() {
 	// this is only server admin function
 	// shut down the server
