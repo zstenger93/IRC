@@ -42,10 +42,10 @@ int Server::processCommands(int pollId) {
 void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[14] = {"MESSAGE",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
+	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"LEAVE", "KICK",	  "INVITE",
 								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS"};
-	for (int i = 0; i < 14; i++) {
+								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "SHUTDOWN"};
+	for (int i = 0; i < 15; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
@@ -69,6 +69,8 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		case 5:
 			// don't have to handle quit, it's automatic
+			// not sure about what to do on server tho
+			// disconnect the user probably ??
 			break;
 		case 6:
 			user->second.setNick(user, extractArgument(1, message, 2));
@@ -89,10 +91,14 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.topicOper();
 			break;
 		case 12:;
-			// just for silence the error, handled in authentication
+			// just for silence the error, handled in authentication for /CAP
 			break;
 		case 13:;
+			//to automaticly join to general after providing the right /PASS
 			handleJoin(user->second, "#General");
+			break;
+		case 14:
+			shutdown();
 			break;
 		default:
 			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
@@ -100,21 +106,5 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 	}
 }
 
-void Server::handleJoin(User& user, std::string name) {
-	if (name.length() == 0) std::cout << "Cannot pass empty string as argument" << std::endl;
-	std::map<std::string, Channel>::iterator it = channels.find(name);
-	if (it == channels.end()) {
-		createChannel(name);
-		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
-							   CREATEDCHANNEL);
-		user.joinChannel(name);
-		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
-							   JOINEDCHANNEL);
-		return;
-	}
-	user.joinChannel(name);
-}
-
 /*___________________________________________ SETTERS ___________________________________________*/
-
 /*___________________________________________ GETTERS ___________________________________________*/

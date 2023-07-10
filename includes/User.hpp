@@ -4,7 +4,6 @@
 #include "Defines.hpp"
 
 class Channel;
-
 class Server;
 
 class User {
@@ -25,7 +24,7 @@ class User {
 
 	// COMMAND TO EXECUTE
 	void sendMessage();
-	void joinChannel(std::string name);
+	void joinChannel(User& user, std::string name);
 	void leaveChannel();
 	void kickUser();
 	void inviteUser();
@@ -36,14 +35,14 @@ class User {
 	void modeOper();
 	void topicUser();
 	void topicOper();
-	void emptyFunction();
-	void motd(User &user);
+	void motd(User& user);
 
    private:
 	std::string userName;
 	std::string nickName;
 	bool connected;
 	int userFd;
+	std::string activeChannels[2];	// save the channels user is joined to?
 };
 
 #endif

@@ -31,7 +31,6 @@ class Server {
 	std::map<std::string, Channel> channels;
 	void createChannel(std::string name);
 	void handleJoin(User &user, std::string name);
-	void addToGeneral(User &user);
 
 	// MAIN LOOPS
 	void run();
@@ -66,6 +65,7 @@ class Server {
 	void setAdminPass(std::string adminPass);
 	void shutdown();
 
+	// PASS
 	std::string extractWord(const std::string &line);
 	std::string base64Decode(const std::string &encodedData);
 	void setServerPassword();

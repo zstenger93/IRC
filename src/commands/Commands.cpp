@@ -8,27 +8,53 @@
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
-void User::sendMessage() {}
-
-void User::joinChannel(std::string name) {
-	std::map<std::string, bool>::iterator it = channels.find(name);
-	// std::cout << it->second << std::endl;
+void Server::handleJoin(User& user, std::string name) {
+	if (name.length() == 0) std::cout << "Cannot pass empty string as argument" << std::endl;
+	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if (it == channels.end()) {
-		channels.insert(std::make_pair(name, true));
-		std::map<std::string, bool>::iterator it = channels.find(name);
-		// std::cout << it->second << std::endl;
+		createChannel(name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
+							   CREATEDCHANNEL);
+		user.joinChannel(user, name);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
+							   JOINEDCHANNEL);
 		return;
 	}
-	// return you are already on the channel
+	user.joinChannel(user, name);
 }
 
-void User::leaveChannel() {}
+void User::sendMessage() {
+	// where to? channel or user?
+	// hash at start of 2nd arg -> channel
+	// send to channel
+	// else error
+	// else send to user
+	// else error
+}
 
-void User::kickUser() {}
+void User::leaveChannel() {
+	// find the channel and disconnect the user from it
+	// else error
+}
 
-void User::inviteUser() {}
+void User::kickUser() {
+	// find the user and kick it from the channel
+	// else error
+}
 
-void User::quitServer() {}
+void User::inviteUser() {
+	// dunno howtf this supposed to work
+}
+
+void User::quitServer() {
+	// disconnect the user myb? idk.
+}
+
+void Server::shutdown() {
+	// this is only server admin function
+	// shut down the server
+	reset = false;
+}
 
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
@@ -40,17 +66,25 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	}
 }
 
-void User::listChannels() { std::cout << "test" << std::endl; }
+void User::listChannels() {
+	// list the available channels? or what you have joined to?
+}
 
-void User::modeUser() {}
+void User::modeUser() {
+	// show the mode of the channel. i guess it should take the channel name as arg
+}
 
-void User::modeOper() {}
+void User::modeOper() {
+	// change the mode of the channel
+}
 
-void User::topicUser() {}
+void User::topicUser() {
+	// show the topic of the channel
+}
 
-void User::topicOper() {}
-
-void User::emptyFunction() {}
+void User::topicOper() {
+	// change the topic of the channel
+}
 
 void User::motd(User& user) {
 	// std::ifstream file("conf/motd.txt");
