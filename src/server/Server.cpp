@@ -1,5 +1,4 @@
 #include "../../includes/Server.hpp"
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 

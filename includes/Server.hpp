@@ -2,15 +2,11 @@
 #define SERVER_HPP
 
 #include "Defines.hpp"
-// #include "Client.hpp"
-// #include "Commands.hpp"
-// #include "User.hpp"
 
 class User;
 class Commands;
 class Client;
 class Channel;
-// #include "Channel.hpp"
 
 class Server {
    public:
