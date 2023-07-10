@@ -35,11 +35,11 @@ int Server::processCommands(int pollId) {
 		stringLength += buffer_len;
 		message += buffer;
 	}
-	commandParser(it, message, it->first);
+	commandParser(it, message, it->first, pollId);
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd) {
+void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd, int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
 	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
@@ -65,12 +65,12 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.kickUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
 			break;
 		case 4:
-			user->second.inviteUser();
+			user->second.inviteUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
 			break;
 		case 5:
-			// don't have to handle quit, it's automatic
-			// not sure about what to do on server tho
-			// disconnect the user probably ??
+			user->second.quitServer();
+			users.erase(users.find(user->second.getUserFd()));
+			removeUser(pollId);
 			break;
 		case 6:
 			user->second.setNick(user, extractArgument(1, message, 2));
@@ -92,6 +92,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		case 12:;
 			// just for silence the error, handled in authentication for /CAP
+			user->second.quitServer();
 			break;
 		case 13:;
 			//to automaticly join to general after providing the right /PASS

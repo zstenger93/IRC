@@ -1,6 +1,8 @@
 #include "../../includes/Commands.hpp"
 
+#include <cstring>
 #include <string>
+#include <utility>
 
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
@@ -23,6 +25,7 @@ void Server::handleJoin(User& user, std::string name) {
 							   JOINEDCHANNEL);
 		return;
 	}
+	// if channel is invite only
 	user.joinChannel(user, name);
 }
 
@@ -45,51 +48,65 @@ void User::leaveChannel(std::string channelName) {
 	// else error
 }
 
-bool	User::isInChannel(std::string channelName)
-{
+bool User::isInChannel(std::string channelName) {
 	return (channels.find(channelName) == channels.end());
 }
 
-void User::kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName) { //users
+void User::kickUser(std::map<int, User>& users, std::string kickUserName,
+					std::string channelName) {	// users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
 		// RETURN NO SUCH CHANNEL ERROR
 	}
-	if (channelIt->second == false)
-	{
+	if (channelIt->second == false) {
 		// THE USER IS NOT OPERATOR ERROR
 	}
 
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(kickUserName) == 0)
-			break;
+		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
 	}
-	if (userIt == users.end())
-	{
+	if (userIt == users.end()) {
 		// NO SUCH USER ERROR
 	}
 
-	if (userIt->second.isInChannel(channelName) == false)
-	{
+	if (userIt->second.isInChannel(channelName) == false) {
 		// KICKUSER IS NOT IN THE CHANNEL
 	}
 
 	userIt->second.leaveChannel(channelName);
-	//SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
-
-	// CAN THE USER REMOVE OTHERS
-
-	// find the user and kick it from the channel
-	// else error
+	// SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
 }
 
-void User::inviteUser() {
-	// dunno howtf this supposed to work
-}
+void User::inviteUser(std::map<int, User>& users, std::string addUserName,
+					  std::string channelName) {  // users
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// RETURN NO SUCH CHANNEL ERROR
+	}
+	if (channelIt->second == false) {
+		// THE USER IS NOT OPERATOR ERROR
+	}
 
+	std::map<int, User>::iterator userIt;
+	for (userIt = users.begin(); userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(addUserName) == 0) break;
+	}
+	if (userIt == users.end()) {
+		// NO SUCH USER ERROR
+	}
+
+	if (userIt->second.isInChannel(channelName) == true) {
+		// USER ALREADY IN THE CHANNEL
+	}
+
+	userIt->second.channels.insert(std::make_pair(channelName, false));
+	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
+}
 void User::quitServer() {
+	
 	// disconnect the user myb? idk.
+
 }
 
 // need to add parsing, parameter should be admin password

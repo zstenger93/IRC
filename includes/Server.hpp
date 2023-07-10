@@ -46,7 +46,7 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(std::map<int, User>::iterator it, std::string message, int fd);
+	void commandParser(std::map<int, User>::iterator it, std::string message, int fd, int pollId);
 	std::string getCommand(std::string message);
 
 	// CONNECTION LIMITS

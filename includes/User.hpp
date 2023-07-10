@@ -27,7 +27,7 @@ class User {
 	void joinChannel(User& user, std::string name);
 	void leaveChannel(std::string channelName);
 	void kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName);
-	void inviteUser();
+	void inviteUser(std::map<int, User> & users, std::string addUserName, std::string channelName);
 	void quitServer();
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
 	void listChannels();
