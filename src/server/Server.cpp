@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 
@@ -75,7 +76,9 @@ void Server::acceptConnection() {
 
 void Server::addUser(int userFd) {
 	static int i = 1;
-	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) + "\0030")));
+	// users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) +
+	// "\0030")));
+	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
 }
 
 void Server::removeUser(int pollId) {
@@ -104,4 +107,4 @@ void Server::setServerSocket(int socket) { serverSocketFd = socket; }
 bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 int Server::getServerSocket() { return serverSocketFd; }
-std::string Server::getHostMask() {return hostmask; }
+std::string Server::getHostMask() { return hostmask; }

@@ -45,7 +45,6 @@ void Server::handleJoin(User& user, std::string name) {
 		return;
 	}
 	// if channel is invite only
-	// should chec if the user is already joined in this particular stuff
 	user.joinChannel(user, name);
 }
 
@@ -136,8 +135,9 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 // :<server> <error code> <client nickname> <channel> :<error message>
 // error: 461 need more params
 // error: 401 nickname dose not exist
-// error 442 user already on channel
-// error 482 dose not have invite privilages
+// error: 442 user already on channel
+// error: 482 dose not have invite privilages
+
 void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 					  std::string channelName) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
@@ -181,8 +181,8 @@ void Server::shutdown() {
 // must have: <code> <nick>
 // optional:
 // error: 431 nickname not given
-// error 432 nickname is invalid
-// error 433 nickname already taken
+// error: 432 nickname is invalid
+// error: 433 nickname already taken
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
