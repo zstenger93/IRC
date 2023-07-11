@@ -1,10 +1,13 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Server::Server(int argc, char **argv) : reset(true) {
+Server::Server() {}
+
+Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
 	Server::setConnectionLimits();
@@ -75,7 +78,10 @@ void Server::acceptConnection() {
 
 void Server::addUser(int userFd) {
 	static int i = 1;
-	users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) + "\0030")));
+	// users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) +
+	// "\0030")));
+	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
+	
 }
 
 void Server::removeUser(int pollId) {
@@ -104,3 +110,4 @@ void Server::setServerSocket(int socket) { serverSocketFd = socket; }
 bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 int Server::getServerSocket() { return serverSocketFd; }
+std::string Server::getHostMask() { return hostmask; }

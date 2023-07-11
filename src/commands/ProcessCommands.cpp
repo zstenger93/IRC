@@ -23,6 +23,9 @@ int Server::processCommands(int pollId) {
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
+	if (it->second.isConnected() == false) {
+		return 1;
+	}
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
 		onlineUserCount--;
@@ -39,20 +42,20 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd, int pollId) {
+void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd,
+						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	// MODE_USER?? TOPIC_USER ?? TOPUC_OPER?? ADMIN??
-	// MISSING COMMANDS PING, WHO, TOPIC, OPER. MOTD
-	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
-								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "ADMIN"};
-	for (int i = 0; i < 15; i++) {
+	std::string commands[17] = {"PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
+								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
+								"ADMIN",   "WHO",  "OPER", "PING",	"MOTD"};
+	for (int i = 0; i < 17; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
+
 	switch (caseId) {
 		case 0:
 			user->second.sendMessage();
@@ -64,44 +67,49 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
 			break;
 		case 3:
-			user->second.kickUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user->second.kickUser(users, extractArgument(1, message, 3),
+								  extractArgument(2, message, 3));
 			break;
 		case 4:
-			user->second.inviteUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user->second.inviteUser(users, extractArgument(1, message, 3),
+									extractArgument(2, message, 3));
 			break;
 		case 5:
-			user->second.quitServer();
-			users.erase(users.find(user->second.getUserFd()));
-			removeUser(pollId);
+			removeUser(pollId); // quitServer();
 			break;
 		case 6:
 			user->second.setNick(user, extractArgument(1, message, 2));
 			break;
 		case 7:
-			user->second.listChannels(); 
+			listChannels(user->second.getUserName());
 			break;
 		case 8:
-			user->second.modeUser(); 
+			mode(message, fd);
 			break;
 		case 9:
-			user->second.modeOper();
+			user->second.topic();
 			break;
 		case 10:
-			user->second.topicUser();
+			// CAP
 			break;
 		case 11:
-			user->second.topicOper();
-			break;
-		case 12:;
-			// just for silence the error, handled in authentication for /CAP
-			user->second.quitServer();
-			break;
-		case 13:;
-			//to automaticly join to general after providing the right /PASS
+			// to automaticly join to general after providing the right /PASS
 			handleJoin(user->second, "#General");
 			break;
-		case 14:
+		case 12:
 			shutdown();
+			break;
+		case 13:;
+			user->second.who();
+			break;
+		case 14:
+			user->second.oper();
+			break;
+		case 15:
+			user->second.ping();
+			break;
+		case 16:
+			user->second.motd(user->second);
 			break;
 		default:
 			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);

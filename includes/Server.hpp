@@ -7,15 +7,18 @@ class User;
 class Commands;
 class Client;
 class Channel;
+class Parser;
 
 class Server {
    public:
+	Server();
 	Server(int argc, char **argv);
 	~Server();
 	// INPUT PARSING
 	void inputParser(int argc, char **argv);
 	bool isRunning();
 	int getPort();
+	std::string getHostMask();
 	void setPort(int portNum);
 	std::string getPassword();
 	bool passwordCheck(std::string psswrd);
@@ -29,7 +32,7 @@ class Server {
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
-	void createChannel(User& user, std::string name);
+	void createChannel(User &user, std::string name);
 	void handleJoin(User &user, std::string name);
 
 	// MAIN LOOPS
@@ -48,6 +51,8 @@ class Server {
 	int processCommands(int pollId);
 	void commandParser(std::map<int, User>::iterator it, std::string message, int fd, int pollId);
 	std::string getCommand(std::string message);
+	void listChannels(std::string userName);
+	void mode(std::string message, int userFd);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
@@ -87,6 +92,7 @@ class Server {
 	int serverSocketFd;
 	pollfd userPoll[CONNECTIONS];
 	int onlineUserCount;
+	std::string hostmask;
 	// Server info
 	std::string password;
 	int port;
