@@ -28,10 +28,7 @@ class User {
 	void leaveChannel(User& user, std::string channelName);
 	void kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName);
 	void inviteUser(std::map<int, User> & users, std::string addUserName, std::string channelName);
-	void quitServer();
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
-	void listChannels();
-	void mode();
 	void topic();
 	void motd(User& user);
 	void who();
@@ -40,6 +37,7 @@ class User {
 
 	// HELPER FUNCTIONS
 	bool	isInChannel(std::string channelName);
+	bool	isOperatorInChannel(std::string channelName);
 
    private:
 	std::string userName;

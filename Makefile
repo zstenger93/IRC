@@ -15,6 +15,7 @@ SRC		= $(MAIN) $(PARSING) \
 MAIN		= main/Irc \
 
 PARSING		= parsing/Parsing \
+			  parsing/Parser \
 
 SERVER		= server/Server \
 
