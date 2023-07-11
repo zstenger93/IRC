@@ -5,6 +5,8 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
+Server::Server() {}
+
 Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
@@ -79,6 +81,7 @@ void Server::addUser(int userFd) {
 	// users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) +
 	// "\0030")));
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
+	
 }
 
 void Server::removeUser(int pollId) {
