@@ -1,6 +1,9 @@
 #include "../../includes/Commands.hpp"
 
+#include <string>
+
 #include "../../includes/Channel.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -164,10 +167,6 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
 
-void User::quitServer() {
-	// disconnect the user myb? idk.
-}
-
 void Server::shutdown() {
 	// this is only server admin function
 	// shut down the server
@@ -202,8 +201,20 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 // indicates end of the list (CONUFSION) must have: <code> <nick> : <channel> optional: <user count>
 // <topic> error: 402 NOSERVER so no list error: 481 no priviliages error: 416 too many matches for
 // the list command??? error 437 list command not aviable?? error 451 user nor registered
-void User::listChannels() {
+void Server::listChannels(std::string userName) {
 	// list the available channels? or what you have joined to?
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(userName) == 0) break;
+	}
+	if (userIt == users.end()) {
+		// NO SUCH USER EXCEPTION. probably not needed
+	}
+
+	for (std::map<std::string, Channel>::iterator channelIt = channels.begin();
+		 channelIt != channels.end(); channelIt++) {
+		/// SEND to user channelIt->first;
+	}
 }
 
 // tf it is doing:
@@ -212,8 +223,48 @@ void User::listChannels() {
 // must have:
 // optional:
 // error:
-void User::mode() {
+void Server::mode(std::string message, int userFd) {  // channelName
 	// show the mode of the channel. i guess it should take the channel name as arg
+	std::string channelName = extractArgument(1, message, 2);
+	std::string mode = "+";
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// NO SUCH CHANNEL ERROR
+	}
+	bool add;
+	if (Parser::getWordCount(message) == 3)	 // channelName
+	{
+		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
+
+		// get every mode and send to user
+		for (std::map<std::string, bool>::const_iterator modeIt = modes.begin();
+			 modeIt != modes.end(); modeIt++) {
+			if (modeIt->second == true)
+				mode += modeIt->first;
+		}
+		// send() send and write the mode to the user only
+	} else if (Parser::getWordCount(message) == 4 && userIt->second.isOperatorInChannel(channelName)) {
+		channelName = extractArgument(1, message, 3);
+		mode = extractArgument(2, message, 3);
+		if (mode[0] == '+')
+			add = true;
+		else if (mode[0] == '-')
+			add = false;
+		else {
+			// ERROR
+		}
+		if (add) {
+			mode = mode.substr(1);
+			channelIt->second.addMode(mode, true);
+			// msg ?
+		}
+		else {
+			channelIt->second.addMode(mode, false);
+			// msg ?
+		}
+
+	}
 }
 
 // tf it is doing:
@@ -246,9 +297,7 @@ void User::ping() {
 	// change the topic of the channel
 }
 
-void User::who() {
-
-}
+void User::who() {}
 
 // // tf it is doing:
 // // command sent from the client:

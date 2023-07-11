@@ -7,7 +7,11 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Channel::Channel(std::string name) : channelName(name) {}
+Channel::Channel(std::string name) : channelName(name) {
+	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
+
+	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));
+}
 Channel::~Channel() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -46,3 +50,5 @@ bool Channel::checkMode(std::string mode) {
 /*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Channel::getChannelName() { return channelName; }
+
+const std::map<std::string, bool>& Channel::getChannelModes() { return modes; }
