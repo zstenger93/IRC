@@ -75,16 +75,16 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 									extractArgument(2, message, 3));
 			break;
 		case 5:
-			removeUser(pollId);
+			removeUser(pollId); // quitServer();
 			break;
 		case 6:
 			user->second.setNick(user, extractArgument(1, message, 2));
 			break;
 		case 7:
-			user->second.listChannels();
+			listChannels(user->second.getUserName());
 			break;
 		case 8:
-			user->second.mode();
+			mode(message, fd);
 			break;
 		case 9:
 			user->second.topic();

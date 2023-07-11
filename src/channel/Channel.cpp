@@ -7,7 +7,11 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Channel::Channel(std::string name) : channelName(name) {}
+Channel::Channel(std::string name) : channelName(name) {
+	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
+
+	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));
+}
 Channel::~Channel() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -19,16 +23,13 @@ void Server::createChannel(User& user, std::string name) {
 }
 
 void User::joinChannel(User& user, std::string name) {
-	// WE NEED FUCKIN USER ITERATOR HEEERRREEE
-	// std::map<std::string, bool>::iterator it = channels.find(name);
-	// if (it != channels.end()) {
-	// 	// send_message_to_server(user.getUserFd(), 5, name.c_str(), ":",
-	// 	// user.getNickName().c_str(), 					   name.c_str(), JOINEDCHANNEL);
-	// 	send_message_to_server(user.getUserFd(), 5, ERR_USERONCHANNEL, user.getNickName().c_str(),
-	// 						   name.c_str(), COL, ALREADYJOINED);
-	// 	return;
-	// }
-	channels.insert(std::make_pair(name, true));
+	std::map<std::string, bool>::iterator it = channels.find(name);
+	if (it == channels.end()) {
+		channels.insert(std::make_pair(name, true));
+		send_message_to_server(user.getUserFd(), 5, name.c_str(), ":", user.getNickName().c_str(),
+							   name.c_str(), JOINEDCHANNEL);
+		return;
+	}
 	send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
 						   JOINEDCHANNEL);
 }
@@ -43,3 +44,5 @@ bool Channel::checkMode(std::string mode) {
 /*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Channel::getChannelName() { return channelName; }
+
+const std::map<std::string, bool>& Channel::getChannelModes() { return modes; }

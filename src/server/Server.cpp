@@ -5,6 +5,8 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
+Server::Server() {}
+
 Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
