@@ -13,8 +13,8 @@ void send_message_to_server(int fd, int count, ...) {
 	while (i < count) {
 		message = message + va_arg(arguments, const char*);
 		i++;
-		if (i == 1 && count > 2) message = message + " \00310";
-		if (i == 2 && count > 2) message = message + " \0030";
+		// if (i == 1 && count > 2) message = message + " \00310";
+		// if (i == 2 && count > 2) message = message + " \0030";
 		if (i != count) message = message + " ";
 	}
 	va_end(arguments);

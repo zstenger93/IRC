@@ -3,6 +3,7 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
+#include "../../includes/ReplyCodes.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -19,27 +20,32 @@
 // error: 473 invite only channel
 // error 474 banned from channel
 // error 475 bad channel password
+
+// std::string successfulJoin = ":" + msg.getSenderUser().getNick() + "!" + msg.getSenderUser().getName() \
+			// 	+ "@" + msg.getSenderUser().getHostmask() + " JOIN :" + *it;
+//
 void Server::handleJoin(User& user, std::string name) {
 	if (name.length() == 0) {
-		send_message_to_server(user.getUserFd(), 6, "461", user.getNickName().c_str(), "JOIN", ":",
-							   user.getNickName().c_str(), name.c_str(), INVALID_C_NAME);
+		send_message_to_server(user.getUserFd(), 3, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
 	}
 	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if (it == channels.end()) {
 		createChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", user.getNickName().c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), CREATEDCHANNEL);
+		std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask() +
+							  JOIN + name + "\r\n";
+		send(user.getUserFd(), message.c_str(), message.length(), 0);
 		user.joinChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", name.c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), JOINEDCHANNEL);
-		std::cout << name << std::endl;
+		send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
+							   JOINEDCHANNEL);
+		// send_message_to_server(user.getUserFd(), 7, user.getNickName().c_str(), "!",
+		// 					   user.getUserName().c_str(), "@", getHostMask().c_str(),
+		// 					   "JOIN :", name.c_str());
+		// send_message_to_server(user.getUserFd(), 3, "JOIN", name.c_str(), JOINEDCHANNEL);
 		return;
 	}
 	// if channel is invite only
 	user.joinChannel(user, name);
-	send_message_to_server(user.getUserFd(), 5, name.c_str(), ":", user.getNickName().c_str(),
-						   name.c_str(), JOINEDCHANNEL);
 }
 
 // tf it is doing: sending a bloody message
@@ -129,8 +135,9 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 // :<server> <error code> <client nickname> <channel> :<error message>
 // error: 461 need more params
 // error: 401 nickname dose not exist
-// error 442 user already on channel
-// error 482 dose not have invite privilages
+// error: 442 user already on channel
+// error: 482 dose not have invite privilages
+
 void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 					  std::string channelName) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
@@ -174,13 +181,14 @@ void Server::shutdown() {
 // must have: <code> <nick>
 // optional:
 // error: 431 nickname not given
-// error 432 nickname is invalid
-// error 433 nickname already taken
+// error: 432 nickname is invalid
+// error: 433 nickname already taken
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
 		// check if someone is already using this nick ??
-		nickName = "\0037" + newNickname + "\0030";
+		nickName = newNickname;
+		// nickName = "\0037" + newNickname + "\0030";
 		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
 		// do we send msg to other users that one changed it's nickname?
 	} else {
@@ -204,7 +212,7 @@ void User::listChannels() {
 // must have:
 // optional:
 // error:
-void User::modeUser() {
+void User::mode() {
 	// show the mode of the channel. i guess it should take the channel name as arg
 }
 
@@ -214,7 +222,7 @@ void User::modeUser() {
 // must have:
 // optional:
 // error:
-void User::modeOper() {
+void User::oper() {
 	// change the mode of the channel
 }
 
@@ -224,7 +232,7 @@ void User::modeOper() {
 // must have:
 // optional:
 // error:
-void User::topicUser() {
+void User::topic() {
 	// show the topic of the channel
 }
 
@@ -234,8 +242,12 @@ void User::topicUser() {
 // must have:
 // optional:
 // error:
-void User::topicOper() {
+void User::ping() {
 	// change the topic of the channel
+}
+
+void User::who() {
+
 }
 
 // // tf it is doing:
