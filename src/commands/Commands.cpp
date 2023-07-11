@@ -3,6 +3,7 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
+#include "../../includes/ReplyCodes.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -25,15 +26,14 @@
 //
 void Server::handleJoin(User& user, std::string name) {
 	if (name.length() == 0) {
-		send_message_to_server(user.getUserFd(), 6, "461", user.getNickName().c_str(), "JOIN", ":",
-							   user.getNickName().c_str(), name.c_str(), INVALID_C_NAME);
+		send_message_to_server(user.getUserFd(), 3, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
 	}
 	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if (it == channels.end()) {
 		createChannel(user, name);
 		std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask() +
-							  " JOIN :" + name + "\r\n";
+							  JOIN + name + "\r\n";
 		send(user.getUserFd(), message.c_str(), message.length(), 0);
 		user.joinChannel(user, name);
 		send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
