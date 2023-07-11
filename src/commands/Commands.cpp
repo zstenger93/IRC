@@ -187,7 +187,8 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
 		// check if someone is already using this nick ??
-		nickName = "\0037" + newNickname + "\0030";
+		nickName = newNickname;
+		// nickName = "\0037" + newNickname + "\0030";
 		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
 		// do we send msg to other users that one changed it's nickname?
 	} else {
