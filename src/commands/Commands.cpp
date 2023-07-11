@@ -212,7 +212,7 @@ void User::listChannels() {
 // must have:
 // optional:
 // error:
-void User::modeUser() {
+void User::mode() {
 	// show the mode of the channel. i guess it should take the channel name as arg
 }
 
@@ -222,7 +222,7 @@ void User::modeUser() {
 // must have:
 // optional:
 // error:
-void User::modeOper() {
+void User::oper() {
 	// change the mode of the channel
 }
 
@@ -232,7 +232,7 @@ void User::modeOper() {
 // must have:
 // optional:
 // error:
-void User::topicUser() {
+void User::topic() {
 	// show the topic of the channel
 }
 
@@ -242,8 +242,12 @@ void User::topicUser() {
 // must have:
 // optional:
 // error:
-void User::topicOper() {
+void User::ping() {
 	// change the topic of the channel
+}
+
+void User::who() {
+
 }
 
 // // tf it is doing:

@@ -31,11 +31,12 @@ class User {
 	void quitServer();
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
 	void listChannels();
-	void modeUser();
-	void modeOper();
-	void topicUser();
-	void topicOper();
+	void mode();
+	void topic();
 	void motd(User& user);
+	void who();
+	void oper();
+	void ping();
 
 	// HELPER FUNCTIONS
 	bool	isInChannel(std::string channelName);
