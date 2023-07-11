@@ -3,7 +3,8 @@
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
 User::User() : userName(""), nickName(""), connected(false) {}
-User::User(int inputFd, std::string name) : userName(name), nickName(name), connected(false), userFd(inputFd) {}
+User::User(int inputFd, std::string name)
+	: userName(name), nickName(name), connected(false), userFd(inputFd) {}
 User::~User() {}
 
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -21,3 +22,10 @@ int User::getUserFd() { return userFd; }
 bool User::isConnected() { return connected; }
 std::string User::getUserName() { return userName; }
 std::string User::getNickName() { return nickName; }
+
+bool User::isOperatorInChannel(std::string channelName) {
+	std::map<std::string, bool>::iterator modeIt = channels.find(channelName);
+
+	if (modeIt != channels.end()) return modeIt->second;
+	return false;
+}
