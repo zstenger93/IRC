@@ -7,6 +7,7 @@ class User;
 class Commands;
 class Client;
 class Channel;
+class Parser;
 
 class Server {
    public:
