@@ -78,7 +78,7 @@
 
 // DEFAULT MESSAGES
 
-#define RICK ":\00314RickRoll.de\0030 "
+#define RICK ":RickRoll.de "
 #define CREATEDCHANNEL " channel has been created."
 #define JOINEDCHANNEL " You have joined to the channel."
 #define MODE_I "This channel mode is invitation only"

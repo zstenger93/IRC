@@ -23,6 +23,9 @@ int Server::processCommands(int pollId) {
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
+	if (it->second.isConnected() == false) {
+		return 1;
+	}
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
 		onlineUserCount--;
@@ -53,6 +56,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		}
 	}
+
 	switch (caseId) {
 		case 0:
 			user->second.sendMessage();
@@ -70,8 +74,8 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.inviteUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
 			break;
 		case 5:
-			user->second.quitServer();
-			users.erase(users.find(user->second.getUserFd()));
+			// user->second.quitServer();
+			// users.erase(users.find(user->second.getUserFd()));My fault this is already implemented don't need to worry about that
 			removeUser(pollId);
 			break;
 		case 6:
