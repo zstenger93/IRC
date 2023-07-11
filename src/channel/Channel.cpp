@@ -1,6 +1,7 @@
 #include "../../includes/Channel.hpp"
 
 #include "../../includes/Commands.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -30,7 +31,7 @@ void User::joinChannel(User& user, std::string name) {
 		return;
 	}
 	send_message_to_server(user.getUserFd(), 3, user.getNickName().c_str(), name.c_str(),
-						   ALREADYJOINED);
+						   JOINEDCHANNEL);
 }
 
 void Channel::addMode(std::string mode, bool value) { modes.insert(std::make_pair(mode, value)); }
