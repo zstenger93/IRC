@@ -1,9 +1,9 @@
 #include "../../includes/Commands.hpp"
 
 #include "../../includes/Channel.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
-#include "../../includes/ReplyCodes.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -33,7 +33,7 @@ void Server::handleJoin(User& user, std::string name) {
 	if (it == channels.end()) {
 		createChannel(user, name);
 		std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask() +
-							  JOIN + name + "\r\n";
+							  JOIN_SERVER + name + "\r\n";
 		send(user.getUserFd(), message.c_str(), message.length(), 0);
 		user.joinChannel(user, name);
 		// send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
@@ -246,9 +246,7 @@ void User::ping() {
 	// change the topic of the channel
 }
 
-void User::who() {
-
-}
+void User::who() {}
 
 // // tf it is doing:
 // // command sent from the client:
