@@ -5,6 +5,7 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Parser.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -29,15 +30,17 @@
 //
 void Server::handleJoin(User& user, std::string name) {
 	if (name.length() == 0) {
-		send_message_to_server(user.getUserFd(), 3, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
+		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
 	}
 	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if (it == channels.end()) {
 		createChannel(user, name);
-		std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask() +
-							  JOIN_SERVER + name + "\r\n";
-		send(user.getUserFd(), message.c_str(), message.length(), 0);
+		// std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask()
+		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(), message.length(),
+		// 0);
+		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
+							   JOINEDCHANNEL);
 		user.joinChannel(user, name);
 		// send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
 		// 					   JOINEDCHANNEL);
@@ -80,12 +83,13 @@ void User::sendMessage() {
 void User::leaveChannel(User& user, std::string channelName) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
-		send_message_to_server(user.getUserFd(), 6, "403 :", user.getNickName().c_str(),
+		send_message_to_server(user.getUserFd(), 4, RICK, "403 :", user.getNickName().c_str(),
 							   channelName.c_str(), CANTLEAVE_C);
 		return;
 	}
 	channels.erase(channel);
-	send_message_to_server(user.getUserFd(), 3, " :", user.getNickName().c_str(), LEFTCHANNEL);
+	send_message_to_server(user.getUserFd(), 4, user.getNickName(), RPL_ENDOFNAMES,
+						   channelName.c_str(), COL, LEFTCHANNEL);
 	// find the channel and disconnect the user from it
 	// else error
 }
@@ -188,10 +192,10 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 		// check if someone is already using this nick ??
 		nickName = newNickname;
 		// nickName = "\0037" + newNickname + "\0030";
-		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKCHANGED);
 		// do we send msg to other users that one changed it's nickname?
 	} else {
-		send_message_to_server(it->first, 2, nickName.c_str(), NICKEMPTYSTR);
+		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKEMPTYSTR);
 	}
 }
 
@@ -240,11 +244,11 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		// get every mode and send to user
 		for (std::map<std::string, bool>::const_iterator modeIt = modes.begin();
 			 modeIt != modes.end(); modeIt++) {
-			if (modeIt->second == true)
-				mode += modeIt->first;
+			if (modeIt->second == true) mode += modeIt->first;
 		}
 		// send() send and write the mode to the user only
-	} else if (Parser::getWordCount(message) == 4 && userIt->second.isOperatorInChannel(channelName)) {
+	} else if (Parser::getWordCount(message) == 4 &&
+			   userIt->second.isOperatorInChannel(channelName)) {
 		channelName = extractArgument(1, message, 3);
 		mode = extractArgument(2, message, 3);
 		if (mode[0] == '+')
@@ -258,12 +262,10 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			mode = mode.substr(1);
 			channelIt->second.addMode(mode, true);
 			// msg ?
-		}
-		else {
+		} else {
 			channelIt->second.addMode(mode, false);
 			// msg ?
 		}
-
 	}
 }
 
