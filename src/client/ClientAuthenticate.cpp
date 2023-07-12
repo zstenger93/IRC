@@ -15,17 +15,19 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 	if (command.compare("PASS") == 0) {
 		if (pass == true) {
 			it->second.connectUser(true);
-			send_message_to_server(it->first, 5, RPL_WELCOME, it->second.getNickName().c_str(), COL,
+			send_message_to_server(it->first, 5, RICK, RPL_WELCOME,
+								   it->second.getNickName().c_str(), COL,
 								   it->second.getUserName().c_str(), CONNECTED);
 			it->second.motd(it->second);
 			return;
 		} else {
 			// send_message_to_server(it->first, 2, "464 server :", NOCONNECTION);
-			send_message_to_server(it->first, 4, ERR_PASSWDMISMATCH, SERVER, COL, NOCONNECTION);
+			send_message_to_server(it->first, 4, RICK, ERR_PASSWDMISMATCH, SERVER, COL,
+								   NOCONNECTION);
 			throw(CustomException(WRONGPASS));
 		}
 	} else if (command.compare("CAP") == 0) {
-		send_message_to_server(it->first, 3, ERR_ALREADYREGISTRED, COL, LOGIN_REQUIRED);
+		send_message_to_server(it->first, 3, RICK, ERR_ALREADYREGISTRED, COL, LOGIN_REQUIRED);
 	}
 }
 

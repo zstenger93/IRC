@@ -63,7 +63,7 @@
 
 #define NICKCHANGED "\0033Your nickname has been changed.\0030"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
-#define LOGIN_REQUIRED                                                                           \
+#define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
 #define INVITED " has been invited to the server"
@@ -78,7 +78,7 @@
 
 // DEFAULT MESSAGES
 
-#define RICK ":RickRoll.de "
+#define RICK "RickRoll.de"
 #define CREATEDCHANNEL " channel has been created."
 #define JOINEDCHANNEL " You have joined to the channel."
 #define MODE_I "This channel mode is invitation only"
