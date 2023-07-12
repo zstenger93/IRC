@@ -19,7 +19,6 @@ int Server::processCommands(int pollId) {
 	stringLength += buffer_len;
 
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-	std::cout << message << std::endl;
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
@@ -55,7 +54,6 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		}
 	}
-	std::cout << caseId << std::endl;
 	switch (caseId) {
 		case 0:
 			sendMessage(message, users, fd);

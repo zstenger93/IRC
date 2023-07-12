@@ -21,7 +21,6 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 			it->second.motd(it->second);
 			return;
 		} else {
-			// send_message_to_server(it->first, 2, "464 server :", NOCONNECTION);
 			send_message_to_server(it->first, 4, RICK, ERR_PASSWDMISMATCH, SERVER, COL,
 								   NOCONNECTION);
 			throw(CustomException(WRONGPASS));
