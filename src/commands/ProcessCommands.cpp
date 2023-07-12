@@ -58,13 +58,13 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 
 	switch (caseId) {
 		case 0:
-			user->second.sendMessage();
+			sendMessage(message, users, fd);
 			break;
 		case 1:
 			handleJoin(user->second, extractArgument(1, message, 2));
 			break;
 		case 2:
-			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
 			break;
 		case 3:
 			user->second.kickUser(users, extractArgument(1, message, 3),
@@ -87,7 +87,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			mode(message, fd);
 			break;
 		case 9:
-			user->second.topic();
+			channelTopic(message, extractArgument(1, message, 2), fd);
 			break;
 		case 10:
 			// CAP

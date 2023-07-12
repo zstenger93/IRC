@@ -3,7 +3,6 @@
 #include <string>
 
 #include "../../includes/Channel.hpp"
-#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
@@ -37,8 +36,8 @@ void Server::handleJoin(User& user, std::string name) {
 	if (it == channels.end()) {
 		createChannel(user, name);
 		// std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask()
-		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(), message.length(),
-		// 0);
+		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(),
+		// message.length(), 0);
 		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
 							   JOINEDCHANNEL);
 		user.joinChannel(user, name);
@@ -62,13 +61,40 @@ void Server::handleJoin(User& user, std::string name) {
 // error: 401 no such nick
 // error: 404 client is not a members of the target channel
 // error: 412 client did not provide any text to send
-void User::sendMessage() {
+void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	if (extractArgument(1, message, -1)[0] != '#') {
+		std::string messageTo = extractArgument(1, message, -1);
+		std::map<int, User>::iterator receiverIt = users.begin();
+		for (; receiverIt != users.end(); receiverIt++) {
+			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
+				;// send the message -> messageTo and to the sender as well
+				return ;
+			}
+		}
+		if (receiverIt == users.end()) {
+			;// NO SUCH USER
+		}
+	} else {
+		std::string channelName = extractArgument(1, message, -1);
+		std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+		if (channelIt != channels.end()) {
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				if (usersIt->second.isInChannel(channelName) == true)
+					;  // send() everyone on the channel
+			}
+		} else {
+			// NO SUCH CHANNEL
+		}
+	}
 	// where to? channel or user?
 	// hash at start of 2nd arg -> channel
 	// send to channel
 	// else error
 	// else send to user
 	// else error
+	// privmsg 7 char
 }
 
 // tf it is doing: leaves the channal
@@ -80,7 +106,7 @@ void User::sendMessage() {
 // error 442 client is not a mmbers of specific client
 // error 461 need more params
 // error 421 the PART command is not recognised as a part of the server
-void User::leaveChannel(User& user, std::string channelName) {
+void User::leaveChannel(std::map<int, User>& users, User& user, std::string channelName) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
 		send_message_to_server(user.getUserFd(), 4, RICK, "403 :", user.getNickName().c_str(),
@@ -88,10 +114,14 @@ void User::leaveChannel(User& user, std::string channelName) {
 		return;
 	}
 	channels.erase(channel);
+	// send to user
 	send_message_to_server(user.getUserFd(), 4, user.getNickName(), RPL_ENDOFNAMES,
 						   channelName.c_str(), COL, LEFTCHANNEL);
-	// find the channel and disconnect the user from it
-	// else error
+	// send to everyone else on the channel
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channelName) == true)
+			;  // send() everyone on the channel
+	}
 }
 
 bool User::isInChannel(std::string channelName) {
@@ -129,8 +159,12 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 		// KICKUSER IS NOT IN THE CHANNEL
 	}
 
-	userIt->second.leaveChannel(userIt->second, channelName);
-	// SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+	userIt->second.leaveChannel(users, userIt->second, channelName);
+	// send to user that he has been kicked from the channel
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channelName) == true)
+			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+	}
 }
 
 // tf it is doing: invite to the channal
@@ -227,6 +261,7 @@ void Server::listChannels(std::string userName) {
 // must have:
 // optional:
 // error:
+// NEED TO DEBUG THIS, IT GET'S SEGFAULT ON JOIN CHANNEL
 void Server::mode(std::string message, int userFd) {  // channelName
 	// show the mode of the channel. i guess it should take the channel name as arg
 	std::string channelName = extractArgument(1, message, 2);
@@ -261,10 +296,18 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		if (add) {
 			mode = mode.substr(1);
 			channelIt->second.addMode(mode, true);
-			// msg ?
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				if (usersIt->second.isInChannel(channelName) == true)
+					;  // msg ? everyone on the channel
+			}
 		} else {
 			channelIt->second.addMode(mode, false);
-			// msg ?
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				if (usersIt->second.isInChannel(channelName) == true)
+					;  // msg ? everyone on the channel
+			}
 		}
 	}
 }
@@ -285,8 +328,25 @@ void User::oper() {
 // must have:
 // optional:
 // error:
-void User::topic() {
-	// show the topic of the channel
+void Server::channelTopic(std::string message, std::string channelName, int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// no such channel
+	}
+	if (Parser::getWordCount(message) == 2) {
+		// send this to the user only
+		// channelIt->second.getChannelTopic()
+	}
+	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName)) {
+		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
+		channelIt->second.setChannelTopic(message.substr(newTopicStartPos));
+		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+			 usersIt++) {
+			if (usersIt->second.isInChannel(channelName) == true)
+				;  // msg ? everyone on the channel
+		}
+	}
 }
 
 // tf it is doing:

@@ -14,9 +14,12 @@ class Channel {
 	void addMode(std::string mode, bool value);
 	bool checkMode(std::string mode);
 	const std::map<std::string, bool> &getChannelModes();
+	const std::string getChannelTopic();
+	void setChannelTopic(std::string newChannelTopic);
 
    private:
 	std::string channelName;
+	std::string channelTopic;
 	std::map<std::string, bool> modes;
 };
 
