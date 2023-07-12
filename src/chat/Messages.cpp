@@ -5,11 +5,11 @@
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
-void send_message_to_server(int fd, int count, ...) {
-	std::string message = RICK;
+void send_message_to_server(int fd, int count, std::string prefix, ...) {
+	std::string message = ":" + prefix + " ";
 	int i = 0;
 	va_list arguments;
-	va_start(arguments, count);
+	va_start(arguments, prefix);
 	while (i < count) {
 		message = message + va_arg(arguments, const char*);
 		i++;

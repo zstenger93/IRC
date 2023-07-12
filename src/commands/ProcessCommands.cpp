@@ -75,7 +75,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 									extractArgument(2, message, 3));
 			break;
 		case 5:
-			removeUser(pollId); // quitServer();
+			removeUser(pollId);	 // quitServer();
 			break;
 		case 6:
 			user->second.setNick(user, extractArgument(1, message, 2));
@@ -112,7 +112,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.motd(user->second);
 			break;
 		default:
-			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
 			break;
 	}
 }
