@@ -29,7 +29,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
-		send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
+		// send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message))
 		user.joinChannel(user, name);
@@ -41,6 +41,7 @@ bool Server::isJoinedWithActiveMode(Channel &channel, User &user, std::string me
 	if (userCount < userLimit && channel.checkMode("l")) {
 		user.joinChannel(user, channel.getChannelName());
 		channel.changeUserCount(userCount++);
+		return true;
 	} else if (userCount == userLimit && channel.checkMode("l")) {
 		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT
 	}
@@ -51,13 +52,15 @@ bool Server::isJoinedWithActiveMode(Channel &channel, User &user, std::string me
 		else {
 			// WRONG PASSWORD FOR THE CHANNEL
 		}
+		return true;
 	}
 	if (channel.checkMode("i"))
 	{
 		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
 		// CANNOT JOIN MESSAGE
+		return true;
 	}
-
+	return false;
 }
 
 // tf it is doing: sending a bloody message
