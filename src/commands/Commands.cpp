@@ -21,9 +21,6 @@
 // error 474 banned from channel
 // error 475 bad channel password
 
-// std::string successfulJoin = ":" + msg.getSenderUser().getNick() + "!" + msg.getSenderUser().getName() \
-			// 	+ "@" + msg.getSenderUser().getHostmask() + " JOIN :" + *it;
-//
 void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (name.length() == 0) {
 		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
@@ -32,16 +29,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
-		// std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask()
-		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(),
-		// message.length(), 0);
 		send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
-		// send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
-		// 					   JOINEDCHANNEL);
-		// send_message_to_server(user.getUserFd(), 7, user.getNickName().c_str(), "!",
-		// 					   user.getUserName().c_str(), "@", getHostMask().c_str(),
-		// 					   "JOIN :", name.c_str());
-		// send_message_to_server(user.getUserFd(), 3, "JOIN", name.c_str(), JOINEDCHANNEL);
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message))
 		user.joinChannel(user, name);
@@ -84,15 +72,20 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	if (extractArgument(1, message, -1)[0] != '#') {
 		std::string messageTo = extractArgument(1, message, -1);
+		if (messageTo.empty() == true)
+			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
-				;  // send the message -> messageTo and to the sender as well
+				send_message_to_server(receiverIt->first, 5, userIt->second.getNickName().c_str(),
+									   PRIVMSG, receiverIt->second.getNickName().c_str(), COL,
+									   message.c_str());
 				return;
 			}
 		}
 		if (receiverIt == users.end()) {
-			;  // NO SUCH USER
+			send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+			return;
 		}
 	} else {
 		std::string channelName = extractArgument(1, message, -1);
@@ -100,20 +93,17 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		if (channelIt != channels.end()) {
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
-				if (usersIt->second.isInChannel(channelName) == true)
-					;  // send() everyone on the channel
+				if (usersIt->second.isInChannel(channelName) == true) {
+					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
+										   PRIVMSG, usersIt->second.getNickName().c_str(), COL,
+										   message.c_str());
+				}
 			}
 		} else {
-			// NO SUCH CHANNEL
+			send_message_to_server(userIt->first, 4, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
+			return;
 		}
 	}
-	// where to? channel or user?
-	// hash at start of 2nd arg -> channel
-	// send to channel
-	// else error
-	// else send to user
-	// else error
-	// privmsg 7 char
 }
 
 // tf it is doing: leaves the channal
