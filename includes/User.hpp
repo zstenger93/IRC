@@ -28,7 +28,6 @@ class User {
 	void kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName);
 	void inviteUser(std::map<int, User> & users, std::string addUserName, std::string channelName);
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
-	void motd(User& user);
 	void who();
 	void oper();
 	void ping();
@@ -42,6 +41,7 @@ class User {
 	std::string nickName;
 	bool connected;
 	int userFd;
+	bool isInvited;
 	std::string activeChannels[2];	// save the channels user is joined to?
 };
 
