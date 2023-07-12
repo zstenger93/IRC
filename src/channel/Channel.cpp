@@ -45,8 +45,11 @@ bool Channel::checkMode(std::string mode) {
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
+
+void Channel::setChannelTopic(std::string newChannelTopic) { channelTopic = newChannelTopic; }
+
 /*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Channel::getChannelName() { return channelName; }
-
 const std::map<std::string, bool>& Channel::getChannelModes() { return modes; }
+const std::string Channel::getChannelTopic() { return channelTopic; }
