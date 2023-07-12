@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../../includes/Channel.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
