@@ -38,8 +38,7 @@ void Server::handleJoin(User& user, std::string name) {
 		// std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask()
 		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(),
 		// message.length(), 0);
-		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
-							   JOINEDCHANNEL);
+		send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
 		user.joinChannel(user, name);
 		// send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
 		// 					   JOINEDCHANNEL);
