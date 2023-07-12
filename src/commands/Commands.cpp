@@ -1,7 +1,4 @@
 #include "../../includes/Commands.hpp"
-
-#include <string>
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -27,29 +24,52 @@
 // std::string successfulJoin = ":" + msg.getSenderUser().getNick() + "!" + msg.getSenderUser().getName() \
 			// 	+ "@" + msg.getSenderUser().getHostmask() + " JOIN :" + *it;
 //
-void Server::handleJoin(User& user, std::string name) {
+void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (name.length() == 0) {
 		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
 	}
-	std::map<std::string, Channel>::iterator it = channels.find(name);
-	if (it == channels.end()) {
+	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
+	if (channelIt == channels.end()) {
 		createChannel(user, name);
 		// std::string message = user.getNickName() + "!" + user.getUserName() + "@" + getHostMask()
 		// + 					  JOIN + name + "\r\n"; send(user.getUserFd(), message.c_str(),
 		// message.length(), 0);
 		send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
-		user.joinChannel(user, name);
 		// send_message_to_server(user.getUserFd(), 4, "PRIVMSG", user.getNickName().c_str(), ":",
 		// 					   JOINEDCHANNEL);
 		// send_message_to_server(user.getUserFd(), 7, user.getNickName().c_str(), "!",
 		// 					   user.getUserName().c_str(), "@", getHostMask().c_str(),
 		// 					   "JOIN :", name.c_str());
 		// send_message_to_server(user.getUserFd(), 3, "JOIN", name.c_str(), JOINEDCHANNEL);
-		return;
 	}
-	// if channel is invite only
-	user.joinChannel(user, name);
+	if (!isJoinedWithActiveMode(channelIt->second, user, message))
+		user.joinChannel(user, name);
+}
+
+bool Server::isJoinedWithActiveMode(Channel &channel, User &user, std::string message) {
+	int userCount = channel.getUserCount();
+	int userLimit = channel.getUserLimit();
+	if (userCount < userLimit && channel.checkMode("l")) {
+		user.joinChannel(user, channel.getChannelName());
+		channel.changeUserCount(userCount++);
+	} else if (userCount == userLimit && channel.checkMode("l")) {
+		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT
+	}
+	if (channel.checkMode("k")) {
+		std::string providedPass = extractArgument(2, message, 3);
+		if (channel.isPasswordCorrect(providedPass))
+			user.joinChannel(user, channel.getChannelName());
+		else {
+			// WRONG PASSWORD FOR THE CHANNEL
+		}
+	}
+	if (channel.checkMode("i"))
+	{
+		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
+		// CANNOT JOIN MESSAGE
+	}
+
 }
 
 // tf it is doing: sending a bloody message
@@ -67,12 +87,12 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
-				;// send the message -> messageTo and to the sender as well
-				return ;
+				;  // send the message -> messageTo and to the sender as well
+				return;
 			}
 		}
 		if (receiverIt == users.end()) {
-			;// NO SUCH USER
+			;  // NO SUCH USER
 		}
 	} else {
 		std::string channelName = extractArgument(1, message, -1);
@@ -123,6 +143,7 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 	}
 }
 
+// HELPER FUNCTION, MOVE IT IDK WHERE
 bool User::isInChannel(std::string channelName) {
 	return (channels.find(channelName) == channels.end());
 }
@@ -316,16 +337,6 @@ void Server::mode(std::string message, int userFd) {  // channelName
 // must have:
 // optional:
 // error:
-void User::oper() {
-	// change the mode of the channel
-}
-
-// tf it is doing:
-// command sent from the client:
-// code:
-// must have:
-// optional:
-// error:
 void Server::channelTopic(std::string message, std::string channelName, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
@@ -365,7 +376,7 @@ void User::who() {}
 // // must have:
 // // optional:
 // // error:
-void User::motd(User& user) {
+void Server::motd(User& user) {
 	// std::ifstream file("conf/motd.txt");
 	// std::string line;
 	// send_message_to_server(user.getUserFd(), 1, MOTD);
