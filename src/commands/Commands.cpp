@@ -263,8 +263,8 @@ void Server::listChannels(std::string userName) {
 // NEED TO DEBUG THIS, IT GET'S SEGFAULT ON JOIN CHANNEL
 void Server::mode(std::string message, int userFd) {  // channelName
 	// show the mode of the channel. i guess it should take the channel name as arg
-	std::string channelName = extractArgument(1, message, 2);
-	std::string mode = "+";
+	std::string channelName = extractArgument(1, message, -1);
+	std::string mode = "";
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
@@ -273,9 +273,8 @@ void Server::mode(std::string message, int userFd) {  // channelName
 	bool add;
 	if (Parser::getWordCount(message) == 3)	 // channelName
 	{
-		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
-
 		// get every mode and send to user
+		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
 		for (std::map<std::string, bool>::const_iterator modeIt = modes.begin();
 			 modeIt != modes.end(); modeIt++) {
 			if (modeIt->second == true) mode += modeIt->first;
