@@ -1,4 +1,5 @@
 #include "../../includes/Commands.hpp"
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -31,11 +32,10 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 		createChannel(user, name);
 		// send_message_to_server(user.getUserFd(), 3, user.getNickName(), JOIN, COL, name.c_str());
 	}
-	if (!isJoinedWithActiveMode(channelIt->second, user, message))
-		user.joinChannel(user, name);
+	if (!isJoinedWithActiveMode(channelIt->second, user, message)) user.joinChannel(user, name);
 }
 
-bool Server::isJoinedWithActiveMode(Channel &channel, User &user, std::string message) {
+bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
 	int userCount = channel.getUserCount();
 	int userLimit = channel.getUserLimit();
 	if (userCount < userLimit && channel.checkMode("l")) {
@@ -54,8 +54,7 @@ bool Server::isJoinedWithActiveMode(Channel &channel, User &user, std::string me
 		}
 		return true;
 	}
-	if (channel.checkMode("i"))
-	{
+	if (channel.checkMode("i")) {
 		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
 		// CANNOT JOIN MESSAGE
 		return true;
@@ -218,11 +217,19 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
 
-void Server::shutdown() {
+void Server::shutdown(std::string message) {
+	std::string adminName = extractArgument(1, message, 3);
+	std::string adminPassword = extractArgument(2, message, 3);
+	if (adminName == operator_name && adminPassword == operator_password) {
+		reset = false;
+		serverState = false;  // not sure if this is needed
+	}
+	else if (adminPassword != operator_password)
+		std::cout << "Wrong admin password." << std::endl;
+	else
+		std::cout << "Provided admin name doesn't exist." << std::endl;  // ADMIN DOESN'T EXIST
 	// this is only server admin function
 	// shut down the server
-	serverState = false;  // not sure if this is needed
-	reset = false;
 }
 
 // tf it is doing:
@@ -362,6 +369,8 @@ void User::ping() {
 }
 
 void User::who() {}
+
+void User::whois() {}
 
 // // tf it is doing:
 // // command sent from the client:
