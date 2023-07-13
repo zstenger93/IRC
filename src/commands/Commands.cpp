@@ -63,13 +63,13 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd) {
 			switch (mode) {
 				case 0:
-					send_message_to_server(senderFd, 4, userIt->second.getNickName(), PRIVMSG,
+					send_message_to_server(userIt->first, 4, userIt->second.getNickName(), PRIVMSG,
 										   channelName.c_str(), COL, message.c_str());
 					break;
 				case 1:
-
 					// SEND MESSAGE ABOUT JOINING THE CHANNEL
-					send_message_to_server(userIt->first, 3, user.getUserName(), "JOIN", COL, channelName.c_str());
+					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
+										   channelName.c_str(), COL, channelName.c_str());
 					break;
 				default:
 					std::cerr << "Error in the switch" << std::endl;
@@ -92,6 +92,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
 		user.joinChannel(user, name);
 		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
+		channelTopic(message, channelIt->first, user.getUserFd());
 	}
 }
 
@@ -384,6 +385,8 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 		// no such channel
 	}
 	if (Parser::getWordCount(message) == 2) {
+		send_message_to_server(userFd, 4, RICK, RPL_TOPIC, channelName.c_str(), COL,
+							   channelIt->second.getChannelTopic().c_str());
 		// send this to the user only
 		// channelIt->second.getChannelTopic()
 	}
