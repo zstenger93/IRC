@@ -97,13 +97,13 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true) {
-					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
-										   PRIVMSG, usersIt->second.getNickName().c_str(), COL,
-										   message.c_str());
+					// send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
+					// 					   PRIVMSG, usersIt->second.getNickName().c_str(), COL,
+					// 					   message.c_str());
 				}
 			}
 		} else {
-			send_message_to_server(userIt->first, 4, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
+			// send_message_to_server(userIt->first, 4, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 			return;
 		}
 	}
