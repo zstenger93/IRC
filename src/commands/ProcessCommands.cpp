@@ -1,8 +1,8 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
-#include "../../includes/Parser.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -48,7 +48,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 	std::string command = getCommand(message);
 	std::string commands[17] = {"PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
 								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO", "PING",	"MOTD", "WHOIS"};
+								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS"};
 	for (int i = 0; i < 17; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -99,14 +99,13 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			handleJoin(message, user->second, "#General");
 			break;
 		case 12:
-			if (Parser::getWordCount(message) == 3)
-				shutdown(message);
+			if (Parser::getWordCount(message) == 3) shutdown(message);
 			break;
 		case 13:;
 			who(fd, message);
 			break;
 		case 14:
-			user->second.ping();
+			user->second.ping(message, fd);
 			break;
 		case 15:
 			motd(fd);

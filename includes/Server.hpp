@@ -55,7 +55,7 @@ class Server {
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
-	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
+	void sendMessage(std::string message, std::map<int, User> &users, int userFd);
 	void motd(int userFd);
 	void whois(int userFd, std::string message);
 	void who(int userFd, std::string message);

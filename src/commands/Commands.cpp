@@ -366,7 +366,7 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 // must have:
 // optional:
 // error:
-void User::ping() {
+void User::ping(std::string message, int userFd) {
 	// play ping pong
 }
 
@@ -377,8 +377,7 @@ void Server::who(int userFd, std::string message) {
 	std::string userNames = "";
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.getUserFd() != userFd)
-		{
+		if (userIt->second.getUserFd() != userFd) {
 			userNames.append(userIt->second.getUserName() + " ");
 		}
 	}
@@ -389,14 +388,12 @@ void Server::whois(int userFd, std::string message) {
 	std::string requestedUserName = extractArgument(1, message, 2);
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(requestedUserName) == 0)
-		{
+		if (userIt->second.getUserName().compare(requestedUserName) == 0) {
 			// SEND MSG TO USER ABOUT USERIT
 			break;
 		}
 	}
-	if (userIt == users.end())
-	{
+	if (userIt == users.end()) {
 		// SUCH USER DOESNT EXIST
 	}
 }
@@ -410,16 +407,16 @@ void Server::whois(int userFd, std::string message) {
 void Server::motd(int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::ifstream file("conf/motd.txt");
-    std::string line;
-    
-    if (file.is_open()) {
-        while (std::getline(file, line)) {
+	std::string line;
+
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
 			// SEND IT TO THE USER
-        }
-        file.close();
-    } else {
-        // ERROR
-    }
+		}
+		file.close();
+	} else {
+		// ERROR
+	}
 }
 
 // tf it is doing:
