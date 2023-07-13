@@ -2,6 +2,7 @@
 #include "../../includes/Commands.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
+#include "../../includes/Parser.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -19,7 +20,6 @@ int Server::processCommands(int pollId) {
 	stringLength += buffer_len;
 
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
 	}
@@ -48,23 +48,25 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 	std::string command = getCommand(message);
 	std::string commands[17] = {"PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
 								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "OPER", "PING",	"MOTD"};
+								"ADMIN",   "WHO", "PING",	"MOTD", "WHOIS"};
 	for (int i = 0; i < 17; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
-
 	switch (caseId) {
 		case 0:
-			user->second.sendMessage();
+			sendMessage(message, users, fd);
 			break;
 		case 1:
-			handleJoin(user->second, extractArgument(1, message, 2));
+			if (Parser::getWordCount(message) == 2)
+				handleJoin(message, user->second, extractArgument(1, message, 2));
+			else
+				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 2:
-			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
 			break;
 		case 3:
 			user->second.kickUser(users, extractArgument(1, message, 3),
@@ -87,29 +89,30 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			mode(message, fd);
 			break;
 		case 9:
-			user->second.topic();
+			channelTopic(message, extractArgument(1, message, 2), fd);
 			break;
 		case 10:
 			// CAP
 			break;
 		case 11:
 			// to automaticly join to general after providing the right /PASS
-			handleJoin(user->second, "#General");
+			handleJoin(message, user->second, "#General");
 			break;
 		case 12:
-			shutdown();
+			if (Parser::getWordCount(message) == 3)
+				shutdown(message);
 			break;
 		case 13:;
-			user->second.who();
+			who(fd, message);
 			break;
 		case 14:
-			user->second.oper();
-			break;
-		case 15:
 			user->second.ping();
 			break;
+		case 15:
+			motd(fd);
+			break;
 		case 16:
-			user->second.motd(user->second);
+			whois(fd, message);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

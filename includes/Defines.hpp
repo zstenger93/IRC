@@ -75,7 +75,8 @@
 #define INVALID_C_NAME "\0034Invalid channel name.\0030"
 #define CANTLEAVE_C "\0034No such channel.\0030"
 #define LEFTCHANNEL "has left the channel."
-
+#define NOSUCHUSER "there ain't such user bozo"
+#define NOSUCHCHAN "there ain't such channel bozo"
 // DEFAULT MESSAGES
 
 #define RICK "RickRoll.de"

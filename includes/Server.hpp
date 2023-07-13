@@ -33,7 +33,8 @@ class Server {
 	// CHANNEL
 	std::map<std::string, Channel> channels;
 	void createChannel(User &user, std::string name);
-	void handleJoin(User &user, std::string name);
+	void handleJoin(std::string message, User &user, std::string name);
+	bool isJoinedWithActiveMode(Channel &channel, User &user, std::string message);
 
 	// MAIN LOOPS
 	void run();
@@ -53,6 +54,11 @@ class Server {
 	std::string getCommand(std::string message);
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
+	void channelTopic(std::string message, std::string channelName, int userFd);
+	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
+	void motd(int userFd);
+	void whois(int userFd, std::string message);
+	void who(int userFd, std::string message);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
@@ -68,7 +74,7 @@ class Server {
 	std::string getAdminPass();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void shutdown();
+	void shutdown(std::string message);
 
 	// PASS
 	std::string extractWord(const std::string &line);
