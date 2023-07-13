@@ -7,6 +7,8 @@
 
 Text-based communication protocol written in c++
 
+<img align=center src="https://github.com/zstenger93/IRC/blob/master/irc.jpeg">
+
 <table>
   <tr>
     <th>Orders</th>

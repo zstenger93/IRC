@@ -56,9 +56,10 @@ class Server {
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
-	void motd(User& user);
-	void setMotd(std::string msgOtd);
+	void motd(int userFd);
+	void setMotd();
 	const std::string getMotd();
+	void whois(int userFd, std::string message);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();

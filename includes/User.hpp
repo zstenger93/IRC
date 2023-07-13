@@ -28,8 +28,7 @@ class User {
 	void kickUser(std::map<int, User> & users, std::string kickUserName, std::string channelName);
 	void inviteUser(std::map<int, User> & users, std::string addUserName, std::string channelName);
 	void setNick(std::map<int, User>::iterator it, std::string newNickname);
-	void who();
-	void whois();
+	void who(int userFd);
 	void oper();
 	void ping();
 

@@ -103,16 +103,16 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 				shutdown(message);
 			break;
 		case 13:;
-			user->second.who();
+			user->second.who(fd);
 			break;
 		case 14:
 			user->second.ping();
 			break;
 		case 15:
-			motd(user->second);
+			motd(fd);
 			break;
 		case 16:
-			user->second.whois();
+			whois(fd, message);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

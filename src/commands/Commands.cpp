@@ -1,5 +1,8 @@
 #include "../../includes/Commands.hpp"
 
+#include <fstream>
+#include <sstream>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -223,11 +226,10 @@ void Server::shutdown(std::string message) {
 	if (adminName == operator_name && adminPassword == operator_password) {
 		reset = false;
 		serverState = false;  // not sure if this is needed
-	}
-	else if (adminPassword != operator_password)
+	} else if (adminPassword != operator_password)
 		std::cout << "Wrong admin password." << std::endl;
 	else
-		std::cout << "Provided admin name doesn't exist." << std::endl;  // ADMIN DOESN'T EXIST
+		std::cout << "Provided admin name doesn't exist." << std::endl;	 // ADMIN DOESN'T EXIST
 	// this is only server admin function
 	// shut down the server
 }
@@ -365,12 +367,18 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 // optional:
 // error:
 void User::ping() {
-	// change the topic of the channel
+	// play ping pong
 }
 
-void User::who() {}
+void User::who(int userFd) {
+	// send the details of a specific user to the user
+}
 
-void User::whois() {}
+void Server::whois(int userFd, std::string message) {
+	std::string requestedUserName = extractArgument(1, message, 2);
+	
+	// send a PRIVMSG to the user with all the usernames
+}
 
 // // tf it is doing:
 // // command sent from the client:
@@ -378,15 +386,12 @@ void User::whois() {}
 // // must have:
 // // optional:
 // // error:
-void Server::motd(User& user) {
-	// std::ifstream file("conf/motd.txt");
-	// std::string line;
-	// send_message_to_server(user.getUserFd(), 1, MOTD);
-	// while (std::getline(file, line)) {
-	// 	std::cout << line << std::endl;
-	// 	send_message_to_server(user.getUserFd(), 1, line.c_str());
-	// }
-	// file.close();
+void Server::motd(int userFd) {
+	std::string msg = getMotd();
+	if (msg.empty()) msg = "";
+	// SEND IT TO THE USER
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	
 }
 
 // tf it is doing:

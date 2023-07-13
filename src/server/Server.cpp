@@ -11,6 +11,7 @@ Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
 	Server::setConnectionLimits();
+	Server::setMotd();
 	Server::inputParser(argc, argv);
 }
 
@@ -81,7 +82,6 @@ void Server::addUser(int userFd) {
 	// users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) +
 	// "\0030")));
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
-	
 }
 
 void Server::removeUser(int pollId) {
@@ -104,10 +104,21 @@ void Server::removeUser(int pollId) {
 
 void Server::setRunning(bool state) { serverState = state; }
 void Server::setServerSocket(int socket) { serverSocketFd = socket; }
+void Server::setMotd() {
+	std::string line, name;
+	std::ifstream file("conf/irc.conf");
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		if (line.find("message_of_the_day") != std::string::npos) {
+			messageOfTheDay = line.substr(22);
+		}
+	}
+}
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
 bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
-int Server::getServerSocket() { return serverSocketFd; }
 std::string Server::getHostMask() { return hostmask; }
+int Server::getServerSocket() { return serverSocketFd; }
+const std::string Server::getMotd() { return messageOfTheDay; }
