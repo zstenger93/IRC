@@ -103,7 +103,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 				shutdown(message);
 			break;
 		case 13:;
-			user->second.who(fd);
+			who(fd, message);
 			break;
 		case 14:
 			user->second.ping();

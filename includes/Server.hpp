@@ -57,9 +57,8 @@ class Server {
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
 	void motd(int userFd);
-	void setMotd();
-	const std::string getMotd();
 	void whois(int userFd, std::string message);
+	void who(int userFd, std::string message);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
@@ -113,7 +112,6 @@ class Server {
 	// Server admin info
 	std::string operator_name;
 	std::string operator_password;
-	std::string messageOfTheDay;
 };
 
 #endif

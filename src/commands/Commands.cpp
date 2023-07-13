@@ -370,14 +370,35 @@ void User::ping() {
 	// play ping pong
 }
 
-void User::who(int userFd) {
-	// send the details of a specific user to the user
+void Server::who(int userFd, std::string message) {
+	if (Parser::getWordCount(message) > 2) {
+		// ERROR TOO MANY ARGS
+	}
+	std::string userNames = "";
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserFd() != userFd)
+		{
+			userNames.append(userIt->second.getUserName() + " ");
+		}
+	}
+	// SEND THE MESSAGE TO USERFD
 }
 
 void Server::whois(int userFd, std::string message) {
 	std::string requestedUserName = extractArgument(1, message, 2);
-	
-	// send a PRIVMSG to the user with all the usernames
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(requestedUserName) == 0)
+		{
+			// SEND MSG TO USER ABOUT USERIT
+			break;
+		}
+	}
+	if (userIt == users.end())
+	{
+		// SUCH USER DOESNT EXIST
+	}
 }
 
 // // tf it is doing:
@@ -387,11 +408,18 @@ void Server::whois(int userFd, std::string message) {
 // // optional:
 // // error:
 void Server::motd(int userFd) {
-	std::string msg = getMotd();
-	if (msg.empty()) msg = "";
-	// SEND IT TO THE USER
 	std::map<int, User>::iterator userIt = users.find(userFd);
-	
+	std::ifstream file("conf/motd.txt");
+    std::string line;
+    
+    if (file.is_open()) {
+        while (std::getline(file, line)) {
+			// SEND IT TO THE USER
+        }
+        file.close();
+    } else {
+        // ERROR
+    }
 }
 
 // tf it is doing:
@@ -403,25 +431,7 @@ void Server::motd(int userFd) {
 // error 431 nonick given
 // error :server.example.com 402 Alice :No such server
 
-// MISSING COMMANDS NOTICE, OPER
-
-// void User::WHO
-// {
-
-// }
-
 // // tf it is doing: PONG
-// // command sent from the client: PING
-// // code: 999 or PING
-// // must have: PING: PONG
-// // optional:
-// // error:
-// void User:: Ping
-// {
-
-// }
-
-// // tf it is doing: sends s
 // // command sent from the client: PING
 // // code: 999 or PING
 // // must have: PING: PONG
@@ -439,10 +449,6 @@ void Server::motd(int userFd) {
 // // optional:
 // // error 461 not enought parameters
 // error 464 password incorrect
-// void User:: Ping
-// {
-
-// }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/
