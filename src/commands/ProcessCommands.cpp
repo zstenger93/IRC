@@ -55,8 +55,8 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		}
 	}
-	// std::cout << "Command recived: " << command << " Full message: " << message
-	// 		  << "Option choosen: " << caseId << std::endl;
+	std::cout << "Command recived: " << command << " Full message: " << message
+			  << "Option choosen: " << caseId << std::endl;
 	switch (caseId) {
 		case 0:
 			break ;

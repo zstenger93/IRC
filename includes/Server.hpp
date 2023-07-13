@@ -59,6 +59,10 @@ class Server {
 	void motd(User& user);
 	void setMotd(std::string msgOtd);
 	const std::string getMotd();
+	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode, std::string message, User &user);
+	void executeCommmandsToChannel(std::string channelName, User& user, int mode,
+								std::string message);
+	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
