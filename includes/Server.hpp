@@ -55,7 +55,11 @@ class Server {
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
-	void sendMessage(std::string message, std::map<int, User> &users, int userFd);
+	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
+	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode, std::string message, User &user);
+	void executeCommmandsToChannel(std::string channelName, User& user, int mode,
+								std::string message);
+	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void motd(int userFd);
 	void whois(int userFd, std::string message);
 	void who(int userFd, std::string message);
