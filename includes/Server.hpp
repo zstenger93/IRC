@@ -8,6 +8,7 @@ class Commands;
 class Client;
 class Channel;
 class Parser;
+#include "Bot.hpp"
 
 class Server {
    public:
@@ -116,6 +117,8 @@ class Server {
 	// Server admin info
 	std::string operator_name;
 	std::string operator_password;
+	Marvin bot;
+
 };
 
 #endif
