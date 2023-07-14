@@ -1,4 +1,5 @@
 #include "../../includes/Commands.hpp"
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -24,12 +25,14 @@
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		// NO CHANNEL FOUND
-		std::cout << "NO SUCH CHANNEL\n";
+		send_message_to_server(senderFd, 4, RICK, ERR_NOSUCHCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(), COL, NOSUCHCHAN);
 		return false;
 	}
 	if (users.find(senderFd)->second.isInChannel(channelName) == false) {
-		std::cout << "THE USER IS NOT IN THE CHANNEL TO SEND THE MSG\n";
+		send_message_to_server(senderFd, 3, RICK, ERR_USERONCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(),
+							   channelName.c_str(), COL, JOINEDCHANNEL);
 		return false;
 	}
 	return true;
@@ -40,7 +43,6 @@ void Server::executeCommmandsToChannel(std::string channelName, User& user, int 
 	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
 	switch (mode) {
 		case 0:
-			// SEND MESSAGE TO THE USERS
 			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
 								   channelName.c_str(), COL, message.c_str());
 			break;
@@ -333,10 +335,10 @@ void Server::mode(std::string message, int userFd) {  // channelName
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		// NO SUCH CHANNEL ERROR
+		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	bool add;
-	if (Parser::getWordCount(message) == 3)	 // channelName
+	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
 		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
@@ -344,8 +346,9 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			 modeIt != modes.end(); modeIt++) {
 			if (modeIt->second == true) mode += modeIt->first;
 		}
-		// send() send and write the mode to the user only
-	} else if (Parser::getWordCount(message) == 4 &&
+		send_message_to_server(userFd, 4, RICK, RPL_CHANNELMODEIS, channelName.c_str(), COL,
+							   mode.c_str());
+	} else if (Parser::getWordCount(message) == 3 &&
 			   userIt->second.isOperatorInChannel(channelName)) {
 		channelName = extractArgument(1, message, 3);
 		mode = extractArgument(2, message, 3);
@@ -354,7 +357,8 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		else if (mode[0] == '-')
 			add = false;
 		else {
-			// ERROR
+			send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHSERVICE, COL,
+								   "No such mode bozo");
 		}
 		if (add) {
 			mode = mode.substr(1);
@@ -362,14 +366,16 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
-					;  // msg ? everyone on the channel
+					send_message_to_server(userIt->first, 4, RICK, RPL_CHANNELMODEIS,
+										   channelName.c_str(), COL, "The mode has been changed");
 			}
 		} else {
 			channelIt->second.addMode(mode, false);
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
-					;  // msg ? everyone on the channel
+					send_message_to_server(userIt->first, 4, RICK, RPL_CHANNELMODEIS, COL,
+										   channelName.c_str(), "The mode has been changed");
 			}
 		}
 	}
@@ -384,14 +390,13 @@ void Server::mode(std::string message, int userFd) {  // channelName
 void Server::channelTopic(std::string message, std::string channelName, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	std::cout << "Debug I am here: " << channelName << std::endl;
 	if (channelIt == channels.end()) {
-		// no such channel
+		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	if (Parser::getWordCount(message) == 2) {
 		send_message_to_server(userFd, 4, RICK, RPL_TOPIC, channelName.c_str(), COL,
 							   channelIt->second.getChannelTopic().c_str());
-		// send this to the user only
-		// channelIt->second.getChannelTopic()
 	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName)) {
 		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
@@ -399,7 +404,9 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 			 usersIt++) {
 			if (usersIt->second.isInChannel(channelName) == true)
-				;  // msg ? everyone on the channel
+				send_message_to_server(userIt->first, 3, RICK,
+									   channelIt->second.getChannelName().c_str(), COL,
+									   channelIt->second.getChannelTopic().c_str());
 		}
 	}
 }
@@ -411,12 +418,15 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 // optional:
 // error:
 void User::ping(std::string message, int userFd) {
-	// play ping pong
+	send_message_to_server(userFd, 4, RICK, "PONG", RICK, COL,
+						   message.c_str());  // NEED TO BE written what we need to
+											  // return, might need to fix the preifx need to parse
+											  // the message, right now prints all of it
 }
 
 void Server::who(int userFd, std::string message) {
 	if (Parser::getWordCount(message) > 2) {
-		// ERROR TOO MANY ARGS
+		send_message_to_server(userFd, 1, RICK, ERR_TOOMANYTARGETS);
 	}
 	std::string userNames = "";
 	std::map<int, User>::iterator userIt = users.begin();
@@ -425,20 +435,21 @@ void Server::who(int userFd, std::string message) {
 			userNames.append(userIt->second.getUserName() + " ");
 		}
 	}
-	// SEND THE MESSAGE TO USERFD
+	send_message_to_server(userFd, 3, RICK, "WHO", COL, userNames.c_str());
 }
 
 void Server::whois(int userFd, std::string message) {
 	std::string requestedUserName = extractArgument(1, message, 2);
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(requestedUserName) == 0) {
-			// SEND MSG TO USER ABOUT USERIT
+		if (userIt->second.getNickName().compare(requestedUserName) == 0) {
+			send_message_to_server(userFd, 4, RICK, "WHOIS", userIt->second.getNickName().c_str(),
+								   COL, userIt->second.getUserName().c_str());
 			break;
 		}
 	}
 	if (userIt == users.end()) {
-		// SUCH USER DOESNT EXIST
+		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 	}
 }
 
@@ -455,7 +466,7 @@ void Server::motd(int userFd) {
 
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
-			// SEND IT TO THE USER
+			send_message_to_server(userFd, 3, RICK, PRIVMSG, COL, line.c_str());
 		}
 		file.close();
 	} else {

@@ -93,7 +93,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			mode(message, fd);
 			break;
 		case 10:
-			channelTopic(message, extractArgument(1, message, 2), fd);
+			channelTopic(message, extractArgument(1, message, -1), fd);
 			break;
 		case 11:
 			// CAP
