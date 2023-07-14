@@ -49,7 +49,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 	std::string commands[18] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
 								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
 								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS"};
-	for (int i = 0; i < 19; i++) {
+	for (int i = 0; i < 18; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;

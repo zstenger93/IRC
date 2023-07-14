@@ -1,4 +1,5 @@
 #include "../../includes/Bot.hpp"
+#include "../../includes/Commands.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -16,7 +17,6 @@ void Marvin::constructBot() {
 	setBotTmol(extractFromConfig("meaning_of_life"));
 	setHelpLine(extractFromConfig("helpline"));
 	setGrade(extractFromConfig("grade"));
-	std::cout << "Marvin has been constructed" << std::endl;
 }
 
 std::string Marvin::extractFromConfig(std::string lineToFind) {
@@ -31,6 +31,43 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 		}
 	}
 	return valueToReturn;
+}
+
+void Marvin::runAi(std::string message) {
+	int caseId;
+	std::string command = extractArgument(0, message, -1);
+	std::string commands[6] = {"what is the meaning of life?", "what's the time?", "help",
+							   "how should I grade this project?", "tell me a joke"};
+
+	for (int i = 0; i < 6; i++) {
+		if (command.compare(commands[i]) == 0) {
+			caseId = i;
+			break;
+		}
+	}
+
+	switch (caseId) {
+		case 0:
+			break;
+		case 1:
+			currentTime();
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		default:
+			break;
+	}
+}
+
+void Marvin::currentTime() {
+	std::time_t currentTime = std::time(NULL);
+	std::cout << std::asctime(std::localtime(&currentTime)) << std::endl;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

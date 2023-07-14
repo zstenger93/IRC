@@ -3,8 +3,6 @@
 
 #include "Defines.hpp"
 
-class Server;
-
 class Marvin {
    public:
 	Marvin();
@@ -25,6 +23,8 @@ class Marvin {
 	std::string getFail();
 	std::string getGrade();
 	std::string extractFromConfig(std::string lineToFind);
+	void currentTime();
+	void runAi(std::string message);
 
    private:
 	std::string botName;
