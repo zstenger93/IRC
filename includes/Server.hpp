@@ -56,13 +56,13 @@ class Server {
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> & users, int userFd);
-	void motd(User& user);
-	void setMotd(std::string msgOtd);
-	const std::string getMotd();
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode, std::string message, User &user);
 	void executeCommmandsToChannel(std::string channelName, User& user, int mode,
 								std::string message);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
+	void motd(int userFd);
+	void whois(int userFd, std::string message);
+	void who(int userFd, std::string message);
 
 	// CONNECTION LIMITS
 	void setConnectionLimits();
@@ -78,7 +78,7 @@ class Server {
 	std::string getAdminPass();
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void shutdown();
+	void shutdown(std::string message);
 
 	// PASS
 	std::string extractWord(const std::string &line);
@@ -116,7 +116,6 @@ class Server {
 	// Server admin info
 	std::string operator_name;
 	std::string operator_password;
-	std::string messageOfTheDay;
 };
 
 #endif

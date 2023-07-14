@@ -46,10 +46,10 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[17] = {"NOTICE", "PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
+	std::string commands[18] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
 								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD"};
-	for (int i = 0; i < 18; i++) {
+								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS"};
+	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
@@ -103,16 +103,19 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			handleJoin(message, user->second, "#General");
 			break;
 		case 13:
-			shutdown();
+			if (Parser::getWordCount(message) == 3) shutdown(message);
 			break;
-		case 14:;
-			user->second.who();
+		case 14:
+			who(fd, message);
 			break;
 		case 15:
-			user->second.ping();
+			user->second.ping(message, fd);
 			break;
 		case 16:
-			motd(user->second);
+			motd(fd);
+			break;
+		case 17:
+			whois(fd, message);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

@@ -1,7 +1,4 @@
 #include "../../includes/Commands.hpp"
-
-#include <cstddef>
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
@@ -88,7 +85,6 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
 	}
-
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
 		user.joinChannel(user, name);
 		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
@@ -266,11 +262,18 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
 
-void Server::shutdown() {
+void Server::shutdown(std::string message) {
+	std::string adminName = extractArgument(1, message, 3);
+	std::string adminPassword = extractArgument(2, message, 3);
+	if (adminName == operator_name && adminPassword == operator_password) {
+		reset = false;
+		serverState = false;  // not sure if this is needed
+	} else if (adminPassword != operator_password)
+		std::cout << "Wrong admin password." << std::endl;
+	else
+		std::cout << "Provided admin name doesn't exist." << std::endl;	 // ADMIN DOESN'T EXIST
 	// this is only server admin function
 	// shut down the server
-	serverState = false;  // not sure if this is needed
-	reset = false;
 }
 
 // tf it is doing:
@@ -407,11 +410,37 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 // must have:
 // optional:
 // error:
-void User::ping() {
-	// change the topic of the channel
+void User::ping(std::string message, int userFd) {
+	// play ping pong
 }
 
-void User::who() {}
+void Server::who(int userFd, std::string message) {
+	if (Parser::getWordCount(message) > 2) {
+		// ERROR TOO MANY ARGS
+	}
+	std::string userNames = "";
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserFd() != userFd) {
+			userNames.append(userIt->second.getUserName() + " ");
+		}
+	}
+	// SEND THE MESSAGE TO USERFD
+}
+
+void Server::whois(int userFd, std::string message) {
+	std::string requestedUserName = extractArgument(1, message, 2);
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(requestedUserName) == 0) {
+			// SEND MSG TO USER ABOUT USERIT
+			break;
+		}
+	}
+	if (userIt == users.end()) {
+		// SUCH USER DOESNT EXIST
+	}
+}
 
 // // tf it is doing:
 // // command sent from the client:
@@ -419,15 +448,19 @@ void User::who() {}
 // // must have:
 // // optional:
 // // error:
-void Server::motd(User& user) {
-	// std::ifstream file("conf/motd.txt");
-	// std::string line;
-	// send_message_to_server(user.getUserFd(), 1, MOTD);
-	// while (std::getline(file, line)) {
-	// 	std::cout << line << std::endl;
-	// 	send_message_to_server(user.getUserFd(), 1, line.c_str());
-	// }
-	// file.close();
+void Server::motd(int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::ifstream file("conf/motd.txt");
+	std::string line;
+
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			// SEND IT TO THE USER
+		}
+		file.close();
+	} else {
+		// ERROR
+	}
 }
 
 // tf it is doing:
@@ -439,25 +472,7 @@ void Server::motd(User& user) {
 // error 431 nonick given
 // error :server.example.com 402 Alice :No such server
 
-// MISSING COMMANDS NOTICE, OPER
-
-// void User::WHO
-// {
-
-// }
-
 // // tf it is doing: PONG
-// // command sent from the client: PING
-// // code: 999 or PING
-// // must have: PING: PONG
-// // optional:
-// // error:
-// void User:: Ping
-// {
-
-// }
-
-// // tf it is doing: sends s
 // // command sent from the client: PING
 // // code: 999 or PING
 // // must have: PING: PONG
@@ -475,10 +490,6 @@ void Server::motd(User& user) {
 // // optional:
 // // error 461 not enought parameters
 // error 464 password incorrect
-// void User:: Ping
-// {
-
-// }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/
