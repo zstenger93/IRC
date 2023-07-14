@@ -1,4 +1,5 @@
 #include "../../includes/Bot.hpp"
+
 #include "../../includes/Commands.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -39,12 +40,11 @@ void Marvin::runAi(std::string message) {
 	std::string commands[6] = {"what is the meaning of life?", "what's the time?", "help",
 							   "how should I grade this project?", "tell me a joke"};
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
-	}
 
 	switch (caseId) {
 		case 0:
@@ -61,6 +61,7 @@ void Marvin::runAi(std::string message) {
 		case 5:
 			break;
 		default:
+			asAnAiLanguageModel();
 			break;
 	}
 }
@@ -69,6 +70,8 @@ void Marvin::currentTime() {
 	std::time_t currentTime = std::time(NULL);
 	std::cout << std::asctime(std::localtime(&currentTime)) << std::endl;
 }
+
+void Marvin::asAnAiLanguageModel() {}
 
 /*___________________________________________ SETTERS ___________________________________________*/
 

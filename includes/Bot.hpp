@@ -25,6 +25,7 @@ class Marvin {
 	std::string extractFromConfig(std::string lineToFind);
 	void currentTime();
 	void runAi(std::string message);
+	void asAnAiLanguageModel();
 
    private:
 	std::string botName;
