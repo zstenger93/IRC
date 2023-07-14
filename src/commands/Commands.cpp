@@ -30,9 +30,9 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 		return false;
 	}
 	if (users.find(senderFd)->second.isInChannel(channelName) == false) {
-		send_message_to_server(senderFd, 3, RICK, ERR_USERONCHANNEL,
+		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
 							   users.find(senderFd)->second.getNickName().c_str(),
-							   channelName.c_str(), COL, JOINEDCHANNEL);
+							   channelName.c_str(), COL, "USER ain't on channel");
 		return false;
 	}
 	return true;
@@ -70,6 +70,10 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
+				case 2:
+					send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
+										   user.getNickName().c_str(), "=", channelName.c_str(),
+										   COL, userIt->second.getNickName().c_str());
 				default:
 					std::cerr << "Error in the switch" << std::endl;
 					break;
@@ -88,9 +92,19 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 		createChannel(user, name);
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
-		user.joinChannel(user, name);
-		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
-		channelTopic(message, channelIt->first, user.getUserFd());
+		user.joinChannel(user, name);  // ADDS USER TO THE CHANNEL
+		loopTroughtTheUsersInChan(
+			name, user.getUserFd(), 1, message,
+			user);	// LOOPS TROUGHT USERS AND SEND INFORMATION THAT USER JOINED
+		channelTopic(message, channelIt->first, user.getUserFd());	// SENDS TOPIC TO THE USER
+		// send_message_to_server(user.getUserFd(), 3, std::string prefix, ...); // START OF THE
+		// LIST
+		loopTroughtTheUsersInChan(
+			name, user.getUserFd(), 2, message,
+			user);	// LOOPS TROUGHT THE USERS IN CHANNEL AND PRINTS OUT A LIST ELEMENT
+		send_message_to_server(user.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
+							   user.getNickName().c_str(), name.c_str(), COL,
+							   "END of NAMES LIST");  // END OF THE LIST
 	}
 }
 
@@ -196,14 +210,19 @@ bool User::isInChannel(std::string channelName) {
 // error 403 nosuchchannel
 // error 442 notonchannel
 // error 476 badchanmask
-void User::kickUser(std::map<int, User>& users, std::string kickUserName,
-					std::string channelName) {	// users
+void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName,
+					int senderFd) {	 // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
+		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(),
+							   channelName.c_str(), COL, "USER ain't on channel");
 		// RETURN NO SUCH CHANNEL ERROR
 	}
 	if (channelIt->second == false) {
-		// THE USER IS NOT OPERATOR ERROR
+		send_message_to_server(senderFd, 3, RICK, ERR_CHANOPRIVSNEEDED,
+							   users.find(senderFd)->second.getNickName().c_str(),
+							   channelName.c_str(), COL, "USER ain't an opperator");
 	}
 
 	std::map<int, User>::iterator userIt;
@@ -211,7 +230,9 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		// NO SUCH USER ERROR
+		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(),
+							   channelName.c_str(), COL, "USER ain't on channel");
 	}
 
 	if (userIt->second.isInChannel(channelName) == false) {
@@ -238,8 +259,8 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 // error: 442 user already on channel
 // error: 482 dose not have invite privilages
 
-void User::inviteUser(std::map<int, User>& users, std::string addUserName,
-					  std::string channelName) {  // users
+void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName,
+					  int senderFd) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
 		// RETURN NO SUCH CHANNEL ERROR
@@ -390,7 +411,6 @@ void Server::mode(std::string message, int userFd) {  // channelName
 void Server::channelTopic(std::string message, std::string channelName, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
-	std::cout << "Debug I am here: " << channelName << std::endl;
 	if (channelIt == channels.end()) {
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}

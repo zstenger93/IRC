@@ -46,9 +46,9 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[18] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
-								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS"};
+	std::string commands[18] = {"NOTICE", "PRIVMSG", "JOIN", "PART", "KICK",  "INVITE",
+								"QUIT",	  "NICK",	 "LIST", "MODE", "TOPIC", "CAP",
+								"PASS",	  "ADMIN",	 "WHO",	 "PING", "MOTD",  "WHOIS"};
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -59,7 +59,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			  << "Option choosen: " << caseId << std::endl;
 	switch (caseId) {
 		case 0:
-			break ;
+			break;
 		case 1:
 			sendMessage(message, users, fd);
 			break;
@@ -74,11 +74,11 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		case 4:
 			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3));
+								  extractArgument(2, message, 3), fd);
 			break;
 		case 5:
 			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3));
+									extractArgument(2, message, 3), fd);
 			break;
 		case 6:
 			removeUser(pollId);	 // quitServer();
