@@ -11,6 +11,7 @@ SRC		= $(MAIN) $(PARSING) \
 		  $(CONFIG) $(ADMIN) \
 		  $(CHANNEL) $(USER) \
 		  $(MESSAGES) $(COMMANDS) \
+		  $(BOT) \
 
 MAIN		= main/Irc \
 
@@ -33,6 +34,8 @@ COMMANDS	= commands/Commands \
 MESSAGES	= chat/Messages \
 
 CHANNEL		= channel/Channel \
+
+BOT			= bot/Bot \
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
 OBJS	= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))

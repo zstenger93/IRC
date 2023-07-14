@@ -1,7 +1,6 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include <_types/_intmax_t.h>
 #include "Defines.hpp"
 
 class Server;

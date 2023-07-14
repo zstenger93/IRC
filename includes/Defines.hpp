@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstdarg>
 #include <cstring>
+#include <ctime>
 #include <exception>
 #include <fstream>
 #include <iostream>

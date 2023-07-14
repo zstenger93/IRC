@@ -17,6 +17,7 @@ void send_message_to_server(int fd, int count, std::string prefix, ...) {
 	}
 	va_end(arguments);
 	message += "\r\n";
+	std::cout <<"Command sent back to client: " <<message << std::endl;
 	send(fd, message.c_str(), message.length(), 0);
 }
 
