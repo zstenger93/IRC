@@ -15,12 +15,14 @@ class Marvin {
 	void setBotThink(std::string setTo);
 	void setBotTmol(std::string setTo);
 	void setHelpLine(std::string setTo);
+	void setFail(std::string setTo);
 	void setGrade(std::string setTo);
 	std::string getBotName();
 	std::string getBotWelcomeLine();
 	std::string getBotThink();
 	std::string getBotTmol();
 	std::string getHelpLine();
+	std::string getFail();
 	std::string getGrade();
 	std::string extractFromConfig(std::string lineToFind);
 
@@ -30,6 +32,7 @@ class Marvin {
 	std::string botThink;
 	std::string tmol;
 	std::string helpLine;
+	std::string fail;
 	std::string grade;
 };
 
