@@ -11,10 +11,12 @@ SRC		= $(MAIN) $(PARSING) \
 		  $(CONFIG) $(ADMIN) \
 		  $(CHANNEL) $(USER) \
 		  $(MESSAGES) $(COMMANDS) \
+		  $(BOT) \
 
 MAIN		= main/Irc \
 
 PARSING		= parsing/Parsing \
+			  parsing/Parser \
 
 SERVER		= server/Server \
 
@@ -32,6 +34,8 @@ COMMANDS	= commands/Commands \
 MESSAGES	= chat/Messages \
 
 CHANNEL		= channel/Channel \
+
+BOT			= bot/Bot \
 
 SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
 OBJS	= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
@@ -64,6 +68,11 @@ re:
 	@make all
 	@echo "$(GREEN)The project has been recompiled.$(COLOR_END)"
 
+# remove it after testing
+run:
+	make
+	./ircserv 6667 secureaf
+
 COLOR_END = \033[0;39m
 CYAN3 = \033[1;4;96m
 YELLOW = \033[1;33m
@@ -76,4 +85,4 @@ CYAN = \033[1;96m
 
 RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re run
