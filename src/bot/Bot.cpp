@@ -1,6 +1,7 @@
 #include "../../includes/Bot.hpp"
 
 #include "../../includes/Commands.hpp"
+#include "../../includes/ReplyCodes.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -18,6 +19,7 @@ void Marvin::constructBot() {
 	setBotTmol(extractFromConfig("meaning_of_life"));
 	setHelpLine(extractFromConfig("helpline"));
 	setGrade(extractFromConfig("grade"));
+	setAiModelExcuse();
 }
 
 std::string Marvin::extractFromConfig(std::string lineToFind) {
@@ -34,46 +36,70 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 	return valueToReturn;
 }
 
-void Marvin::runAi(std::string message) {
+void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 	int caseId;
-	std::string command = extractArgument(0, message, -1);
-	std::string commands[6] = {"what is the meaning of life?", "what's the time?", "help",
-							   "how should I grade this project?", "tell me a joke"};
+	std::string aiCommand = extractArgument(0, message, -1);
+	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
+		*it = std::tolower(static_cast<unsigned char>(*it));
+	}
+	std::string aiCommands[6] = {"what is the meaning of life?", "what's the time?", "help",
+								 "how should I grade this project?", "tell me a joke"};
 
 	for (int i = 0; i < 6; i++)
-		if (command.compare(commands[i]) == 0) {
+		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
 			break;
 		}
-
 	switch (caseId) {
 		case 0:
+			answerTmol(userFd, userNick);
 			break;
 		case 1:
-			currentTime();
+			currentTime(userFd, userNick);
 			break;
 		case 2:
+			answerHelp(userFd, userNick);
 			break;
 		case 3:
+			answerGrade(userFd, userNick);
 			break;
 		case 4:
+			generateJoke(userFd, userNick);
 			break;
 		case 5:
 			break;
 		default:
-			asAnAiLanguageModel();
+			aiModelExcuse(userFd, userNick);
 			break;
 	}
 }
 
-void Marvin::currentTime() {
+void Marvin::currentTime(int userFd, std::string userNick) {
 	std::time_t currentTime = std::time(NULL);
 	std::cout << std::asctime(std::localtime(&currentTime)) << std::endl;
 }
 
-void Marvin::asAnAiLanguageModel() {}
+void Marvin::setAiModelExcuse() {
+	int i = 0;
+	std::string line;
+	std::ifstream file("conf/asanai.txt");
+	while (std::getline(file, line)) {
+		asAnAi[i++] = line;
+	}
+}
 
-/*___________________________________________ SETTERS ___________________________________________*/
+void Marvin::answerTmol(int userFd, std::string userNick) {}
+void Marvin::answerHelp(int userFd, std::string userNick) {}
+void Marvin::answerGrade(int userFd, std::string userNick) {}
+void Marvin::generateJoke(int userFd, std::string userNick) {}
+void Marvin::aiModelExcuse(int userFd, std::string userNick) {
+	for (int i = 0; i < 6; i++)
+		send_message_to_server(userFd, 5, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   asAnAi[i].c_str());
+}
+
+/*___________________________________________ SETTERS
+ * ___________________________________________*/
 
 void Marvin::setBotName(std::string setTo) { botName = setTo; }
 void Marvin::setBotWelcomeLine(std::string setTo) { botWelcomeLine = setTo; }
@@ -83,7 +109,8 @@ void Marvin::setHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setFail(std::string setTo) { grade = setTo; }
 void Marvin::setGrade(std::string setTo) { fail = setTo; }
 
-/*___________________________________________ GETTERS ___________________________________________*/
+/*___________________________________________ GETTERS
+ * ___________________________________________*/
 
 std::string Marvin::getBotName() { return botName; }
 std::string Marvin::getBotWelcomeLine() { return botWelcomeLine; }
