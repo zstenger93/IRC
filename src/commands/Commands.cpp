@@ -101,9 +101,8 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 		loopTroughtTheUsersInChan(
 			name, user.getUserFd(), 2, message,
 			user);	// LOOPS TROUGHT THE USERS IN CHANNEL AND PRINTS OUT A LIST ELEMENT
-		send_message_to_server(user.getUserFd(), 6, RICK, RPL_NAMREPLY,
-										   user.getNickName().c_str(), "=", name.c_str(),
-										   COL, "Marvin");
+		send_message_to_server(user.getUserFd(), 6, RICK, RPL_NAMREPLY, user.getNickName().c_str(),
+							   "=", name.c_str(), COL, "Marvin");
 		send_message_to_server(user.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
 							   user.getNickName().c_str(), name.c_str(), COL,
 							   "END of NAMES LIST");  // END OF THE LIST
@@ -151,8 +150,13 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		std::string messageTo = extractArgument(1, message, -1);
 		if (messageTo.empty() == true)
 			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
-		if (messageTo.compare("Marvin"))
-			; // write stuff here
+		std::cout << "wtf" << std::endl;
+		std::cout << messageTo << std::endl;
+		if (messageTo.compare("Marvin") == 0) {
+			std::string msg = message.substr(12);
+			bot.runAi(userFd, userIt->second.getNickName(), msg);
+			return;
+		}
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
