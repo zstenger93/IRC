@@ -45,9 +45,9 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[19] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
-								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS", "BOT"};
+	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
+								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -117,7 +117,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 			whois(fd, message);
 			break;
 		case 18:
-			bot.runAi(fd, user->second.getNickName(), message);
+			bot.runAi(fd, user->second.getNickName(), message, user->second, users);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

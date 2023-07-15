@@ -1,11 +1,8 @@
 #include "../../includes/Bot.hpp"
 
-#include <unistd.h>
-
-#include <cstdlib>
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
+#include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -42,18 +39,21 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 	return valueToReturn;
 }
 
-void Marvin::runAi(int userFd, std::string userNick, std::string message) {
+void Marvin::runAi(int userFd, std::string userNick, std::string message, User& user,
+				   std::map<int, User>& users) {
 	int caseId;
 	std::string aiCommand = message.substr(3 + 1);
 	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 		*it = std::tolower(static_cast<unsigned char>(*it));
 	}
-	std::cout << "|" << aiCommand << "|" << std::endl;
-	std::string aiCommands[6] = {"what is the meaning of life?\r\n", "what's the time?\r\n",
-								 "help\r\n", "how should i grade this project?\r\n",
-								 "tell me a joke\r\n"};
-	std::cout << "|" << aiCommands[3] << "|" << std::endl;
-	for (int i = 0; i < 5; i++)
+	std::string aiCommands[7] = {"what is the meaning of life?\r\n",
+								 "what's the time?\r\n",
+								 "help\r\n",
+								 "how should i grade this project?\r\n",
+								 "tell me a joke\r\n",
+								 "list\r\n",
+								 "deathroll\r\n"};
+	for (int i = 0; i < 7; i++)
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
 			break;
@@ -73,6 +73,15 @@ void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 			break;
 		case 4:
 			generateJoke(userFd, userNick);
+			break;
+		case 5:
+			listPossibleInput(userFd, userNick);
+			break;
+		case 6:
+			if (deathRoll(userFd, userNick) == -1) {
+				// DOES KICK WORK ?
+				// user.kickUser(users, user.getUserName().c_str(), "#General", userFd);
+			}
 			break;
 		default:
 			aiModelExcuse(userFd, userNick);
@@ -125,6 +134,40 @@ void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 	for (int i = 0; i < 6; i++)
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   asAnAi[i].c_str());
+}
+
+void Marvin::listPossibleInput(int userFd, std::string userNick) {
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, LAZY);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, WELP);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, LIST);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, JOKE);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, TIME);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, LIFE);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, GRADE);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, DEATH);
+}
+
+int Marvin::deathRoll(int userFd, std::string userNick) {
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   "Let's see your roll");
+	std::srand(static_cast<unsigned int>(std::time(0)));
+	int roll = rand() % 100;
+	std::stringstream ss;
+	ss << roll;
+	std::string deathRoll = ss.str();
+	if (roll >= 50) {
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   deathRoll.c_str());
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   LIVE);
+	} else {
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   deathRoll.c_str());
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   SPARTA);
+		return -1;
+	}
+	return 0;
 }
 
 void Marvin::setBotJokes() {
