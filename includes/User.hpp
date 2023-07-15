@@ -27,7 +27,6 @@ class User {
 	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName);
 	void kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName, int senderFd);
 	void inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName, int senderFd);
-	void setNick(std::map<int, User>::iterator it, std::string newNickname);
 	void oper();
 	void ping(std::string message, int userFd);
 

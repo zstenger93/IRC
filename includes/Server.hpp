@@ -50,7 +50,7 @@ class Server {
 
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(std::map<int, User>::iterator it, std::string message, int fd, int pollId);
+	void commandParser(std::map<int, User>::iterator &it, std::string message, int fd, int pollId);
 	std::string getCommand(std::string message);
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
@@ -80,6 +80,7 @@ class Server {
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
 	void shutdown(std::string message);
+	void setNick(std::map<int, User>::iterator &it, std::string newNickname);
 
 	// PASS
 	std::string extractWord(const std::string &line);

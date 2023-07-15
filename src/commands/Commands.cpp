@@ -38,21 +38,21 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	return true;
 }
 
-void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
-									   std::string message) {
-	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
-	switch (mode) {
-		case 0:
-			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
-								   channelName.c_str(), COL, extractMessage(message).c_str());
-			break;
-		case 1:
-			break;
-		default:
-			std::cerr << "Error in the switch" << std::endl;
-			break;
-	}
-}
+// void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
+// 									   std::string message) {
+// 	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
+// 	switch (mode) {
+// 		case 0:
+// 			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
+// 								   channelName.c_str(), COL, extractMessage(message).c_str());
+// 			break;
+// 		case 1:
+// 			break;
+// 		default:
+// 			std::cerr << "Error in the switch" << std::endl;
+// 			break;
+// 	}
+// }
 
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
@@ -75,6 +75,7 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
 										   user.getNickName().c_str(), "=", channelName.c_str(),
 										   COL, userIt->second.getNickName().c_str());
+				case 3:
 				default:
 					std::cerr << "Error in the switch" << std::endl;
 					break;
@@ -308,16 +309,25 @@ void Server::shutdown(std::string message) {
 // error: 431 nickname not given
 // error: 432 nickname is invalid
 // error: 433 nickname already taken
-void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
-	// needs channel name after username
+void Server::setNick(std::map<int, User>::iterator& it, std::string newNickname) {
 	if (newNickname.length() != 0) {
 		// check if someone is already using this nick ??
-		nickName = newNickname;
+		// nickName = newNickname;
 		// nickName = "\0037" + newNickname + "\0030";
-		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKCHANGED);
-		// do we send msg to other users that one changed it's nickname?
+		std::map<int, User>::iterator userIt = users.begin();
+
+		for (; userIt != users.end(); userIt++) {
+			if (userIt->first != it->first)
+				send_message_to_server(userIt->first, 2, it->second.getNickName().c_str(), "NICK",
+							   newNickname.c_str());
+		}
+		send_message_to_server(it->first, 2, it->second.getNickName().c_str(), "NICK",
+							   newNickname.c_str());
+		it->second.setNickName(newNickname);
+
 	} else {
-		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKEMPTYSTR);
+		send_message_to_server(it->first, 2, RICK, it->second.getNickName().c_str(), NICKEMPTYSTR);
+		it->second.setNickName(newNickname);
 	}
 }
 
@@ -336,7 +346,6 @@ void Server::listChannels(std::string userName) {
 	if (userIt == users.end()) {
 		// NO SUCH USER EXCEPTION. probably not needed
 	}
-
 	for (std::map<std::string, Channel>::iterator channelIt = channels.begin();
 		 channelIt != channels.end(); channelIt++) {
 		/// SEND to user channelIt->first;
