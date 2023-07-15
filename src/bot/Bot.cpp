@@ -1,9 +1,4 @@
 #include "../../includes/Bot.hpp"
-
-#include <unistd.h>
-
-#include <cstdlib>
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 

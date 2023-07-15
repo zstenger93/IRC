@@ -38,22 +38,6 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	return true;
 }
 
-// void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
-// 									   std::string message) {
-// 	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
-// 	switch (mode) {
-// 		case 0:
-// 			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
-// 								   channelName.c_str(), COL, extractMessage(message).c_str());
-// 			break;
-// 		case 1:
-// 			break;
-// 		default:
-// 			std::cerr << "Error in the switch" << std::endl;
-// 			break;
-// 	}
-// }
-
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
 	if (checkIfCanBeExecuted(channelName, senderFd) == false) return;
@@ -67,7 +51,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 										   extractMessage(message).c_str());
 					break;
 				case 1:
-					// SEND MESSAGE ABOUT JOINING THE CHANNEL
 					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
@@ -171,7 +154,6 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 	} else {
 		std::string channelName = extractArgument(1, message, -1);
 		loopTroughtTheUsersInChan(channelName, userFd, 0, message, userIt->second);
-		// executeCommmandsToChannel(channelName, userIt->second, 0, message);
 	}
 }
 
@@ -230,7 +212,6 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't an opperator");
 	}
-
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
 		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
@@ -240,13 +221,10 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't on channel");
 	}
-
 	if (userIt->second.isInChannel(channelName) == false) {
 		// KICKUSER IS NOT IN THE CHANNEL @todo
 	}
-
 	userIt->second.leaveChannel(users, userIt->second, channelName);
-	// send to user that he has been kicked from the channel
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channelName) == true)
 			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL @todo
@@ -274,7 +252,6 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 	if (channelIt->second == false) {
 		// THE USER IS NOT OPERATOR ERROR @todo
 	}
-
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
 		if (userIt->second.getUserName().compare(addUserName) == 0) break;
@@ -282,11 +259,9 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 	if (userIt == users.end()) {
 		// NO SUCH USER ERROR @todo
 	}
-
 	if (userIt->second.isInChannel(channelName) == true) {
 		// USER ALREADY IN THE CHANNEL @todo
 	}
-
 	userIt->second.channels.insert(std::make_pair(channelName, false));
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL @todo
 }
@@ -369,7 +344,6 @@ void Server::listChannels(std::string userName) {
 // error:
 // NEED TO DEBUG THIS, IT GET'S SEGFAULT ON JOIN CHANNEL
 void Server::mode(std::string message, int userFd) {  // channelName
-	// show the mode of the channel. i guess it should take the channel name as arg
 	std::string channelName = extractArgument(1, message, -1);
 	std::string mode = "";
 	std::map<int, User>::iterator userIt = users.find(userFd);
@@ -378,7 +352,6 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	bool add;
-
 	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
@@ -506,13 +479,10 @@ void Server::whois(int userFd, std::string message) {
 								   userIt->second.getUserName().c_str(), COL,
 								   "We do not steel user personal data bozo");
 			send_message_to_server(userFd, 4, RICK, RPL_WHOISCHANNELS,
-								   userIt->second.getUserName().c_str(), COL,
-								   "@General");
+								   userIt->second.getUserName().c_str(), COL, "@General");
 			send_message_to_server(userFd, 4, RICK, RPL_ENDOFWHOIS,
-								   userIt->second.getUserName().c_str(), COL,
-								   "END OF WHO IS LIST");
+								   userIt->second.getUserName().c_str(), COL, "END OF WHO IS LIST");
 			// needs an itterator of every single channel user has joined in @todo
-
 			break;
 		}
 	}
@@ -531,7 +501,6 @@ void Server::motd(int userFd, std::string channelName) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::ifstream file("conf/motd.txt");
 	std::string line;
-
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			if (channelName.empty() == false)
@@ -561,10 +530,7 @@ void Server::motd(int userFd, std::string channelName) {
 // // must have: PING: PONG
 // // optional:
 // // error:
-// void User:: Ping
-// {
 
-// }
 
 // // tf it is doing: OPER
 // // command sent from the client: OPER <username> <password>
