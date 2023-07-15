@@ -561,10 +561,6 @@ void Server::motd(int userFd, std::string channelName) {
 // // must have: PING: PONG
 // // optional:
 // // error:
-// void User:: Ping
-// {
-
-// }
 
 // // tf it is doing: OPER
 // // command sent from the client: OPER <username> <password>

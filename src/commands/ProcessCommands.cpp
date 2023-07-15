@@ -13,7 +13,6 @@ int Server::processCommands(int pollId) {
 	std::string message = "";
 	char buffer[512];
 	int buffer_len, stringLength = 0;
-
 	memset(buffer, 0, 512);
 	buffer_len = recv(userPoll[pollId].fd, buffer, 512, USERDISCONECTED);
 	message = buffer;
