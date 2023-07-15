@@ -9,6 +9,27 @@ Text-based communication protocol written in c++
 
 <img align=center src="https://github.com/zstenger93/IRC/blob/commands/media/irc.jpeg">
 
+## Main loop
+
+server.setup
+server.run
+close serversocket
+
+This loop should never stop since your server should be nonstop available
+
+## server.setup()
+
+Setup of the server socket we will listen to, basically a bunch of fd's
+
+## server.run()
+
+Listening to all users with `poll()` if it is a new connection we authenticate whoever is trying to join
+our server else
+
+## processCommands()
+
+Here we handle most of the available commands on our server
+
 <table>
   <tr>
     <th>Orders</th>
