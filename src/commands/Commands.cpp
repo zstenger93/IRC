@@ -1,6 +1,7 @@
 #include "../../includes/Commands.hpp"
-
 #include "../../includes/Channel.hpp"
+#include "../../includes/Parser.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -19,27 +20,103 @@
 // error: 473 invite only channel
 // error 474 banned from channel
 // error 475 bad channel password
-void Server::handleJoin(User& user, std::string name) {
+
+bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
+	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// NO CHANNEL FOUND
+		std::cout << "NO SUCH CHANNEL\n";
+		return false;
+	}
+	if (users.find(senderFd)->second.isInChannel(channelName) == false) {
+		std::cout << "THE USER IS NOT IN THE CHANNEL TO SEND THE MSG\n";
+		return false;
+	}
+	return true;
+}
+
+void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
+									   std::string message) {
+	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
+	switch (mode) {
+		case 0:
+			// SEND MESSAGE TO THE USERS
+			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
+								   channelName.c_str(), COL, message.c_str());
+			break;
+		case 1:
+			break;
+		default:
+			std::cerr << "Error in the switch" << std::endl;
+			break;
+	}
+}
+
+void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
+									   std::string message, User& user) {
+	if (checkIfCanBeExecuted(channelName, senderFd) == false) return;
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd) {
+			switch (mode) {
+				case 0:
+					send_message_to_server(userIt->first, 4, userIt->second.getNickName(), PRIVMSG,
+										   channelName.c_str(), COL, message.c_str());
+					break;
+				case 1:
+					// SEND MESSAGE ABOUT JOINING THE CHANNEL
+					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
+										   channelName.c_str(), COL, channelName.c_str());
+					break;
+				default:
+					std::cerr << "Error in the switch" << std::endl;
+					break;
+			}
+		}
+	}
+}
+
+void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (name.length() == 0) {
-		send_message_to_server(user.getUserFd(), 6, "461", user.getNickName().c_str(), "JOIN", ":",
-							   user.getNickName().c_str(), name.c_str(), INVALID_C_NAME);
+		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
 	}
-	std::map<std::string, Channel>::iterator it = channels.find(name);
-	if (it == channels.end()) {
+	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
+	if (channelIt == channels.end()) {
 		createChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", user.getNickName().c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), CREATEDCHANNEL);
-		user.joinChannel(user, name);
-		send_message_to_server(user.getUserFd(), 6, "NOTICE", name.c_str(), ":",
-							   user.getNickName().c_str(), name.c_str(), JOINEDCHANNEL);
-		std::cout << name << std::endl;
-		return;
 	}
-	// if channel is invite only
-	user.joinChannel(user, name);
-	send_message_to_server(user.getUserFd(), 5, name.c_str(), ":", user.getNickName().c_str(),
-						   name.c_str(), JOINEDCHANNEL);
+	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
+		user.joinChannel(user, name);
+		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
+		channelTopic(message, channelIt->first, user.getUserFd());
+	}
+}
+
+bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
+	int userCount = channel.getUserCount();
+	int userLimit = channel.getUserLimit();
+	if (userCount < userLimit && channel.checkMode("l")) {
+		user.joinChannel(user, channel.getChannelName());
+		channel.changeUserCount(userCount++);
+		return true;
+	} else if (userCount == userLimit && channel.checkMode("l")) {
+		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT
+	}
+	if (channel.checkMode("k")) {
+		std::string providedPass = extractArgument(2, message, 3);
+		if (channel.isPasswordCorrect(providedPass))
+			user.joinChannel(user, channel.getChannelName());
+		else {
+			// WRONG PASSWORD FOR THE CHANNEL
+		}
+		return true;
+	}
+	if (channel.checkMode("i")) {
+		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
+		// CANNOT JOIN MESSAGE
+		return true;
+	}
+	return false;
 }
 
 // tf it is doing: sending a bloody message
@@ -50,13 +127,30 @@ void Server::handleJoin(User& user, std::string name) {
 // error: 401 no such nick
 // error: 404 client is not a members of the target channel
 // error: 412 client did not provide any text to send
-void User::sendMessage() {
-	// where to? channel or user?
-	// hash at start of 2nd arg -> channel
-	// send to channel
-	// else error
-	// else send to user
-	// else error
+void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	if (extractArgument(1, message, -1)[0] != '#') {
+		std::string messageTo = extractArgument(1, message, -1);
+		if (messageTo.empty() == true)
+			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+		std::map<int, User>::iterator receiverIt = users.begin();
+		for (; receiverIt != users.end(); receiverIt++) {
+			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
+				send_message_to_server(receiverIt->first, 5, userIt->second.getNickName().c_str(),
+									   PRIVMSG, receiverIt->second.getNickName().c_str(), COL,
+									   message.c_str());
+				return;
+			}
+		}
+		if (receiverIt == users.end()) {
+			send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+			return;
+		}
+	} else {
+		std::string channelName = extractArgument(1, message, -1);
+		//		loopTroughtTheUsersInChan(channelName, userFd, 0, message);
+		executeCommmandsToChannel(channelName, userIt->second, 0, message);
+	}
 }
 
 // tf it is doing: leaves the channal
@@ -68,21 +162,27 @@ void User::sendMessage() {
 // error 442 client is not a mmbers of specific client
 // error 461 need more params
 // error 421 the PART command is not recognised as a part of the server
-void User::leaveChannel(User& user, std::string channelName) {
+void User::leaveChannel(std::map<int, User>& users, User& user, std::string channelName) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
-		send_message_to_server(user.getUserFd(), 6, "403 :", user.getNickName().c_str(),
+		send_message_to_server(user.getUserFd(), 4, RICK, "403 :", user.getNickName().c_str(),
 							   channelName.c_str(), CANTLEAVE_C);
 		return;
 	}
 	channels.erase(channel);
-	send_message_to_server(user.getUserFd(), 3, " :", user.getNickName().c_str(), LEFTCHANNEL);
-	// find the channel and disconnect the user from it
-	// else error
+	// send to user
+	send_message_to_server(user.getUserFd(), 4, user.getNickName(), RPL_ENDOFNAMES,
+						   channelName.c_str(), COL, LEFTCHANNEL);
+	// send to everyone else on the channel
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channelName) == true)
+			;  // send() everyone on the channel
+	}
 }
 
+// HELPER FUNCTION, MOVE IT IDK WHERE
 bool User::isInChannel(std::string channelName) {
-	return (channels.find(channelName) == channels.end());
+	return (channels.find(channelName) != channels.end());
 }
 
 // tf it is doing: Kicks user from the channal
@@ -116,8 +216,12 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 		// KICKUSER IS NOT IN THE CHANNEL
 	}
 
-	userIt->second.leaveChannel(userIt->second, channelName);
-	// SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+	userIt->second.leaveChannel(users, userIt->second, channelName);
+	// send to user that he has been kicked from the channel
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channelName) == true)
+			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+	}
 }
 
 // tf it is doing: invite to the channal
@@ -129,8 +233,9 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName,
 // :<server> <error code> <client nickname> <channel> :<error message>
 // error: 461 need more params
 // error: 401 nickname dose not exist
-// error 442 user already on channel
-// error 482 dose not have invite privilages
+// error: 442 user already on channel
+// error: 482 dose not have invite privilages
+
 void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 					  std::string channelName) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
@@ -157,15 +262,18 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName,
 	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
 }
 
-void User::quitServer() {
-	// disconnect the user myb? idk.
-}
-
-void Server::shutdown() {
+void Server::shutdown(std::string message) {
+	std::string adminName = extractArgument(1, message, 3);
+	std::string adminPassword = extractArgument(2, message, 3);
+	if (adminName == operator_name && adminPassword == operator_password) {
+		reset = false;
+		serverState = false;  // not sure if this is needed
+	} else if (adminPassword != operator_password)
+		std::cout << "Wrong admin password." << std::endl;
+	else
+		std::cout << "Provided admin name doesn't exist." << std::endl;	 // ADMIN DOESN'T EXIST
 	// this is only server admin function
 	// shut down the server
-	serverState = false;  // not sure if this is needed
-	reset = false;
 }
 
 // tf it is doing:
@@ -174,17 +282,18 @@ void Server::shutdown() {
 // must have: <code> <nick>
 // optional:
 // error: 431 nickname not given
-// error 432 nickname is invalid
-// error 433 nickname already taken
+// error: 432 nickname is invalid
+// error: 433 nickname already taken
 void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 	// needs channel name after username
 	if (newNickname.length() != 0) {
 		// check if someone is already using this nick ??
-		nickName = "\0037" + newNickname + "\0030";
-		send_message_to_server(it->first, 2, nickName.c_str(), NICKCHANGED);
+		nickName = newNickname;
+		// nickName = "\0037" + newNickname + "\0030";
+		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKCHANGED);
 		// do we send msg to other users that one changed it's nickname?
 	} else {
-		send_message_to_server(it->first, 2, nickName.c_str(), NICKEMPTYSTR);
+		send_message_to_server(it->first, 2, RICK, nickName.c_str(), NICKEMPTYSTR);
 	}
 }
 
@@ -194,8 +303,20 @@ void User::setNick(std::map<int, User>::iterator it, std::string newNickname) {
 // indicates end of the list (CONUFSION) must have: <code> <nick> : <channel> optional: <user count>
 // <topic> error: 402 NOSERVER so no list error: 481 no priviliages error: 416 too many matches for
 // the list command??? error 437 list command not aviable?? error 451 user nor registered
-void User::listChannels() {
+void Server::listChannels(std::string userName) {
 	// list the available channels? or what you have joined to?
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(userName) == 0) break;
+	}
+	if (userIt == users.end()) {
+		// NO SUCH USER EXCEPTION. probably not needed
+	}
+
+	for (std::map<std::string, Channel>::iterator channelIt = channels.begin();
+		 channelIt != channels.end(); channelIt++) {
+		/// SEND to user channelIt->first;
+	}
 }
 
 // tf it is doing:
@@ -204,8 +325,54 @@ void User::listChannels() {
 // must have:
 // optional:
 // error:
-void User::modeUser() {
+// NEED TO DEBUG THIS, IT GET'S SEGFAULT ON JOIN CHANNEL
+void Server::mode(std::string message, int userFd) {  // channelName
 	// show the mode of the channel. i guess it should take the channel name as arg
+	std::string channelName = extractArgument(1, message, -1);
+	std::string mode = "";
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// NO SUCH CHANNEL ERROR
+	}
+	bool add;
+	if (Parser::getWordCount(message) == 3)	 // channelName
+	{
+		// get every mode and send to user
+		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
+		for (std::map<std::string, bool>::const_iterator modeIt = modes.begin();
+			 modeIt != modes.end(); modeIt++) {
+			if (modeIt->second == true) mode += modeIt->first;
+		}
+		// send() send and write the mode to the user only
+	} else if (Parser::getWordCount(message) == 4 &&
+			   userIt->second.isOperatorInChannel(channelName)) {
+		channelName = extractArgument(1, message, 3);
+		mode = extractArgument(2, message, 3);
+		if (mode[0] == '+')
+			add = true;
+		else if (mode[0] == '-')
+			add = false;
+		else {
+			// ERROR
+		}
+		if (add) {
+			mode = mode.substr(1);
+			channelIt->second.addMode(mode, true);
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				if (usersIt->second.isInChannel(channelName) == true)
+					;  // msg ? everyone on the channel
+			}
+		} else {
+			channelIt->second.addMode(mode, false);
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				if (usersIt->second.isInChannel(channelName) == true)
+					;  // msg ? everyone on the channel
+			}
+		}
+	}
 }
 
 // tf it is doing:
@@ -214,8 +381,27 @@ void User::modeUser() {
 // must have:
 // optional:
 // error:
-void User::modeOper() {
-	// change the mode of the channel
+void Server::channelTopic(std::string message, std::string channelName, int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
+	if (channelIt == channels.end()) {
+		// no such channel
+	}
+	if (Parser::getWordCount(message) == 2) {
+		send_message_to_server(userFd, 4, RICK, RPL_TOPIC, channelName.c_str(), COL,
+							   channelIt->second.getChannelTopic().c_str());
+		// send this to the user only
+		// channelIt->second.getChannelTopic()
+	}
+	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName)) {
+		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
+		channelIt->second.setChannelTopic(message.substr(newTopicStartPos));
+		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+			 usersIt++) {
+			if (usersIt->second.isInChannel(channelName) == true)
+				;  // msg ? everyone on the channel
+		}
+	}
 }
 
 // tf it is doing:
@@ -224,18 +410,36 @@ void User::modeOper() {
 // must have:
 // optional:
 // error:
-void User::topicUser() {
-	// show the topic of the channel
+void User::ping(std::string message, int userFd) {
+	// play ping pong
 }
 
-// tf it is doing:
-// command sent from the client:
-// code:
-// must have:
-// optional:
-// error:
-void User::topicOper() {
-	// change the topic of the channel
+void Server::who(int userFd, std::string message) {
+	if (Parser::getWordCount(message) > 2) {
+		// ERROR TOO MANY ARGS
+	}
+	std::string userNames = "";
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserFd() != userFd) {
+			userNames.append(userIt->second.getUserName() + " ");
+		}
+	}
+	// SEND THE MESSAGE TO USERFD
+}
+
+void Server::whois(int userFd, std::string message) {
+	std::string requestedUserName = extractArgument(1, message, 2);
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		if (userIt->second.getUserName().compare(requestedUserName) == 0) {
+			// SEND MSG TO USER ABOUT USERIT
+			break;
+		}
+	}
+	if (userIt == users.end()) {
+		// SUCH USER DOESNT EXIST
+	}
 }
 
 // // tf it is doing:
@@ -244,15 +448,19 @@ void User::topicOper() {
 // // must have:
 // // optional:
 // // error:
-void User::motd(User& user) {
-	// std::ifstream file("conf/motd.txt");
-	// std::string line;
-	// send_message_to_server(user.getUserFd(), 1, MOTD);
-	// while (std::getline(file, line)) {
-	// 	std::cout << line << std::endl;
-	// 	send_message_to_server(user.getUserFd(), 1, line.c_str());
-	// }
-	// file.close();
+void Server::motd(int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::ifstream file("conf/motd.txt");
+	std::string line;
+
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			// SEND IT TO THE USER
+		}
+		file.close();
+	} else {
+		// ERROR
+	}
 }
 
 // tf it is doing:
@@ -264,25 +472,7 @@ void User::motd(User& user) {
 // error 431 nonick given
 // error :server.example.com 402 Alice :No such server
 
-// MISSING COMMANDS NOTICE, OPER
-
-// void User::WHO
-// {
-
-// }
-
 // // tf it is doing: PONG
-// // command sent from the client: PING
-// // code: 999 or PING
-// // must have: PING: PONG
-// // optional:
-// // error:
-// void User:: Ping
-// {
-
-// }
-
-// // tf it is doing: sends s
 // // command sent from the client: PING
 // // code: 999 or PING
 // // must have: PING: PONG
@@ -300,10 +490,6 @@ void User::motd(User& user) {
 // // optional:
 // // error 461 not enought parameters
 // error 464 password incorrect
-// void User:: Ping
-// {
-
-// }
 
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/

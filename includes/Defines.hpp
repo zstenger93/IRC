@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstdarg>
 #include <cstring>
+#include <ctime>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -63,7 +64,7 @@
 
 #define NICKCHANGED "\0033Your nickname has been changed.\0030"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
-#define LOGIN_REQUIRED                                                                           \
+#define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
 #define INVITED " has been invited to the server"
@@ -75,10 +76,11 @@
 #define INVALID_C_NAME "\0034Invalid channel name.\0030"
 #define CANTLEAVE_C "\0034No such channel.\0030"
 #define LEFTCHANNEL "has left the channel."
-
+#define NOSUCHUSER "there ain't such user bozo"
+#define NOSUCHCHAN "there ain't such channel bozo"
 // DEFAULT MESSAGES
 
-#define RICK ":\00314RickRoll.de\0030 "
+#define RICK "RickRoll.de"
 #define CREATEDCHANNEL " channel has been created."
 #define JOINEDCHANNEL " You have joined to the channel."
 #define MODE_I "This channel mode is invitation only"

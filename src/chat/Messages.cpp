@@ -5,21 +5,19 @@
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
-void send_message_to_server(int fd, int count, ...) {
-	std::string message = RICK;
+void send_message_to_server(int fd, int count, std::string prefix, ...) {
+	std::string message = ":" + prefix + " ";
 	int i = 0;
 	va_list arguments;
-	va_start(arguments, count);
+	va_start(arguments, prefix);
 	while (i < count) {
 		message = message + va_arg(arguments, const char*);
 		i++;
-		if (i == 1 && count > 2) message = message + " \00310";
-		if (i == 2 && count > 2) message = message + " \0030";
 		if (i != count) message = message + " ";
 	}
 	va_end(arguments);
 	message += "\r\n";
-	std::cout << message << std::endl;
+	std::cout <<"Command sent back to client: " <<message << std::endl;
 	send(fd, message.c_str(), message.length(), 0);
 }
 
@@ -41,7 +39,6 @@ std::string extractArgument(int specificArg, const std::string& message, int aCo
 	if (tokens.size() - 1 > aCount && aCount != -1) return std::string();
 	if (specificArg >= 0 && specificArg < static_cast<int>(tokens.size())) {
 		return tokens[specificArg];
-		std::cout << tokens.size() << std::endl;
 	}
 	return std::string();
 }
