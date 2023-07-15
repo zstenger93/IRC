@@ -117,20 +117,20 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 		channel.changeUserCount(userCount++);
 		return true;
 	} else if (userCount == userLimit && channel.checkMode("l")) {
-		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT
+		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT @todo
 	}
 	if (channel.checkMode("k")) {
 		std::string providedPass = extractArgument(2, message, 3);
 		if (channel.isPasswordCorrect(providedPass))
 			user.joinChannel(user, channel.getChannelName());
 		else {
-			// WRONG PASSWORD FOR THE CHANNEL
+			// WRONG PASSWORD FOR THE CHANNEL @todo
 		}
 		return true;
 	}
 	if (channel.checkMode("i")) {
 		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
-		// CANNOT JOIN MESSAGE
+		// CANNOT JOIN MESSAGE @todo
 		return true;
 	}
 	return false;
@@ -150,8 +150,6 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		std::string messageTo = extractArgument(1, message, -1);
 		if (messageTo.empty() == true)
 			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
-		std::cout << "wtf" << std::endl;
-		std::cout << messageTo << std::endl;
 		if (messageTo.compare("Marvin") == 0) {
 			std::string msg = message.substr(12);
 			bot.runAi(userFd, userIt->second.getNickName(), msg);
@@ -194,13 +192,13 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 		return;
 	}
 	channels.erase(channel);
-	// send to user
+	// send to user @todo
 	send_message_to_server(user.getUserFd(), 4, user.getNickName(), RPL_ENDOFNAMES,
 						   channelName.c_str(), COL, LEFTCHANNEL);
-	// send to everyone else on the channel
+	// send to everyone else on the channel @todo
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channelName) == true)
-			;  // send() everyone on the channel
+			;  // send() everyone on the channel @todo
 	}
 }
 
@@ -225,7 +223,7 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't on channel");
-		// RETURN NO SUCH CHANNEL ERROR
+		// RETURN NO SUCH CHANNEL ERROR @todo
 	}
 	if (channelIt->second == false) {
 		send_message_to_server(senderFd, 3, RICK, ERR_CHANOPRIVSNEEDED,
@@ -244,14 +242,14 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 	}
 
 	if (userIt->second.isInChannel(channelName) == false) {
-		// KICKUSER IS NOT IN THE CHANNEL
+		// KICKUSER IS NOT IN THE CHANNEL @todo
 	}
 
 	userIt->second.leaveChannel(users, userIt->second, channelName);
 	// send to user that he has been kicked from the channel
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channelName) == true)
-			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL
+			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL @todo
 	}
 }
 
@@ -271,10 +269,10 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 					  int senderFd) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		// RETURN NO SUCH CHANNEL ERROR
+		// RETURN NO SUCH CHANNEL ERROR @todo
 	}
 	if (channelIt->second == false) {
-		// THE USER IS NOT OPERATOR ERROR
+		// THE USER IS NOT OPERATOR ERROR @todo
 	}
 
 	std::map<int, User>::iterator userIt;
@@ -282,15 +280,15 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 		if (userIt->second.getUserName().compare(addUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		// NO SUCH USER ERROR
+		// NO SUCH USER ERROR @todo
 	}
 
 	if (userIt->second.isInChannel(channelName) == true) {
-		// USER ALREADY IN THE CHANNEL
+		// USER ALREADY IN THE CHANNEL @todo
 	}
 
 	userIt->second.channels.insert(std::make_pair(channelName, false));
-	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL
+	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL @todo
 }
 
 void Server::shutdown(std::string message) {
@@ -350,7 +348,7 @@ void Server::listChannels(std::string userName) {
 		if (userIt->second.getUserName().compare(userName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		// NO SUCH USER EXCEPTION. probably not needed
+		// NO SUCH USER EXCEPTION. probably not needed @todo
 	}
 	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), "channel", COL,
 						   "NAME");
@@ -380,6 +378,7 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	bool add;
+
 	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
@@ -397,6 +396,8 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			add = true;
 		else if (mode[0] == '-')
 			add = false;
+		else if (mode[0] == 'b' && mode.length() == 1)
+			return;
 		else {
 			send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHSERVICE, COL,
 								   "No such mode bozo");
@@ -473,23 +474,45 @@ void Server::who(int userFd, std::string message) {
 	if (Parser::getWordCount(message) > 2) {
 		send_message_to_server(userFd, 1, RICK, ERR_TOOMANYTARGETS);
 	}
+	std::map<int, User>::iterator user = users.find(userFd);
 	std::string userNames = "";
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
 		if (userIt->second.getUserFd() != userFd) {
-			userNames.append(userIt->second.getUserName() + " ");
+			send_message_to_server(userFd, 5, user->second.getNickName().c_str(), RPL_WHOREPLY,
+								   RICK, userIt->second.getNickName().c_str(), COL,
+								   userIt->second.getUserName().c_str());
 		}
 	}
-	send_message_to_server(userFd, 3, RICK, "WHO", COL, userNames.c_str());
+	send_message_to_server(userFd, 3, user->second.getNickName(), RPL_ENDOFWHO, COL,
+						   "END OF WHO LIST");
 }
+
+// :YourServerName 311 ClientNick TargetNickname UserName HostName YourServerName * :Real Name
+// :YourServerName 319 ClientNick TargetNickname :@#Channel1 @#Channel2
+// :YourServerName 312 ClientNick TargetNickname YourServerName :Server Description
+// :YourServerName 317 ClientNick TargetNickname 1234567890 :Seconds idle, signon time
+// :YourServerName 318 ClientNick TargetNickname :End of /WHOIS list.
 
 void Server::whois(int userFd, std::string message) {
 	std::string requestedUserName = extractArgument(1, message, 2);
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
 		if (userIt->second.getNickName().compare(requestedUserName) == 0) {
-			send_message_to_server(userFd, 4, RICK, "WHOIS", userIt->second.getNickName().c_str(),
-								   COL, userIt->second.getUserName().c_str());
+			// send_message_to_server(userFd, 4, RICK, RPL_WHOREPLY,
+			// 					   userIt->second.getNickName().c_str(), COL,
+			// 					   userIt->second.getUserName().c_str());
+			send_message_to_server(userFd, 4, RICK, RPL_WHOISUSER,
+								   userIt->second.getUserName().c_str(), COL,
+								   "We do not steel user personal data bozo");
+			send_message_to_server(userFd, 4, RICK, RPL_WHOISCHANNELS,
+								   userIt->second.getUserName().c_str(), COL,
+								   "@General");
+			send_message_to_server(userFd, 4, RICK, RPL_ENDOFWHOIS,
+								   userIt->second.getUserName().c_str(), COL,
+								   "END OF WHO IS LIST");
+			// needs an itterator of every single channel user has joined in @todo
+
 			break;
 		}
 	}
