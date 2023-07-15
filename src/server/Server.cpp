@@ -3,6 +3,7 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 
+
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
 Server::Server() {}
@@ -12,6 +13,7 @@ Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
 	Server::setConnectionLimits();
 	Server::inputParser(argc, argv);
+	bot.constructBot(); // creating our ai overlord
 }
 
 Server::~Server() {}

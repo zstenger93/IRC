@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include "Defines.hpp"
+#include "Bot.hpp"
 
 class User;
 class Commands;
@@ -118,6 +119,10 @@ class Server {
 	// Server admin info
 	std::string operator_name;
 	std::string operator_password;
+
+	// OUR AI OVERLORD
+	Marvin bot;
+
 };
 
 #endif
