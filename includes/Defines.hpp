@@ -112,6 +112,9 @@
 #define TIME "what's the time?"
 #define LIFE "what is the meaning of life?"
 #define GRADE "how should i grade this project?"
+#define DEATH "deathroll"
+#define LIVE "You will live another day."
+#define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
 
 // COLORS
 
