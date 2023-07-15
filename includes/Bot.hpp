@@ -42,8 +42,8 @@ class Marvin {
 	std::string helpLine;
 	std::string fail;
 	std::string grade;
-	std::string asAnAi[6];
-	// std::string jokes[85];
+	std::vector<std::string> asAnAi;
+	std::vector<std::string> jokes;
 };
 
 #endif

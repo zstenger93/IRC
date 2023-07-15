@@ -91,7 +91,7 @@ void Marvin::setBotAiModelExcuse() {
 	std::string line;
 	std::ifstream file("conf/asanai.txt");
 	while (std::getline(file, line)) {
-		asAnAi[i++] = line;
+		asAnAi.push_back(line);
 	}
 }
 
@@ -115,10 +115,10 @@ void Marvin::answerGrade(int userFd, std::string userNick) {
 }
 
 void Marvin::generateJoke(int userFd, std::string userNick) {
-	// std::srand(static_cast<unsigned int>(std::time(0)));
-	// int randomJoke = rand() % 100;
-	// send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
-	// 					   jokes[randomJoke].c_str());
+	std::srand(static_cast<unsigned int>(std::time(0)));
+	int randomJoke = rand() % 100;
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   jokes[randomJoke].c_str());
 }
 
 void Marvin::aiModelExcuse(int userFd, std::string userNick) {
@@ -128,13 +128,12 @@ void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 }
 
 void Marvin::setBotJokes() {
-	// int i = 0;
-	// std::string line;
-	// std::ifstream file("conf/jokes.txt");
-	// while (std::getline(file, line)) {
-	// 	jokes[i++] = line;
-	// 	std::cout << i << " " << line << std::endl;
-	// }
+	int i = 0;
+	std::string line;
+	std::ifstream file("conf/jokes.txt");
+	while (std::getline(file, line)) {
+		jokes.push_back(line);
+	}
 }
 
 /*___________________________________________ SETTERS
