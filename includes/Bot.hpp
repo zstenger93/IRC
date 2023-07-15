@@ -33,6 +33,7 @@ class Marvin {
 	void answerGrade(int userFd, std::string userNick);
 	void generateJoke(int userFd, std::string userNick);
 	void aiModelExcuse(int userFd, std::string userNick);
+	void listPossibleInput(int userFd, std::string userNick);
 
    private:
 	std::string botName;

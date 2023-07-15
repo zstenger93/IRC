@@ -48,12 +48,10 @@ void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 		*it = std::tolower(static_cast<unsigned char>(*it));
 	}
-	std::cout << "|" << aiCommand << "|" << std::endl;
-	std::string aiCommands[6] = {"what is the meaning of life?\r\n", "what's the time?\r\n",
-								 "help\r\n", "how should i grade this project?\r\n",
-								 "tell me a joke\r\n"};
-	std::cout << "|" << aiCommands[3] << "|" << std::endl;
-	for (int i = 0; i < 5; i++)
+	std::string aiCommands[7] = {
+		"what is the meaning of life?\r\n",		"what's the time?\r\n", "help\r\n",
+		"how should i grade this project?\r\n", "tell me a joke\r\n",	"list\r\n"};
+	for (int i = 0; i < 6; i++)
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
 			break;
@@ -73,6 +71,9 @@ void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 			break;
 		case 4:
 			generateJoke(userFd, userNick);
+			break;
+		case 5:
+			listPossibleInput(userFd, userNick);
 			break;
 		default:
 			aiModelExcuse(userFd, userNick);
@@ -127,6 +128,19 @@ void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 							   asAnAi[i].c_str());
 }
 
+void Marvin::listPossibleInput(int userFd, std::string userNick) {
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, "help");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, "list");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   "tell me a joke");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   "what's the time?");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   "what is the meaning of life?");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+						   "how should i grade this project?");
+}
+
 void Marvin::setBotJokes() {
 	int i = 0;
 	std::string line;
@@ -136,8 +150,7 @@ void Marvin::setBotJokes() {
 	}
 }
 
-/*___________________________________________ SETTERS
- * ___________________________________________*/
+/*___________________________________________ SETTERS ___________________________________________*/
 
 void Marvin::setBotName(std::string setTo) { botName = setTo; }
 void Marvin::setBotWelcomeLine(std::string setTo) { botWelcomeLine = setTo; }
@@ -147,8 +160,7 @@ void Marvin::setBotHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setBotFail(std::string setTo) { fail = setTo; }
 void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 
-/*___________________________________________ GETTERS
- * ___________________________________________*/
+/*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Marvin::getBotName() { return botName; }
 std::string Marvin::getBotWelcomeLine() { return botWelcomeLine; }
