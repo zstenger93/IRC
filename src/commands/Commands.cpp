@@ -388,16 +388,18 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
-					send_message_to_server(userIt->first, 4, RICK, RPL_CHANNELMODEIS,
-										   channelName.c_str(), COL, "The mode has been changed");
+					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
+										   "MODE", channelName.c_str(), mode.c_str(),
+										   usersIt->second.getNickName().c_str());
 			}
 		} else {
 			channelIt->second.addMode(mode, false);
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
-					send_message_to_server(userIt->first, 4, RICK, RPL_CHANNELMODEIS, COL,
-										   channelName.c_str(), "The mode has been changed");
+					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
+										   "MODE", channelName.c_str(), mode.c_str(),
+										   usersIt->second.getNickName().c_str());
 			}
 		}
 	}
@@ -491,14 +493,11 @@ void Server::motd(int userFd, std::string channelName) {
 
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
-			// send_message_to_server(userFd, 3, RICK, PRIVMSG, channelName.c_str(), COL,
-			// 					   line.c_str());
 			if (channelName.empty() == false)
 				send_message_to_server(userFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
-								   line.c_str());
+									   line.c_str());
 			else
-				send_message_to_server(userFd, 3, RICK, PRIVMSG, COL,
-								   line.c_str());
+				send_message_to_server(userFd, 3, RICK, PRIVMSG, COL, line.c_str());
 		}
 		file.close();
 	} else {
