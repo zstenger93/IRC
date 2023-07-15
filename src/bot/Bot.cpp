@@ -1,9 +1,4 @@
 #include "../../includes/Bot.hpp"
-
-#include <unistd.h>
-
-#include <cstdlib>
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 
@@ -48,11 +43,9 @@ void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 		*it = std::tolower(static_cast<unsigned char>(*it));
 	}
-	std::cout << "|" << aiCommand << "|" << std::endl;
 	std::string aiCommands[6] = {"what is the meaning of life?\r\n", "what's the time?\r\n",
 								 "help\r\n", "how should i grade this project?\r\n",
 								 "tell me a joke\r\n"};
-	std::cout << "|" << aiCommands[3] << "|" << std::endl;
 	for (int i = 0; i < 5; i++)
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
@@ -87,7 +80,6 @@ void Marvin::currentTime(int userFd, std::string userNick) {
 }
 
 void Marvin::setBotAiModelExcuse() {
-	int i = 0;
 	std::string line;
 	std::ifstream file("conf/asanai.txt");
 	while (std::getline(file, line)) {
@@ -121,6 +113,7 @@ void Marvin::generateJoke(int userFd, std::string userNick) {
 						   jokes[randomJoke].c_str());
 }
 
+// IS THE FOR LOOP IS OKAY THIS WAY ?
 void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 	for (int i = 0; i < 6; i++)
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
@@ -128,7 +121,6 @@ void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 }
 
 void Marvin::setBotJokes() {
-	int i = 0;
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
 	while (std::getline(file, line)) {
@@ -136,8 +128,7 @@ void Marvin::setBotJokes() {
 	}
 }
 
-/*___________________________________________ SETTERS
- * ___________________________________________*/
+/*___________________________________________ SETTERS ___________________________________________*/
 
 void Marvin::setBotName(std::string setTo) { botName = setTo; }
 void Marvin::setBotWelcomeLine(std::string setTo) { botWelcomeLine = setTo; }
@@ -147,8 +138,7 @@ void Marvin::setBotHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setBotFail(std::string setTo) { fail = setTo; }
 void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 
-/*___________________________________________ GETTERS
- * ___________________________________________*/
+/*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Marvin::getBotName() { return botName; }
 std::string Marvin::getBotWelcomeLine() { return botWelcomeLine; }
