@@ -46,5 +46,10 @@ std::string extractArgument(int specificArg, const std::string& message, int aCo
 	return std::string();
 }
 
+std::string extractMessage(std::string message) {
+	std::string parsedMessage = message.substr(message.find_first_of(':') + 1);
+	std::cout << "This is the parsed msg" << parsedMessage << std::endl;
+	return parsedMessage;
+}
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/

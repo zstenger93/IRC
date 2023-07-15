@@ -44,7 +44,7 @@ void Server::executeCommmandsToChannel(std::string channelName, User& user, int 
 	switch (mode) {
 		case 0:
 			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
-								   channelName.c_str(), COL, message.c_str());
+								   channelName.c_str(), COL, extractMessage(message).c_str());
 			break;
 		case 1:
 			break;
@@ -61,9 +61,10 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 	for (; userIt != users.end(); userIt++) {
 		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd) {
 			switch (mode) {
-				case 0: //sends message to the users inside of the channel
+				case 0:	 // sends message to the users inside of the channel
 					send_message_to_server(userIt->first, 4, user.getNickName().c_str(), PRIVMSG,
-										   channelName.c_str(), COL, message.c_str());
+										   channelName.c_str(), COL,
+										   extractMessage(message).c_str());
 					break;
 				case 1:
 					// SEND MESSAGE ABOUT JOINING THE CHANNEL
@@ -154,7 +155,7 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
 				send_message_to_server(receiverIt->first, 5, userIt->second.getNickName().c_str(),
 									   PRIVMSG, receiverIt->second.getNickName().c_str(), COL,
-									   message.c_str());
+									   extractMessage(message).c_str());
 				return;
 			}
 		}
