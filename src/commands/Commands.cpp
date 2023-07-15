@@ -414,9 +414,11 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
+		return;
 	}
 	if (Parser::getWordCount(message) == 2) {
-		send_message_to_server(userFd, 4, RICK, RPL_TOPIC, channelName.c_str(), COL,
+		send_message_to_server(userFd, 5, RICK, RPL_TOPIC, userIt->second.getNickName().c_str(),
+							   channelName.c_str(), COL,
 							   channelIt->second.getChannelTopic().c_str());
 	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName)) {
@@ -425,8 +427,8 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 			 usersIt++) {
 			if (usersIt->second.isInChannel(channelName) == true)
-				send_message_to_server(userIt->first, 3, RICK,
-									   channelIt->second.getChannelName().c_str(), COL,
+				send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
+									   "TOPIC", channelIt->second.getChannelName().c_str(), COL,
 									   channelIt->second.getChannelTopic().c_str());
 		}
 	}
