@@ -48,11 +48,9 @@ void Marvin::runAi(int userFd, std::string userNick, std::string message) {
 	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 		*it = std::tolower(static_cast<unsigned char>(*it));
 	}
-	std::cout << "|" << aiCommand << "|" << std::endl;
 	std::string aiCommands[6] = {"what is the meaning of life?\r\n", "what's the time?\r\n",
 								 "help\r\n", "how should i grade this project?\r\n",
 								 "tell me a joke\r\n"};
-	std::cout << "|" << aiCommands[3] << "|" << std::endl;
 	for (int i = 0; i < 5; i++)
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
