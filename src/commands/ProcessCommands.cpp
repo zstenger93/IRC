@@ -1,5 +1,6 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -19,9 +20,11 @@ int Server::processCommands(int pollId) {
 	stringLength += buffer_len;
 
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-
 	if (it->second.isConnected() == false) {
 		authenticate(message, it);
+	}
+	if (it->second.isConnected() == false) {
+		return 1;
 	}
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
@@ -39,72 +42,86 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd, int pollId) {
+void Server::commandParser(std::map<int, User>::iterator& user, std::string message, int fd,
+						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	// MODE_USER?? TOPIC_USER ?? TOPUC_OPER?? ADMIN??
-	// MISSING COMMANDS PING, WHO, TOPIC, OPER. MOTD
-	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
-								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "ADMIN"};
-	for (int i = 0; i < 15; i++) {
+	std::string commands[19] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
+								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
+								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS", "BOT"};
+	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
+	std::cout << "Command recived: " << command << " Full message: " << message
+			  << "Option choosen: " << caseId << std::endl;
 	switch (caseId) {
 		case 0:
-			user->second.sendMessage();
 			break;
 		case 1:
-			handleJoin(user->second, extractArgument(1, message, 2));
+			sendMessage(message, users, fd);
 			break;
 		case 2:
-			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
+			if (Parser::getWordCount(message) == 2)
+				handleJoin(message, user->second, extractArgument(1, message, 2));
+			else
+				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 3:
-			user->second.kickUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
 			break;
 		case 4:
-			user->second.inviteUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user->second.kickUser(users, extractArgument(1, message, 3),
+								  extractArgument(2, message, 3), fd);
 			break;
 		case 5:
-			user->second.quitServer();
-			users.erase(users.find(user->second.getUserFd()));
-			removeUser(pollId);
+			user->second.inviteUser(users, extractArgument(1, message, 3),
+									extractArgument(2, message, 3), fd);
 			break;
 		case 6:
-			user->second.setNick(user, extractArgument(1, message, 2));
+			removeUser(pollId);	 // quitServer();
 			break;
 		case 7:
-			user->second.listChannels(); 
+			setNick(user, extractArgument(1, message, 2));
 			break;
 		case 8:
-			user->second.modeUser(); 
+			listChannels(user->second.getNickName());
 			break;
 		case 9:
-			user->second.modeOper();
+			mode(message, fd);
 			break;
 		case 10:
-			user->second.topicUser();
+			channelTopic(message, extractArgument(1, message, -1), fd);
 			break;
 		case 11:
-			user->second.topicOper();
+			// CAP
 			break;
-		case 12:;
-			// just for silence the error, handled in authentication for /CAP
-			user->second.quitServer();
+		case 12:
+			// to automaticly join to general after providing the right /PASS
+			handleJoin(message, user->second, "#General");
 			break;
-		case 13:;
-			//to automaticly join to general after providing the right /PASS
-			handleJoin(user->second, "#General");
+		case 13:
+			if (Parser::getWordCount(message) == 3) shutdown(message);
 			break;
 		case 14:
-			shutdown();
+			who(fd, message);
+			break;
+		case 15:
+			user->second.ping(message, fd);
+			break;
+		case 16:
+			motd(fd, extractArgument(2, message, 3));
+			break;
+		case 17:
+			whois(fd, message);
+			break;
+		case 18:
+			bot.runAi(fd, user->second.getNickName(), message);
 			break;
 		default:
-			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
 			break;
 	}
 }

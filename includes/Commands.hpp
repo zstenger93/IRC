@@ -23,7 +23,8 @@ class Commands {
    private:
 };
 
-void send_message_to_server(int fd, int count, ...);
+void send_message_to_server(int fd, int count, std::string prefix, ...);
 std::string extractArgument(int specificArg, const std::string& message, int aCount);
+std::string extractMessage(std::string message);
 
 #endif
