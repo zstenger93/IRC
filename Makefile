@@ -46,7 +46,10 @@ $(NAME): $(OBJS)
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@echo "$(GREEN)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 # @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
+	@echo "$(GREEN)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
+
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
