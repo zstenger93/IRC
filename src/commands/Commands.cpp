@@ -441,10 +441,12 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 // optional:
 // error:
 void User::ping(std::string message, int userFd) {
-	send_message_to_server(userFd, 4, RICK, "PONG", RICK, COL,
-						   message.c_str());  // NEED TO BE written what we need to
-											  // return, might need to fix the preifx need to parse
-											  // the message, right now prints all of it
+	if (message.length() < 6) return;
+	send_message_to_server(
+		userFd, 3, RICK, "PONG", COL,
+		message.substr(5).c_str());	 // NEED TO BE written what we need to
+									 // return, might need to fix the preifx need to parse
+									 // the message, right now prints all of it
 }
 
 void Server::who(int userFd, std::string message) {
