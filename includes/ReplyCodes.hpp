@@ -54,6 +54,7 @@
 # define    RPL_WHOISIDLE			"317"
 # define    RPL_ENDOFWHOIS			"318"
 # define    RPL_WHOISCHANNELS		"319"
+# define    RPL_STARTLIST           "321"
 # define    RPL_LIST				"322"
 # define    RPL_LISTEND				"323"
 # define    RPL_CHANNELMODEIS		"324"

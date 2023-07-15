@@ -1,8 +1,8 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
-#include "../../includes/Parser.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
@@ -42,73 +42,83 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd,
+void Server::commandParser(std::map<int, User>::iterator& user, std::string message, int fd,
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[16] = {"PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
+	std::string commands[19] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
 								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO", "PING",	"MOTD"};
-	for (int i = 0; i < 17; i++) {
+								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS", "BOT"};
+	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
+	std::cout << "Command recived: " << command << " Full message: " << message
+			  << "Option choosen: " << caseId << std::endl;
 	switch (caseId) {
 		case 0:
-			sendMessage(message, users, fd);
 			break;
 		case 1:
+			sendMessage(message, users, fd);
+			break;
+		case 2:
 			if (Parser::getWordCount(message) == 2)
 				handleJoin(message, user->second, extractArgument(1, message, 2));
 			else
 				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
-		case 2:
+		case 3:
 			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
 			break;
-		case 3:
-			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3));
-			break;
 		case 4:
-			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3));
+			user->second.kickUser(users, extractArgument(1, message, 3),
+								  extractArgument(2, message, 3), fd);
 			break;
 		case 5:
-			removeUser(pollId);	 // quitServer();
+			user->second.inviteUser(users, extractArgument(1, message, 3),
+									extractArgument(2, message, 3), fd);
 			break;
 		case 6:
-			user->second.setNick(user, extractArgument(1, message, 2));
+			removeUser(pollId);	 // quitServer();
 			break;
 		case 7:
-			listChannels(user->second.getUserName());
+			setNick(user, extractArgument(1, message, 2));
 			break;
 		case 8:
-			mode(message, fd);
+			listChannels(user->second.getNickName());
 			break;
 		case 9:
-			channelTopic(message, extractArgument(1, message, 2), fd);
+			mode(message, fd);
 			break;
 		case 10:
-			// CAP
+			channelTopic(message, extractArgument(1, message, -1), fd);
 			break;
 		case 11:
+			// CAP
+			break;
+		case 12:
 			// to automaticly join to general after providing the right /PASS
 			handleJoin(message, user->second, "#General");
 			break;
-		case 12:
-			shutdown();
-			break;
-		case 13:;
-			user->second.who();
+		case 13:
+			if (Parser::getWordCount(message) == 3) shutdown(message);
 			break;
 		case 14:
-			user->second.ping();
+			who(fd, message);
 			break;
 		case 15:
-			motd(user->second);
+			user->second.ping(message, fd);
+			break;
+		case 16:
+			motd(fd, extractArgument(2, message, 3));
+			break;
+		case 17:
+			whois(fd, message);
+			break;
+		case 18:
+			bot.runAi(fd, user->second.getNickName(), message);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
