@@ -28,6 +28,16 @@ our server else
 
 ## processCommands()
 
+### normal client commands
+
+handling all the choosen commands in a switch statement which are:
+
+join, part, notice, privmsg, kick, invite, quit, nick, list, mode, topic, cap, pass, admin, who, ping, motd, who, whois
+
+### bot command/s
+
+after the first /BOT command the bot will be available to talk with in a private channel without the /BOT command
+
 Here we handle most of the available commands on our server
 
 <table>
