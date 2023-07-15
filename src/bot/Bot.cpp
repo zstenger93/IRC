@@ -136,8 +136,7 @@ void Marvin::setBotJokes() {
 	}
 }
 
-/*___________________________________________ SETTERS
- * ___________________________________________*/
+/*___________________________________________ SETTERS ___________________________________________*/
 
 void Marvin::setBotName(std::string setTo) { botName = setTo; }
 void Marvin::setBotWelcomeLine(std::string setTo) { botWelcomeLine = setTo; }
@@ -147,8 +146,7 @@ void Marvin::setBotHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setBotFail(std::string setTo) { fail = setTo; }
 void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 
-/*___________________________________________ GETTERS
- * ___________________________________________*/
+/*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Marvin::getBotName() { return botName; }
 std::string Marvin::getBotWelcomeLine() { return botWelcomeLine; }
