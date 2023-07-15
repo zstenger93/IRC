@@ -42,7 +42,7 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator & user, std::string message, int fd,
+void Server::commandParser(std::map<int, User>::iterator& user, std::string message, int fd,
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
@@ -87,7 +87,7 @@ void Server::commandParser(std::map<int, User>::iterator & user, std::string mes
 			setNick(user, extractArgument(1, message, 2));
 			break;
 		case 8:
-			listChannels(user->second.getUserName());
+			listChannels(user->second.getNickName());
 			break;
 		case 9:
 			mode(message, fd);

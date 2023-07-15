@@ -75,7 +75,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
 										   user.getNickName().c_str(), "=", channelName.c_str(),
 										   COL, userIt->second.getNickName().c_str());
-				case 3:
 				default:
 					std::cerr << "Error in the switch" << std::endl;
 					break;
@@ -319,7 +318,7 @@ void Server::setNick(std::map<int, User>::iterator& it, std::string newNickname)
 		for (; userIt != users.end(); userIt++) {
 			if (userIt->first != it->first)
 				send_message_to_server(userIt->first, 2, it->second.getNickName().c_str(), "NICK",
-							   newNickname.c_str());
+									   newNickname.c_str());
 		}
 		send_message_to_server(it->first, 2, it->second.getNickName().c_str(), "NICK",
 							   newNickname.c_str());
@@ -346,10 +345,15 @@ void Server::listChannels(std::string userName) {
 	if (userIt == users.end()) {
 		// NO SUCH USER EXCEPTION. probably not needed
 	}
+	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), "channel", COL,
+						   "NAME");
 	for (std::map<std::string, Channel>::iterator channelIt = channels.begin();
 		 channelIt != channels.end(); channelIt++) {
-		/// SEND to user channelIt->first;
+		send_message_to_server(userIt->first, 3, RICK, RPL_LIST, userName.c_str(),
+							   channelIt->second.getChannelName().c_str());
 	}
+	send_message_to_server(userIt->first, 4, RICK, RPL_LISTEND, userName.c_str(), COL,
+						   "END OF CHANNEL LIST");
 }
 
 // tf it is doing:
