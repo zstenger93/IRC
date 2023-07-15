@@ -6,6 +6,8 @@
 #define NOT_FOUND 1
 #define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
+#include "ReplyCodes.hpp"
+
 // DEFAULT HEADERS
 
 #include <arpa/inet.h>
@@ -127,8 +129,6 @@
 // \00315: Light grey (silver)
 // \0030: end color
 
-// MOTD
-
-#define MOTD "When I was young I used to think that USB is a country next to USA"
+// MOTD	
 
 #endif

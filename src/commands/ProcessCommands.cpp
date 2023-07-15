@@ -42,14 +42,14 @@ int Server::processCommands(int pollId) {
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd,
+void Server::commandParser(std::map<int, User>::iterator& user, std::string message, int fd,
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[18] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
-								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS"};
-	for (int i = 0; i < 18; i++) {
+	std::string commands[18] = {"NOTICE", "PRIVMSG", "JOIN", "PART", "KICK",  "INVITE",
+								"QUIT",	  "NICK",	 "LIST", "MODE", "TOPIC", "CAP",
+								"PASS",	  "ADMIN",	 "WHO",	 "PING", "MOTD",  "WHOIS"};
+	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
@@ -59,7 +59,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			  << "Option choosen: " << caseId << std::endl;
 	switch (caseId) {
 		case 0:
-			break ;
+			break;
 		case 1:
 			sendMessage(message, users, fd);
 			break;
@@ -74,26 +74,26 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			break;
 		case 4:
 			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3));
+								  extractArgument(2, message, 3), fd);
 			break;
 		case 5:
 			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3));
+									extractArgument(2, message, 3), fd);
 			break;
 		case 6:
 			removeUser(pollId);	 // quitServer();
 			break;
 		case 7:
-			user->second.setNick(user, extractArgument(1, message, 2));
+			setNick(user, extractArgument(1, message, 2));
 			break;
 		case 8:
-			listChannels(user->second.getUserName());
+			listChannels(user->second.getNickName());
 			break;
 		case 9:
 			mode(message, fd);
 			break;
 		case 10:
-			channelTopic(message, extractArgument(1, message, 2), fd);
+			channelTopic(message, extractArgument(1, message, -1), fd);
 			break;
 		case 11:
 			// CAP
@@ -112,7 +112,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.ping(message, fd);
 			break;
 		case 16:
-			motd(fd);
+			motd(fd, extractArgument(2, message, 3));
 			break;
 		case 17:
 			whois(fd, message);
