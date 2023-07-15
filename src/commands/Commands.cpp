@@ -484,14 +484,21 @@ void Server::whois(int userFd, std::string message) {
 // // must have:
 // // optional:
 // // error:
-void Server::motd(int userFd) {
+void Server::motd(int userFd, std::string channelName) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::ifstream file("conf/motd.txt");
 	std::string line;
 
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
-			send_message_to_server(userFd, 3, RICK, PRIVMSG, COL, line.c_str());
+			// send_message_to_server(userFd, 3, RICK, PRIVMSG, channelName.c_str(), COL,
+			// 					   line.c_str());
+			if (channelName.empty() == false)
+				send_message_to_server(userFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
+								   line.c_str());
+			else
+				send_message_to_server(userFd, 3, RICK, PRIVMSG, COL,
+								   line.c_str());
 		}
 		file.close();
 	} else {

@@ -112,7 +112,7 @@ void Server::commandParser(std::map<int, User>::iterator user, std::string messa
 			user->second.ping(message, fd);
 			break;
 		case 16:
-			motd(fd);
+			motd(fd, extractArgument(2, message, 3));
 			break;
 		case 17:
 			whois(fd, message);
