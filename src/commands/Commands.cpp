@@ -98,8 +98,6 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 			name, user.getUserFd(), 1, message,
 			user);	// LOOPS TROUGHT USERS AND SEND INFORMATION THAT USER JOINED
 		channelTopic(message, channelIt->first, user.getUserFd());	// SENDS TOPIC TO THE USER
-		// send_message_to_server(user.getUserFd(), 3, std::string prefix, ...); // START OF THE
-		// LIST
 		loopTroughtTheUsersInChan(
 			name, user.getUserFd(), 2, message,
 			user);	// LOOPS TROUGHT THE USERS IN CHANNEL AND PRINTS OUT A LIST ELEMENT
@@ -381,8 +379,7 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			 modeIt != modes.end(); modeIt++) {
 			if (modeIt->second == true) mode += modeIt->first;
 		}
-		send_message_to_server(userFd, 4, RICK, RPL_CHANNELMODEIS, channelName.c_str(), COL,
-							   mode.c_str());
+		send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL, mode.c_str());
 	} else if (Parser::getWordCount(message) == 3 &&
 			   userIt->second.isOperatorInChannel(channelName)) {
 		channelName = extractArgument(1, message, 3);
@@ -432,9 +429,8 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 		return;
 	}
 	if (Parser::getWordCount(message) == 2) {
-		send_message_to_server(userFd, 5, RICK, RPL_TOPIC, userIt->second.getNickName().c_str(),
-							   channelName.c_str(), COL,
-							   channelIt->second.getChannelTopic().c_str());
+		send_message_to_server(userFd, 4, RICK, RPL_TOPIC, userIt->second.getNickName().c_str(),
+							   channelName.c_str(), channelIt->second.getChannelTopic().c_str());
 	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName)) {
 		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
