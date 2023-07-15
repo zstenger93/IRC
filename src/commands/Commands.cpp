@@ -375,7 +375,7 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	bool add;
-	
+
 	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
@@ -485,14 +485,31 @@ void Server::who(int userFd, std::string message) {
 						   "END OF WHO LIST");
 }
 
+// :YourServerName 311 ClientNick TargetNickname UserName HostName YourServerName * :Real Name
+// :YourServerName 319 ClientNick TargetNickname :@#Channel1 @#Channel2
+// :YourServerName 312 ClientNick TargetNickname YourServerName :Server Description
+// :YourServerName 317 ClientNick TargetNickname 1234567890 :Seconds idle, signon time
+// :YourServerName 318 ClientNick TargetNickname :End of /WHOIS list.
+
 void Server::whois(int userFd, std::string message) {
 	std::string requestedUserName = extractArgument(1, message, 2);
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
 		if (userIt->second.getNickName().compare(requestedUserName) == 0) {
-			send_message_to_server(userFd, 4, RICK, RPL_WHOREPLY,
-								   userIt->second.getNickName().c_str(), COL,
-								   userIt->second.getUserName().c_str());
+			// send_message_to_server(userFd, 4, RICK, RPL_WHOREPLY,
+			// 					   userIt->second.getNickName().c_str(), COL,
+			// 					   userIt->second.getUserName().c_str());
+			send_message_to_server(userFd, 4, RICK, RPL_WHOISUSER,
+								   userIt->second.getUserName().c_str(), COL,
+								   "We do not steel user personal data bozo");
+			send_message_to_server(userFd, 4, RICK, RPL_WHOISCHANNELS,
+								   userIt->second.getUserName().c_str(), COL,
+								   "@General");
+			send_message_to_server(userFd, 4, RICK, RPL_ENDOFWHOIS,
+								   userIt->second.getUserName().c_str(), COL,
+								   "END OF WHO IS LIST");
+			// needs an itterator of every single channel user has joined in @todo
+
 			break;
 		}
 	}
