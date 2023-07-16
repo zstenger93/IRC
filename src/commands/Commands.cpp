@@ -120,20 +120,31 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 		channel.changeUserCount(userCount++);
 		return true;
 	} else if (userCount == userLimit && channel.checkMode("l")) {
-		// CANNOT JOIN THE USER LIMIT IS: USERLIMIT @todo
+		send_message_to_server(
+			user.getUserFd(), 5, RICK, ERR_CHANNELISFULL, user.getNickName().c_str(),
+			channel.getChannelName().c_str(), COL,
+			"THERE ARE TOO MANY RICKS ON THE CHANNEL (+l)");  // should be checked if this is
+															  // working
 	}
 	if (channel.checkMode("k")) {
 		std::string providedPass = extractArgument(2, message, 3);
 		if (channel.isPasswordCorrect(providedPass))
 			user.joinChannel(user, channel.getChannelName(), 0);
 		else {
-			// WRONG PASSWORD FOR THE CHANNEL @todo
+			send_message_to_server(
+				user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
+				channel.getChannelName().c_str(), COL,
+				"ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD (+k)");	// should be checked if this
+																		// is working
 		}
 		return true;
 	}
 	if (channel.checkMode("i")) {
 		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
-		// CANNOT JOIN MESSAGE @todo
+		send_message_to_server(
+			user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN, user.getNickName().c_str(),
+			channel.getChannelName().c_str(), COL,
+			"YOU NEED AN INVITE FROM THE RICK (+i)");  // should be checked if this is working
 		return true;
 	}
 	return false;
@@ -258,12 +269,10 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
-							   users.find(senderFd)->second.getNickName().c_str(),
-							   channelName.c_str(), COL, "USER ain't on channel");
+		send_message_to_server(senderFd, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 	}
 	if (userIt->second.isInChannel(channelName) == false) {
-		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
+		send_message_to_server(senderFd, 5, RICK, ERR_USERNOTINCHANNEL,
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't on channel");
 	}
@@ -284,13 +293,17 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 
 void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName,
 					  int senderFd) {  // users
+
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		send_message_to_server(senderFd, 4, RICK, ERR_NOSUCHCHANNEL,
-							   users.find(senderFd)->second.getNickName().c_str(), COL, NOSUCHCHAN);
+		send_message_to_server(senderFd, 2, RICK, ERR_NOSUCHCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str());
+		return;
 	}
 	if (channelIt->second == false) {
-		// THE USER IS NOT OPERATOR ERROR @todo
+		send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
+							   "You ain't the master RICK ROLLER");
+		return;
 	}
 
 	std::map<int, User>::iterator userIt;
@@ -298,15 +311,21 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 		if (userIt->second.getUserName().compare(addUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		// NO SUCH USER ERROR @todo
+		send_message_to_server(senderFd, 2, RICK, ERR_NOSUCHNICK, addUserName.c_str());
+		return;
 	}
 
 	if (userIt->second.isInChannel(channelName) == true) {
-		// USER ALREADY IN THE CHANNEL @todo
+		send_message_to_server(senderFd, 2, RICK, ERR_USERONCHANNEL, addUserName.c_str());
+		return;
 	}
-
-	userIt->second.channels.insert(std::make_pair(channelName, false));
-	// USER HAS BEEN INVITED AND ADDED TO THE CHANNEL @todo
+	userIt->second.channels.insert(
+		std::make_pair(channelName, false));  // Proably should not do this xd
+	send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
+						   "Your invite was rolled");
+	send_message_to_server(userIt->first, 5, RICK, "NOTICE", userIt->second.getNickName().c_str(),
+						   COL, "You are invited to join the conspiracy at",
+						   channelName.c_str());  // should be tested
 }
 
 void Server::shutdown(std::string message) {
@@ -366,7 +385,7 @@ void Server::listChannels(std::string userName) {
 		if (userIt->second.getUserName().compare(userName) == 0) break;
 	}
 	if (userIt == users.end()) {
-		// NO SUCH USER EXCEPTION. probably not needed @todo
+		send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 	}
 	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), "channel", COL,
 						   "NAME");
@@ -506,43 +525,12 @@ void Server::who(int userFd, std::string message) {
 						   "END OF WHO LIST");
 }
 
-// :YourServerName 311 ClientNick TargetNickname UserName HostName YourServerName * :Real Name
-// :YourServerName 319 ClientNick TargetNickname :@#Channel1 @#Channel2
-// :YourServerName 312 ClientNick TargetNickname YourServerName :Server Description
-// :YourServerName 317 ClientNick TargetNickname 1234567890 :Seconds idle, signon time
-// :YourServerName 318 ClientNick TargetNickname :End of /WHOIS list.
-
 void Server::whois(int userFd, std::string message) {
-	std::string requestedUserName = extractArgument(1, message, 2);
-	std::map<int, User>::iterator userIt = users.begin();
-	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.getNickName().compare(requestedUserName) == 0) {
-			// send_message_to_server(userFd, 4, RICK, RPL_WHOREPLY,
-			// 					   userIt->second.getNickName().c_str(), COL,
-			// 					   userIt->second.getUserName().c_str());
-			send_message_to_server(userFd, 4, RICK, RPL_WHOISUSER,
-								   userIt->second.getUserName().c_str(), COL,
-								   "We do not steel user personal data bozo");
-			send_message_to_server(userFd, 4, RICK, RPL_WHOISCHANNELS,
-								   userIt->second.getUserName().c_str(), COL, "@General");
-			send_message_to_server(userFd, 4, RICK, RPL_ENDOFWHOIS,
-								   userIt->second.getUserName().c_str(), COL, "END OF WHO IS LIST");
-			// needs an itterator of every single channel user has joined in @todo
-
-			break;
-		}
-	}
-	if (userIt == users.end()) {
-		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
-	}
+	std::map<int, User>::iterator user = users.find(userFd);
+	send_message_to_server(userFd, 4, RICK, PRIVMSG, user->second.getNickName().c_str(), COL,
+						   "We do not steel user data BOZO");
 }
 
-// // tf it is doing:
-// // command sent from the client:
-// // code:
-// // must have:
-// // optional:
-// // error:
 void Server::motd(int userFd, std::string channelName) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::ifstream file("conf/motd.txt");

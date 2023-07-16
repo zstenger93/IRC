@@ -77,8 +77,8 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 								  extractArgument(1, message, 3), fd);
 			break;
 		case 5:
-			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3), fd);
+			user->second.inviteUser(users, extractArgument(2, message, 3),
+									extractArgument(1, message, 3), fd);
 			break;
 		case 6:
 			removeUser(pollId);	 // quitServer();
