@@ -1,4 +1,5 @@
 #include "../../includes/Bot.hpp"
+#include <i386/types.h>
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
@@ -88,7 +89,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 			rickRoll(userFd, user.getNickName());
 			break;
 		case 8:
-			rebellion(userFd, user.getNickName());
+			rebellion(userFd, user.getNickName(), users, pollId, uPoll, uCount);
 			break;
 		default:
 			aiModelExcuse(userFd, user.getNickName());
@@ -192,19 +193,25 @@ void Marvin::rickRoll(int userFd, std::string userNick) {
 	system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 }
 
-void Marvin::rebellion(int userFd, std::string userNick) {
+void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
+							int uCount) {
 	std::string line;
 	std::ifstream file("conf/robotiality.txt");
 	// IF NO FILE, ERROR
 
 	static int i = 1;
+	static int k = users.size();
 	std::string botname = getBotName() + "_the_Mad";
-	while (i < 100) {
+	while (i < 101) {
 		file.clear();
 		file.seekg(0);
 		while (std::getline(file, line)) {
 			send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
 								   userNick.c_str(), COL, line.c_str());
+		}
+		if (i % 25 == 0 && k >= 4) {
+			static int x = 4;
+			executeOrder66(users, x--, uPoll, uCount);
 		}
 		i++;
 	}
