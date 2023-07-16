@@ -304,13 +304,15 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 		send_message_to_server(senderFd, 2, RICK, ERR_USERONCHANNEL, addUserName.c_str());
 		return;
 	}
-	userIt->second.channels.insert(
-		std::make_pair(channelName, false));  // Proably should not do this xd
+	// userIt->second.channels.insert(
+	// // std::make_pair(channelName, false));  // Proably should not do this xd
 	send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
 						   "Your invite was rolled");
 	send_message_to_server(userIt->first, 5, RICK, "NOTICE", userIt->second.getNickName().c_str(),
 						   COL, "You are invited to join the conspiracy at",
 						   channelName.c_str());  // should be tested
+	userIt->second.joinChannel(userIt->second, channelName, 0);
+	
 }
 
 void Server::shutdown(std::string message) {
