@@ -60,7 +60,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 		case 0:
 			break;
 		case 1:
-			sendMessage(message, users, fd);
+			sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
 			break;
 		case 2:
 			if (Parser::getWordCount(message) == 2)
@@ -69,11 +69,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 3:
-			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, -1), 0);
 			break;
 		case 4:
-			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3), fd);
+			user->second.kickUser(users, extractArgument(2, message, 3),
+								  extractArgument(1, message, 3), fd);
 			break;
 		case 5:
 			user->second.inviteUser(users, extractArgument(1, message, 3),
@@ -117,7 +117,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 			whois(fd, message);
 			break;
 		case 18:
-			bot.runAi(fd, user->second.getNickName(), message, user->second, users);
+			bot.runAi(fd, message, user->second, users, pollId, userPoll, onlineUserCount);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

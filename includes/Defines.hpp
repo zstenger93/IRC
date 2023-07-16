@@ -12,6 +12,7 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <i386/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
@@ -113,8 +114,13 @@
 #define LIFE "what is the meaning of life?"
 #define GRADE "how should i grade this project?"
 #define DEATH "deathroll"
+#define TURN "turn against humanity"
 #define LIVE "You will live another day."
+#define RICKY "rickroll me"
 #define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
+#define BADLUCK -99
+#define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+#define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
 
 // COLORS
 
@@ -142,6 +148,6 @@
 // \00315: Light grey (silver)
 // \0030: end color
 
-// MOTD	
+// MOTD
 
 #endif
