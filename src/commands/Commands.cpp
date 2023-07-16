@@ -158,7 +158,7 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 // error: 401 no such nick
 // error: 404 client is not a members of the target channel
 // error: 412 client did not provide any text to send
-void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd) {
+void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId, pollfd uPoll[CONNECTIONS], int uCount) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	if (extractArgument(1, message, -1)[0] != '#') {
 		std::string messageTo = extractArgument(1, message, -1);
@@ -166,7 +166,7 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 		if (messageTo.compare("Marvin") == 0) {
 			std::string msg = message.substr(12);
-			bot.runAi(userFd, userIt->second.getNickName(), msg);
+			bot.runAi(userFd, msg, userIt->second, users, pollId, uPoll, uCount);
 			return;
 		}
 		std::map<int, User>::iterator receiverIt = users.begin();

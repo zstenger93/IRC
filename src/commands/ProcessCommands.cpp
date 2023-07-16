@@ -61,7 +61,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 		case 0:
 			break;
 		case 1:
-			sendMessage(message, users, fd);
+			sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
 			break;
 		case 2:
 			if (Parser::getWordCount(message) == 2)
@@ -118,7 +118,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 			whois(fd, message);
 			break;
 		case 18:
-			bot.runAi(fd, user->second.getNickName(), message);
+			bot.runAi(fd, message, user->second, users, pollId, userPoll, onlineUserCount);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

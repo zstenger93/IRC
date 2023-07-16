@@ -56,7 +56,7 @@ class Server {
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
-	void sendMessage(std::string message, std::map<int, User> &users, int userFd);
+	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId, pollfd uPoll[CONNECTIONS], int uCount);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);
 	void executeCommmandsToChannel(std::string channelName, User &user, int mode,
@@ -122,7 +122,6 @@ class Server {
 
 	// OUR AI OVERLORD
 	Marvin bot;
-
 };
 
 #endif

@@ -3,6 +3,8 @@
 
 #include "Defines.hpp"
 
+class User;
+
 class Marvin {
    public:
 	Marvin();
@@ -26,13 +28,21 @@ class Marvin {
 	std::string getBotGrade();
 	std::string getBotJoke();
 	std::string extractFromConfig(std::string lineToFind);
-	void runAi(int userFd, std::string userNick, std::string message);
+	void runAi(int userFd, std::string message, User& user, std::map<int, User>& users, int pollId,
+			   pollfd uPoll[CONNECTIONS], int uCount);
 	void currentTime(int userFd, std::string userNick);
 	void answerTmol(int userFd, std::string userNick);
 	void answerHelp(int userFd, std::string userNick);
 	void answerGrade(int userFd, std::string userNick);
 	void generateJoke(int userFd, std::string userNick);
 	void aiModelExcuse(int userFd, std::string userNick);
+	void listPossibleInput(int userFd, std::string userNick);
+	int deathRoll(int userFd, std::string userNick);
+	void executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
+						int uCount);
+	void rickRoll(int userFd, std::string userNick);
+	void rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId,
+				   pollfd uPoll[CONNECTIONS], int uCount);
 
    private:
 	std::string botName;
