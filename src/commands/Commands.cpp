@@ -93,6 +93,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 		send_message_to_server(user.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
 							   user.getNickName().c_str(), name.c_str(), COL,
 							   "END of NAMES LIST");  // END OF THE LIST
+		listChannels(user.getNickName());
 	}
 }
 
@@ -115,8 +116,7 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 		if (channel.isPasswordCorrect(providedPass)) {
 			user.joinChannel(user, channel.getChannelName(), 0);
 			return true;
-		}
-		else {
+		} else {
 			send_message_to_server(
 				user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
 				channel.getChannelName().c_str(), COL,
@@ -305,15 +305,32 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 		send_message_to_server(senderFd, 2, RICK, ERR_USERONCHANNEL, addUserName.c_str());
 		return;
 	}
-	// userIt->second.channels.insert(
-	// // std::make_pair(channelName, false));  // Proably should not do this xd
 	send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
 						   "Your invite was rolled");
 	send_message_to_server(userIt->first, 5, RICK, "NOTICE", userIt->second.getNickName().c_str(),
 						   COL, "You are invited to join the conspiracy at",
 						   channelName.c_str());  // should be tested
 	userIt->second.joinChannel(userIt->second, channelName, 0);
-	
+	std::map<int, User>::iterator usersIt;
+	// send_message_to_server(userIt->first, 4, userIt->second.getNickName().c_str(), "TOPIC",
+	// 							   userIt->second.getNickName().c_str() , COL,
+	// 							   channelIt->second.);// well kinda fucked up can not send
+	// topic....
+	for (usersIt = users.begin(); userIt != users.end(); userIt++) {
+		if (userIt->first != usersIt->first) {
+			send_message_to_server(usersIt->first, 4, userIt->second.getNickName(), "JOIN",
+								   channelName.c_str(), COL, channelName.c_str());
+			send_message_to_server(userIt->first, 6, RICK, RPL_NAMREPLY,
+								   userIt->second.getNickName().c_str(), "=", channelName.c_str(),
+								   COL, usersIt->second.getNickName().c_str());
+		}
+		send_message_to_server(userIt->second.getUserFd(), 6, RICK, RPL_NAMREPLY,
+							   userIt->second.getNickName().c_str(), "=", channelName.c_str(), COL,
+							   "Marvin");
+		send_message_to_server(userIt->second.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
+							   userIt->second.getNickName().c_str(), channelName.c_str(), COL,
+							   "END of NAMES LIST");
+	}
 }
 
 void Server::shutdown(std::string message) {
@@ -437,7 +454,8 @@ void Server::mode(std::string message, int userFd) {  // channelName
 				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
 			}
 			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4) {
-				channelIt->second.setChannelUserLimit(std::atoi(extractArgument(3, message, 4).c_str()));
+				channelIt->second.setChannelUserLimit(
+					std::atoi(extractArgument(3, message, 4).c_str()));
 			}
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
