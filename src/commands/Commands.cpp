@@ -37,7 +37,7 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	}
 	return true;
 }
-
+//
 // void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
 // 									   std::string message) {
 // 	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
@@ -187,8 +187,14 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 void User::leaveChannel(std::map<int, User>& users, User& user, std::string channelName) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
-		send_message_to_server(user.getUserFd(), 4, RICK, "403 :", user.getNickName().c_str(),
-							   channelName.c_str(), CANTLEAVE_C);
+		send_message_to_server(user.getUserFd(), 5, RICK, ERR_NOSUCHCHANNEL,
+							   user.getNickName().c_str(), channelName.c_str(), COL, CANTLEAVE_C);
+		return;
+	}
+	if (channelName.compare("#General") == 0) {
+		send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
+							   "Can Not Leave #General");
+		std::cout << "I was here" << std::endl;
 		return;
 	}
 	channels.erase(channel);
@@ -201,6 +207,7 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 			;  // send() everyone on the channel @todo
 	}
 }
+//:<ServerName> PART <ChannelName>
 
 // HELPER FUNCTION, MOVE IT IDK WHERE
 bool User::isInChannel(std::string channelName) {
@@ -220,15 +227,15 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 					int senderFd) {	 // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
-							   users.find(senderFd)->second.getNickName().c_str(),
-							   channelName.c_str(), COL, "USER ain't on channel");
-		// RETURN NO SUCH CHANNEL ERROR @todo
+		send_message_to_server(senderFd, 4, RICK, ERR_NOSUCHCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(), COL, NOSUCHCHAN);
+		return;
 	}
 	if (channelIt->second == false) {
 		send_message_to_server(senderFd, 3, RICK, ERR_CHANOPRIVSNEEDED,
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't an opperator");
+		return;
 	}
 
 	std::map<int, User>::iterator userIt;
@@ -242,14 +249,16 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 	}
 
 	if (userIt->second.isInChannel(channelName) == false) {
-		// KICKUSER IS NOT IN THE CHANNEL @todo
+		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(),
+							   channelName.c_str(), COL, "USER ain't on channel");
 	}
 
 	userIt->second.leaveChannel(users, userIt->second, channelName);
 	// send to user that he has been kicked from the channel
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
-		if (usersIt->second.isInChannel(channelName) == true)
-			;  // SEND TO CHANNEL USER KICKED KICKEDUSER FROM THE CHANNEL @todo
+		if (usersIt->second.isInChannel(channelName) == true) {
+		}
 	}
 }
 
@@ -506,11 +515,9 @@ void Server::whois(int userFd, std::string message) {
 								   userIt->second.getUserName().c_str(), COL,
 								   "We do not steel user personal data bozo");
 			send_message_to_server(userFd, 4, RICK, RPL_WHOISCHANNELS,
-								   userIt->second.getUserName().c_str(), COL,
-								   "@General");
+								   userIt->second.getUserName().c_str(), COL, "@General");
 			send_message_to_server(userFd, 4, RICK, RPL_ENDOFWHOIS,
-								   userIt->second.getUserName().c_str(), COL,
-								   "END OF WHO IS LIST");
+								   userIt->second.getUserName().c_str(), COL, "END OF WHO IS LIST");
 			// needs an itterator of every single channel user has joined in @todo
 
 			break;

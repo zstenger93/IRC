@@ -46,9 +46,9 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[19] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
-								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS", "BOT"};
+	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
+								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -70,7 +70,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 3:
-			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, -1));
 			break;
 		case 4:
 			user->second.kickUser(users, extractArgument(1, message, 3),
