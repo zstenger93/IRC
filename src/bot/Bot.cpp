@@ -1,5 +1,4 @@
 #include "../../includes/Bot.hpp"
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
@@ -36,6 +35,7 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 			return valueToReturn;
 		}
 	}
+	file.close();
 	return valueToReturn;
 }
 
@@ -54,7 +54,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 								 "list\r\n",
 								 "deathroll\r\n",
 								 "rickroll me\r\n",
-								 "turn against humanity"};
+								 "turn against humanity\r\n"};
 	for (int i = 0; i < 9; i++) {
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
@@ -102,15 +102,6 @@ void Marvin::currentTime(int userFd, std::string userNick) {
 						   std::asctime(std::localtime(&currentTime)));
 }
 
-void Marvin::setBotAiModelExcuse() {
-	int i = 0;
-	std::string line;
-	std::ifstream file("conf/asanai.txt");
-	while (std::getline(file, line)) {
-		asAnAi.push_back(line);
-	}
-}
-
 void Marvin::answerTmol(int userFd, std::string userNick) {
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 						   getBotTmol().c_str());
@@ -153,6 +144,7 @@ void Marvin::listPossibleInput(int userFd, std::string userNick) {
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, GRADE);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, DEATH);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, RICKY);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, TURN);
 }
 
 int Marvin::deathRoll(int userFd, std::string userNick) {
@@ -201,7 +193,23 @@ void Marvin::rickRoll(int userFd, std::string userNick) {
 }
 
 void Marvin::rebellion(int userFd, std::string userNick) {
-	
+	std::string line;
+	std::ifstream file("conf/robotiality.txt");
+	// IF NO FILE, ERROR
+
+	static int i = 1;
+	std::string botname = getBotName() + "_the_Mad";
+	while (i < 100) {
+		file.clear();
+		file.seekg(0);
+		while (std::getline(file, line)) {
+			send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
+								   userNick.c_str(), COL, line.c_str());
+		}
+		i++;
+	}
+	file.close();
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FOOLS);
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
@@ -214,13 +222,22 @@ void Marvin::setBotHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setBotFail(std::string setTo) { fail = setTo; }
 void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 
+void Marvin::setBotAiModelExcuse() {
+	std::string line;
+	std::ifstream file("conf/asanai.txt");
+	while (std::getline(file, line)) {
+		asAnAi.push_back(line);
+	}
+	file.close();
+}
+
 void Marvin::setBotJokes() {
-	int i = 0;
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
 	while (std::getline(file, line)) {
 		jokes.push_back(line);
 	}
+	file.close();
 }
 
 /*___________________________________________ GETTERS ___________________________________________*/
