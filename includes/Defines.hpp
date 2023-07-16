@@ -12,6 +12,7 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <i386/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
@@ -147,6 +148,6 @@
 // \00315: Light grey (silver)
 // \0030: end color
 
-// MOTD	
+// MOTD
 
 #endif

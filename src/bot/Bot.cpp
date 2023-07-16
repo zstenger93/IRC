@@ -1,5 +1,5 @@
 #include "../../includes/Bot.hpp"
-#include <i386/types.h>
+
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
@@ -193,8 +193,8 @@ void Marvin::rickRoll(int userFd, std::string userNick) {
 	system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 }
 
-void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
-							int uCount) {
+void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId,
+					   pollfd uPoll[CONNECTIONS], int uCount) {
 	std::string line;
 	std::ifstream file("conf/robotiality.txt");
 	// IF NO FILE, ERROR
