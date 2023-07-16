@@ -37,22 +37,6 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	}
 	return true;
 }
-//
-// void Server::executeCommmandsToChannel(std::string channelName, User& user, int mode,
-// 									   std::string message) {
-// 	if (checkIfCanBeExecuted(channelName, user.getUserFd()) == false) return;
-// 	switch (mode) {
-// 		case 0:
-// 			send_message_to_server(user.getUserFd(), 4, user.getNickName(), PRIVMSG,
-// 								   channelName.c_str(), COL, extractMessage(message).c_str());
-// 			break;
-// 		case 1:
-// 			break;
-// 		default:
-// 			std::cerr << "Error in the switch" << std::endl;
-// 			break;
-// 	}
-// }
 
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
@@ -158,7 +142,8 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 // error: 401 no such nick
 // error: 404 client is not a members of the target channel
 // error: 412 client did not provide any text to send
-void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId, pollfd uPoll[CONNECTIONS], int uCount) {
+void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,
+						 pollfd uPoll[CONNECTIONS], int uCount) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	if (extractArgument(1, message, -1)[0] != '#') {
 		std::string messageTo = extractArgument(1, message, -1);

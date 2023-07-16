@@ -20,6 +20,10 @@ Channel::~Channel() {}
 
 void Server::createChannel(User& user, std::string name) {
 	channels.insert(std::make_pair(name, Channel(name)));
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		listChannels(userIt->second.getNickName());
+	}
 }
 
 void User::joinChannel(User& user, std::string name, int op) {
