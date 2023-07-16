@@ -70,11 +70,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 3:
-			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, -1), 0);
 			break;
 		case 4:
-			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3), fd);
+			user->second.kickUser(users, extractArgument(2, message, 3),
+								  extractArgument(1, message, 3), fd);
 			break;
 		case 5:
 			user->second.inviteUser(users, extractArgument(1, message, 3),

@@ -1,5 +1,4 @@
 #include "../../includes/Bot.hpp"
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
@@ -129,6 +128,7 @@ void Marvin::generateJoke(int userFd, std::string userNick) {
 						   jokes[randomJoke].c_str());
 }
 
+// IS THE FOR LOOP IS OKAY THIS WAY ?
 void Marvin::aiModelExcuse(int userFd, std::string userNick) {
 	for (int i = 0; i < 6; i++)
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
