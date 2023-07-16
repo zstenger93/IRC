@@ -143,6 +143,24 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 // error: 401 no such nick
 // error: 404 client is not a members of the target channel
 // error: 412 client did not provide any text to send
+
+void Server::sendFiles(std::map<int, User> users, std::string message, int userFd) {
+	std::map<int, User>::iterator userIt = users.find(userFd);
+	std::string messageTo = extractArgument(2, message, 8);
+	if (messageTo.empty() == true)
+		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+	std::map<int, User>::iterator receiverIt = users.begin();
+	for (; receiverIt != users.end(); receiverIt++) {
+		if (receiverIt->second.getUserName().compare(messageTo) == 0) break;
+	}
+	std::string FileName = extractArgument(4, message, -1);
+	std::string FileIdk = extractArgument(5, message, -1);
+	std::string FileBits = extractArgument(6, message, -1);
+	std::string FileSize = extractArgument(7, message, -1);
+	std::cout << " " << FileName << " " << FileIdk << " " << FileBits << " "
+			  << " " << FileSize << std::endl;
+}
+
 void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,
 						 pollfd uPoll[CONNECTIONS], int uCount) {
 	std::map<int, User>::iterator userIt = users.find(userFd);

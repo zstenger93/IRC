@@ -58,6 +58,7 @@ class Server {
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
 					 pollfd uPoll[CONNECTIONS], int uCount);
+	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
