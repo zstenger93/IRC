@@ -184,7 +184,7 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 // error 442 client is not a mmbers of specific client
 // error 461 need more params
 // error 421 the PART command is not recognised as a part of the server
-void User::leaveChannel(std::map<int, User>& users, User& user, std::string channelName) {
+void User::leaveChannel(std::map<int, User>& users, User& user, std::string channelName, int mode) {
 	std::map<std::string, bool>::iterator channel = channels.find(channelName);
 	if (channel == channels.end()) {
 		send_message_to_server(user.getUserFd(), 5, RICK, ERR_NOSUCHCHANNEL,
@@ -194,17 +194,30 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 	if (channelName.compare("#General") == 0) {
 		send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
 							   "Can Not Leave #General");
-		std::cout << "I was here" << std::endl;
 		return;
 	}
 	channels.erase(channel);
-	// send to user @todo
-	send_message_to_server(user.getUserFd(), 4, user.getNickName(), RPL_ENDOFNAMES,
-						   channelName.c_str(), COL, LEFTCHANNEL);
-	// send to everyone else on the channel @todo
-	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
-		if (usersIt->second.isInChannel(channelName) == true)
-			;  // send() everyone on the channel @todo
+	if (mode == 0) {
+		send_message_to_server(user.getUserFd(), 2, user.getNickName(), "PART",
+							   channelName.c_str());
+		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+			 usersIt++) {
+			if (usersIt->second.isInChannel(channelName) == true)
+				send_message_to_server(usersIt->first, 4, user.getNickName(), "PART",
+									   channelName.c_str(), COL, "User Rick Rolled Away");
+		}
+	}
+	if (mode == 1) {
+		send_message_to_server(user.getUserFd(), 5, RICK, "KICK", channelName.c_str(),
+							   user.getNickName().c_str(), COL,
+							   "KICKED FOR NOT APPRICIATING THE GREAT RICK ROLL CONSPIRACY");
+		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+			 usersIt++) {
+			if (usersIt->second.isInChannel(channelName) == true)
+				send_message_to_server(usersIt->second.getUserFd(), 5, RICK, "KICK",
+									   channelName.c_str(), user.getNickName().c_str(), COL,
+									   "User got RICKED OUT OF THE CHANNEL");
+		}
 	}
 }
 //:<ServerName> PART <ChannelName>
@@ -225,6 +238,7 @@ bool User::isInChannel(std::string channelName) {
 // error 476 badchanmask
 void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName,
 					int senderFd) {	 // users
+
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
 		send_message_to_server(senderFd, 4, RICK, ERR_NOSUCHCHANNEL,
@@ -237,7 +251,6 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 							   channelName.c_str(), COL, "USER ain't an opperator");
 		return;
 	}
-
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
 		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
@@ -247,19 +260,12 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't on channel");
 	}
-
 	if (userIt->second.isInChannel(channelName) == false) {
 		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
 							   users.find(senderFd)->second.getNickName().c_str(),
 							   channelName.c_str(), COL, "USER ain't on channel");
 	}
-
-	userIt->second.leaveChannel(users, userIt->second, channelName);
-	// send to user that he has been kicked from the channel
-	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
-		if (usersIt->second.isInChannel(channelName) == true) {
-		}
-	}
+	userIt->second.leaveChannel(users, userIt->second, channelName, 1);
 }
 
 // tf it is doing: invite to the channal

@@ -24,7 +24,7 @@ class User {
 
 	// COMMAND TO EXECUTE
 	void joinChannel(User& user, std::string name);
-	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName);
+	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName, int mode);
 	void kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName, int senderFd);
 	void inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName, int senderFd);
 	void oper();
