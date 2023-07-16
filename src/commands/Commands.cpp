@@ -84,6 +84,8 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 }
 
 void Server::handleJoin(std::string message, User& user, std::string name) {
+	int op = 0;
+
 	if (name.length() == 0) {
 		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
@@ -91,9 +93,10 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
+		op = 1;
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
-		user.joinChannel(user, name);  // ADDS USER TO THE CHANNEL
+		user.joinChannel(user, name, op);  // ADDS USER TO THE CHANNEL
 		loopTroughtTheUsersInChan(
 			name, user.getUserFd(), 1, message,
 			user);	// LOOPS TROUGHT USERS AND SEND INFORMATION THAT USER JOINED
@@ -113,7 +116,7 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 	int userCount = channel.getUserCount();
 	int userLimit = channel.getUserLimit();
 	if (userCount < userLimit && channel.checkMode("l")) {
-		user.joinChannel(user, channel.getChannelName());
+		user.joinChannel(user, channel.getChannelName(), 0);
 		channel.changeUserCount(userCount++);
 		return true;
 	} else if (userCount == userLimit && channel.checkMode("l")) {
@@ -122,7 +125,7 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 	if (channel.checkMode("k")) {
 		std::string providedPass = extractArgument(2, message, 3);
 		if (channel.isPasswordCorrect(providedPass))
-			user.joinChannel(user, channel.getChannelName());
+			user.joinChannel(user, channel.getChannelName(), 0);
 		else {
 			// WRONG PASSWORD FOR THE CHANNEL @todo
 		}
@@ -246,9 +249,8 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 		return;
 	}
 	if (channelIt->second == false) {
-		send_message_to_server(senderFd, 3, RICK, ERR_CHANOPRIVSNEEDED,
-							   users.find(senderFd)->second.getNickName().c_str(),
-							   channelName.c_str(), COL, "USER ain't an opperator");
+		send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
+							   "You ain't the master RICK ROLLER");
 		return;
 	}
 	std::map<int, User>::iterator userIt;
@@ -284,7 +286,8 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 					  int senderFd) {  // users
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
-		// RETURN NO SUCH CHANNEL ERROR @todo
+		send_message_to_server(senderFd, 4, RICK, ERR_NOSUCHCHANNEL,
+							   users.find(senderFd)->second.getNickName().c_str(), COL, NOSUCHCHAN);
 	}
 	if (channelIt->second == false) {
 		// THE USER IS NOT OPERATOR ERROR @todo
