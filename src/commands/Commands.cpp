@@ -112,8 +112,10 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 	}
 	if (channel.checkMode("k")) {
 		std::string providedPass = extractArgument(2, message, 3);
-		if (channel.isPasswordCorrect(providedPass))
+		if (channel.isPasswordCorrect(providedPass)) {
 			user.joinChannel(user, channel.getChannelName(), 0);
+			return true;
+		}
 		else {
 			send_message_to_server(
 				user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
@@ -121,7 +123,6 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 				"ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD (+k)");	// should be checked if this
 																		// is working
 		}
-		return true;
 	}
 	if (channel.checkMode("i")) {
 		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
@@ -394,6 +395,10 @@ void Server::listChannels(std::string userName) {
 // NEED TO DEBUG THIS, IT GET'S SEGFAULT ON JOIN CHANNEL
 void Server::mode(std::string message, int userFd) {  // channelName
 	// show the mode of the channel. i guess it should take the channel name as arg
+	if (Parser::getWordCount(message) > 4 || Parser::getWordCount(message) < 2) {
+		// ERROR
+		return;
+	}
 	std::string channelName = extractArgument(1, message, -1);
 	std::string mode = "";
 	std::map<int, User>::iterator userIt = users.find(userFd);
@@ -402,7 +407,6 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	bool add;
-
 	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
@@ -412,7 +416,7 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			if (modeIt->second == true) mode += modeIt->first;
 		}
 		send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL, mode.c_str());
-	} else if (Parser::getWordCount(message) == 3 &&
+	} else if ((Parser::getWordCount(message) == 3 || Parser::getWordCount(message) == 4) &&
 			   userIt->second.isOperatorInChannel(channelName)) {
 		channelName = extractArgument(1, message, 3);
 		mode = extractArgument(2, message, 3);
@@ -429,6 +433,12 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		if (add) {
 			mode = mode.substr(1);
 			channelIt->second.addMode(mode, true);
+			if (mode.compare("k") == 0 && Parser::getWordCount(message) == 4) {
+				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
+			}
+			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4) {
+				channelIt->second.setChannelUserLimit(std::atoi(extractArgument(3, message, 4).c_str()));
+			}
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
@@ -552,10 +562,6 @@ void Server::motd(int userFd, std::string channelName) {
 // // must have: PING: PONG
 // // optional:
 // // error:
-// void User:: Ping
-// {
-
-// }
 
 // // tf it is doing: OPER
 // // command sent from the client: OPER <username> <password>
