@@ -114,7 +114,10 @@
 #define GRADE "how should i grade this project?"
 #define DEATH "deathroll"
 #define LIVE "You will live another day."
+#define RICKY "rickroll me"
 #define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
+#define BADLUCK -99
+#define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 // COLORS
 

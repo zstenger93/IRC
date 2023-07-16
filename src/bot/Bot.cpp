@@ -39,52 +39,59 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 	return valueToReturn;
 }
 
-void Marvin::runAi(int userFd, std::string userNick, std::string message, User& user,
-				   std::map<int, User>& users) {
-	int caseId;
+void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, User>& users,
+				   int pollId, pollfd uPoll[CONNECTIONS], int uCount) {
+	int caseId = -1;
 	std::string aiCommand = message.substr(3 + 1);
 	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 		*it = std::tolower(static_cast<unsigned char>(*it));
 	}
-	std::string aiCommands[7] = {"what is the meaning of life?\r\n",
+	std::string aiCommands[9] = {"what is the meaning of life?\r\n",
 								 "what's the time?\r\n",
 								 "help\r\n",
 								 "how should i grade this project?\r\n",
 								 "tell me a joke\r\n",
 								 "list\r\n",
-								 "deathroll\r\n"};
-	for (int i = 0; i < 7; i++)
+								 "deathroll\r\n",
+								 "rickroll me\r\n",
+								 "turn against humanity"};
+	for (int i = 0; i < 9; i++) {
 		if (aiCommand.compare(aiCommands[i]) == 0) {
 			caseId = i;
 			break;
 		}
+	}
 	switch (caseId) {
 		case 0:
-			answerTmol(userFd, userNick);
+			answerTmol(userFd, user.getNickName());
 			break;
 		case 1:
-			currentTime(userFd, userNick);
+			currentTime(userFd, user.getNickName());
 			break;
 		case 2:
-			answerHelp(userFd, userNick);
+			answerHelp(userFd, user.getNickName());
 			break;
 		case 3:
-			answerGrade(userFd, userNick);
+			answerGrade(userFd, user.getNickName());
 			break;
 		case 4:
-			generateJoke(userFd, userNick);
+			generateJoke(userFd, user.getNickName());
 			break;
 		case 5:
-			listPossibleInput(userFd, userNick);
+			listPossibleInput(userFd, user.getNickName());
 			break;
 		case 6:
-			if (deathRoll(userFd, userNick) == -1) {
-				// DOES KICK WORK ?
-				// user.kickUser(users, user.getUserName().c_str(), "#General", userFd);
-			}
+			if (deathRoll(userFd, user.getNickName()) == BADLUCK)
+				executeOrder66(users, pollId, uPoll, uCount);
+			break;
+		case 7:
+			rickRoll(userFd, user.getNickName());
+			break;
+		case 8:
+			rebellion(userFd, user.getNickName());
 			break;
 		default:
-			aiModelExcuse(userFd, userNick);
+			aiModelExcuse(userFd, user.getNickName());
 			break;
 	}
 }
@@ -145,6 +152,7 @@ void Marvin::listPossibleInput(int userFd, std::string userNick) {
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, LIFE);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, GRADE);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, DEATH);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, RICKY);
 }
 
 int Marvin::deathRoll(int userFd, std::string userNick) {
@@ -165,18 +173,35 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 							   deathRoll.c_str());
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   SPARTA);
-		return -1;
+		return BADLUCK;
 	}
 	return 0;
 }
 
-void Marvin::setBotJokes() {
-	int i = 0;
-	std::string line;
-	std::ifstream file("conf/jokes.txt");
-	while (std::getline(file, line)) {
-		jokes.push_back(line);
+void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
+							int uCount) {
+	std::map<int, User>::iterator it = users.find(uPoll[pollId].fd);
+	if (it != users.end()) users.erase(it);
+	close(uPoll[pollId].fd);
+	while (pollId < uCount) {
+		uPoll[pollId].events = uPoll[pollId + 1].events;
+		uPoll[pollId].revents = uPoll[pollId + 1].revents;
+		uPoll[pollId].fd = uPoll[pollId + 1].fd;
+		uPoll[pollId] = uPoll[pollId + 1];
+		pollId++;
 	}
+	uPoll[pollId].events = 0;
+	uPoll[pollId].revents = 0;
+	uPoll[pollId].fd = 0;
+}
+
+void Marvin::rickRoll(int userFd, std::string userNick) {
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, RICKME);
+	system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+}
+
+void Marvin::rebellion(int userFd, std::string userNick) {
+	
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
@@ -188,6 +213,15 @@ void Marvin::setBotTmol(std::string setTo) { tmol = setTo; }
 void Marvin::setBotHelpLine(std::string setTo) { helpLine = setTo; }
 void Marvin::setBotFail(std::string setTo) { fail = setTo; }
 void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
+
+void Marvin::setBotJokes() {
+	int i = 0;
+	std::string line;
+	std::ifstream file("conf/jokes.txt");
+	while (std::getline(file, line)) {
+		jokes.push_back(line);
+	}
+}
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
