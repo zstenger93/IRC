@@ -20,6 +20,8 @@ class Channel {
 	int getUserCount();
 	int getUserLimit();
 	bool isPasswordCorrect(std::string inputPassword);
+	void setChannelPassword(std::string setTo);
+	void setChannelUserLimit(int setTo);
 
    private:
 	std::string channelName;

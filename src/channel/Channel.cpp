@@ -51,6 +51,8 @@ bool Channel::isPasswordCorrect(std::string inputPassword) {
 
 void Channel::setChannelTopic(std::string newChannelTopic) { channelTopic = newChannelTopic; }
 void Channel::changeUserCount(int count) { userCount = count; }
+void Channel::setChannelPassword(std::string setTo) { channelPassword = setTo; }
+void Channel::setChannelUserLimit(int setTo) { userLimit = setTo; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 
