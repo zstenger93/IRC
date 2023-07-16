@@ -20,7 +20,7 @@ void send_message_to_server(int fd, int count, std::string prefix, ...) {
 	}
 	va_end(arguments);
 	message += "\r\n";
-	std::cout << "Command sent back to client: " << message << std::endl;
+	std::cout << message << std::endl;
 	send(fd, message.c_str(), message.length(), 0);
 }
 
@@ -48,7 +48,6 @@ std::string extractArgument(int specificArg, const std::string& message, int aCo
 
 std::string extractMessage(std::string message) {
 	std::string parsedMessage = message.substr(message.find_first_of(':') + 1);
-	std::cout << "This is the parsed msg" << parsedMessage << std::endl;
 	return parsedMessage;
 }
 /*___________________________________________ SETTERS ___________________________________________*/

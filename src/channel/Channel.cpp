@@ -22,13 +22,15 @@ void Server::createChannel(User& user, std::string name) {
 	channels.insert(std::make_pair(name, Channel(name)));
 }
 
-void User::joinChannel(User& user, std::string name) {
+void User::joinChannel(User& user, std::string name, int op) {
 	std::map<std::string, bool>::iterator it = channels.find(name);
 	if (it == channels.end()) {
 		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
 							   name.c_str());
-		channels.insert(std::make_pair(name, true));
-		return;
+		if (op == 1)
+			channels.insert(std::make_pair(name, true));
+		else
+			channels.insert(std::make_pair(name, false));
 	} else {
 		send_message_to_server(user.getUserFd(), 2, RICK, ERR_USERONCHANNEL, name.c_str());
 	}
