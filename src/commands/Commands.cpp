@@ -150,8 +150,11 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		std::string messageTo = extractArgument(1, message, -1);
 		if (messageTo.empty() == true)
 			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
-		if (messageTo.compare("Marvin"))
-			;  // write stuff here
+		if (messageTo.compare("Marvin") == 0) {
+			std::string msg = message.substr(12);
+			bot.runAi(userFd, userIt->second.getNickName(), msg);
+			return;
+		}
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {

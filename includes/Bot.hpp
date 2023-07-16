@@ -12,19 +12,27 @@ class Marvin {
 	void setBotWelcomeLine(std::string setTo);
 	void setBotThink(std::string setTo);
 	void setBotTmol(std::string setTo);
-	void setHelpLine(std::string setTo);
-	void setFail(std::string setTo);
-	void setGrade(std::string setTo);
+	void setBotHelpLine(std::string setTo);
+	void setBotFail(std::string setTo);
+	void setBotGrade(std::string setTo);
+	void setBotAiModelExcuse();
+	void setBotJokes();
 	std::string getBotName();
 	std::string getBotWelcomeLine();
 	std::string getBotThink();
 	std::string getBotTmol();
-	std::string getHelpLine();
-	std::string getFail();
-	std::string getGrade();
+	std::string getBotHelpLine();
+	std::string getBotFail();
+	std::string getBotGrade();
+	std::string getBotJoke();
 	std::string extractFromConfig(std::string lineToFind);
-	void currentTime();
-	void runAi(std::string message);
+	void runAi(int userFd, std::string userNick, std::string message);
+	void currentTime(int userFd, std::string userNick);
+	void answerTmol(int userFd, std::string userNick);
+	void answerHelp(int userFd, std::string userNick);
+	void answerGrade(int userFd, std::string userNick);
+	void generateJoke(int userFd, std::string userNick);
+	void aiModelExcuse(int userFd, std::string userNick);
 
    private:
 	std::string botName;
@@ -34,6 +42,8 @@ class Marvin {
 	std::string helpLine;
 	std::string fail;
 	std::string grade;
+	std::vector<std::string> asAnAi;
+	std::vector<std::string> jokes;
 };
 
 #endif
