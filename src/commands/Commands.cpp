@@ -39,8 +39,10 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 void Server::sendFiles(std::map<int, User> users, std::string message, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::string messageTo = extractArgument(1, message, 8);
-	if (messageTo.empty() == true)
+	if (messageTo.empty() == true) {
 		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+		return;
+	}
 	std::map<int, User>::iterator receiverIt = users.begin();
 	for (; receiverIt != users.end(); receiverIt++) {
 		if (receiverIt->second.getUserName().compare(messageTo) == 0) break;
@@ -67,8 +69,10 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	if (extractArgument(1, message, -1)[0] != '#') {
 		std::string messageTo = extractArgument(1, message, -1);
-		if (messageTo.empty() == true)
+		if (messageTo.empty() == true) {
 			send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+			return;
+		}
 		if (messageTo.compare("Marvin") == 0) {
 			std::string msg = message.substr(12);
 			bot.runAi(userFd, msg, userIt->second, users, pollId, uPoll, uCount);
@@ -167,6 +171,7 @@ void Server::listChannels(std::string userName) {
 	}
 	if (userIt == users.end()) {
 		send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+		return;
 	}
 	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), "channel", COL,
 						   "NAME");

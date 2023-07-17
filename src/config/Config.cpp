@@ -27,6 +27,7 @@ void Server::setServerPassword() {
 		std::istringstream iss(line);
 		if (line.find("server_password") != std::string::npos) {
 			setPassword(base64Decode(extractWord(line)));
+			return;
 		}
 	}
 	file.close();
