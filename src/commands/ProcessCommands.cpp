@@ -65,11 +65,10 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 			break;
 		case 1:
 			std::cout << pos << std::endl;
-			if (pos == std::string::npos) {
-				std::cout << message << std::endl;
+			if (pos == std::string::npos)
 				sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
-			} else
-				
+			else
+				sendFiles(users, message, fd);
 			break;
 		case 2:
 			if (Parser::getWordCount(message) == 2)

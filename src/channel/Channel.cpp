@@ -1,5 +1,8 @@
 #include "../../includes/Channel.hpp"
 
+#include <iostream>
+#include <string>
+
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
@@ -40,7 +43,16 @@ void User::joinChannel(User& user, std::string name, int op) {
 	}
 }
 
-void Channel::addMode(std::string mode, bool value) { modes.insert(std::make_pair(mode, value)); }
+void Channel::addMode(std::string mode, bool value) {
+	std::map<std::string, bool>::iterator modesIt = modes.find(mode);
+
+	if (modesIt == modes.end()) {
+		return;
+	}
+	if (modesIt->second != value) {
+		modesIt->second = value;
+	}
+}
 
 bool Channel::checkMode(std::string mode) {
 	return (modes.find(mode) == modes.end() ? false : modes.find(mode)->second);

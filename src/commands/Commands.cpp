@@ -100,7 +100,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
 	int userCount = channel.getUserCount();
 	int userLimit = channel.getUserLimit();
-	if (userCount < userLimit && channel.checkMode("l")) {
+	if (userCount < userLimit && channel.checkMode("l") == true) {
 		user.joinChannel(user, channel.getChannelName(), 0);
 		channel.changeUserCount(userCount++);
 		return true;
@@ -108,20 +108,27 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 		send_message_to_server(
 			user.getUserFd(), 5, RICK, ERR_CHANNELISFULL, user.getNickName().c_str(),
 			channel.getChannelName().c_str(), COL,
-			"THERE ARE TOO MANY RICKS ON THE CHANNEL (+l)");  // should be checked if this is
-															  // working
+			"THERE ARE TOO MANY RICKS ON THE CHANNEL (+l)");  //@note check working
 	}
-	if (channel.checkMode("k")) {
-		std::string providedPass = extractArgument(2, message, 3);
-		if (channel.isPasswordCorrect(providedPass)) {
-			user.joinChannel(user, channel.getChannelName(), 0);
-			return true;
+	std::cout << channel.getChannelName() << std::endl;
+	std::cout << channel.checkMode("k") << std::endl << std::endl;
+	if (channel.checkMode("k") == true) {
+		std::cout << "cheking for passwor" << std::endl;
+		if (Parser::getWordCount(message) == 3) {
+			std::string providedPass = extractArgument(2, message, 3);
+			if (channel.isPasswordCorrect(providedPass)) {
+				user.joinChannel(user, channel.getChannelName(), 0);
+				return true;
+			} else {
+				send_message_to_server(
+					user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
+					channel.getChannelName().c_str(), COL,
+					"ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD (+k)");	//@note check work
+				return true;
+			}
 		} else {
-			send_message_to_server(
-				user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
-				channel.getChannelName().c_str(), COL,
-				"ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD (+k)");	// should be checked if this
-																		// is working
+			// WRONG NUMBER OF ARGUMENTS @todo
+			return true;
 		}
 	}
 	if (channel.checkMode("i")) {
@@ -146,19 +153,29 @@ bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string me
 
 void Server::sendFiles(std::map<int, User> users, std::string message, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
-	std::string messageTo = extractArgument(2, message, 8);
+	std::string messageTo = extractArgument(1, message, 8);
 	if (messageTo.empty() == true)
 		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 	std::map<int, User>::iterator receiverIt = users.begin();
 	for (; receiverIt != users.end(); receiverIt++) {
 		if (receiverIt->second.getUserName().compare(messageTo) == 0) break;
 	}
-	std::string FileName = extractArgument(4, message, -1);
-	std::string FileIdk = extractArgument(5, message, -1);
-	std::string FileBits = extractArgument(6, message, -1);
+	if (receiverIt == users.end()) {
+		send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+		return;
+	}
+
+	std::string FileName = extractArgument(4, message, -1);	 //@note to be checked
+	std::string IpAdress = extractArgument(5, message, -1);
+	std::string PortNumber = extractArgument(6, message, -1);
 	std::string FileSize = extractArgument(7, message, -1);
-	std::cout << " " << FileName << " " << FileIdk << " " << FileBits << " "
-			  << " " << FileSize << std::endl;
+	if (FileName.empty() == true || IpAdress.empty() == true || PortNumber.empty() == true ||
+		FileSize.empty() == true)
+		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+	send_message_to_server(receiverIt->second.getUserFd(), 9, userIt->second.getNickName(),
+						   "PRIVMSG", receiverIt->second.getNickName().c_str(), "DCC", "ACCEPT",
+						   FileName.c_str(), IpAdress.c_str(), PortNumber.c_str(), FileSize.c_str(),
+						   COL, "File transfer");
 }
 
 void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,
@@ -440,8 +457,9 @@ void Server::mode(std::string message, int userFd) {  // channelName
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
 		send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
+		return;
 	}
-	bool add;
+	bool add = false;
 	if (Parser::getWordCount(message) == 2)	 // channelName
 	{
 		// get every mode and send to user
@@ -453,8 +471,7 @@ void Server::mode(std::string message, int userFd) {  // channelName
 		send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL, mode.c_str());
 	} else if ((Parser::getWordCount(message) == 3 || Parser::getWordCount(message) == 4) &&
 			   userIt->second.isOperatorInChannel(channelName)) {
-		channelName = extractArgument(1, message, 3);
-		mode = extractArgument(2, message, 3);
+		mode = extractArgument(2, message, -1);
 		if (mode[0] == '+')
 			add = true;
 		else if (mode[0] == '-')
@@ -470,10 +487,15 @@ void Server::mode(std::string message, int userFd) {  // channelName
 			channelIt->second.addMode(mode, true);
 			if (mode.compare("k") == 0 && Parser::getWordCount(message) == 4) {
 				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
+				send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL,
+									   mode.c_str());
 			}
-			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4) {
+			if (mode.compare("l") == 0 &&
+				Parser::getWordCount(message) == 4) {  //@note to be checked
 				channelIt->second.setChannelUserLimit(
 					std::atoi(extractArgument(3, message, 4).c_str()));
+				send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL,
+									   mode.c_str());
 			}
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
