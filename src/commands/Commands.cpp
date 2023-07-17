@@ -51,7 +51,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 										   extractMessage(message).c_str());
 					break;
 				case 1:
-					// SEND MESSAGE ABOUT JOINING THE CHANNEL
 					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
@@ -194,7 +193,6 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 	} else {
 		std::string channelName = extractArgument(1, message, -1);
 		loopTroughtTheUsersInChan(channelName, userFd, 0, message, userIt->second);
-		// executeCommmandsToChannel(channelName, userIt->second, 0, message);
 	}
 }
 
@@ -314,7 +312,6 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 							   "You ain't the master RICK ROLLER");
 		return;
 	}
-
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
 		if (userIt->second.getUserName().compare(addUserName) == 0) break;
@@ -323,7 +320,6 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 		send_message_to_server(senderFd, 2, RICK, ERR_NOSUCHNICK, addUserName.c_str());
 		return;
 	}
-
 	if (userIt->second.isInChannel(channelName) == true) {
 		send_message_to_server(senderFd, 2, RICK, ERR_USERONCHANNEL, addUserName.c_str());
 		return;
@@ -578,7 +574,6 @@ void Server::motd(int userFd, std::string channelName) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::ifstream file("conf/motd.txt");
 	std::string line;
-
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			if (channelName.empty() == false)
