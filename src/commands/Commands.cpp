@@ -69,7 +69,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 
 void Server::handleJoin(std::string message, User& user, std::string name) {
 	int op = 0;
-
 	if (name.length() == 0) {
 		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
 		return;
@@ -80,63 +79,52 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 		op = 1;
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
-		user.joinChannel(user, name, op);  // ADDS USER TO THE CHANNEL
-		loopTroughtTheUsersInChan(
-			name, user.getUserFd(), 1, message,
-			user);	// LOOPS TROUGHT USERS AND SEND INFORMATION THAT USER JOINED
+		user.joinChannel(user, name, op);
+		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
 		channelTopic(message, channelIt->first, user.getUserFd());	// SENDS TOPIC TO THE USER
-		loopTroughtTheUsersInChan(
-			name, user.getUserFd(), 2, message,
-			user);	// LOOPS TROUGHT THE USERS IN CHANNEL AND PRINTS OUT A LIST ELEMENT
+		loopTroughtTheUsersInChan(name, user.getUserFd(), 2, message, user);
 		send_message_to_server(user.getUserFd(), 6, RICK, RPL_NAMREPLY, user.getNickName().c_str(),
 							   "=", name.c_str(), COL, "Marvin");
 		send_message_to_server(user.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
-							   user.getNickName().c_str(), name.c_str(), COL,
-							   "END of NAMES LIST");  // END OF THE LIST
+							   user.getNickName().c_str(), name.c_str(), COL, "END of NAMES LIST");
 		listChannels(user.getNickName());
 	}
 }
 
-bool Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
-	int userCount = channel.getUserCount();
-	int userLimit = channel.getUserLimit();
-	if (userCount < userLimit && channel.checkMode("l") == true) {
-		user.joinChannel(user, channel.getChannelName(), 0);
-		channel.changeUserCount(userCount++);
-		return true;
-	} else if (userCount == userLimit && channel.checkMode("l")) {
-		send_message_to_server(
-			user.getUserFd(), 5, RICK, ERR_CHANNELISFULL, user.getNickName().c_str(),
-			channel.getChannelName().c_str(), COL,
-			"THERE ARE TOO MANY RICKS ON THE CHANNEL (+l)");  //@note check working
+int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
+	int userCount = channel.getUserCount(), userLimit = channel.getUserLimit();
+	if (channel.checkMode("i") == true) {
+		send_message_to_server(user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN,
+							   user.getNickName().c_str(), channel.getChannelName().c_str(), COL,
+							   INVITENEEDED);
+		return INVITEONLY;
 	}
-	std::cout << channel.getChannelName() << std::endl;
-	std::cout << channel.checkMode("k") << std::endl << std::endl;
+	channel.checkMode("k");
+	if (userCount < userLimit && channel.checkMode("l") == true) {
+	} else if (userCount == userLimit && channel.checkMode("l")) {
+		send_message_to_server(user.getUserFd(), 5, RICK, ERR_CHANNELISFULL,
+							   user.getNickName().c_str(), channel.getChannelName().c_str(), COL,
+							   USERLIMITREACHED);
+		return ACTIVEMODEERROR;
+	}
 	if (channel.checkMode("k") == true) {
-		std::cout << "cheking for passwor" << std::endl;
 		if (Parser::getWordCount(message) == 3) {
 			std::string providedPass = extractArgument(2, message, 3);
 			if (channel.isPasswordCorrect(providedPass)) {
-				user.joinChannel(user, channel.getChannelName(), 0);
-				return true;
 			} else {
-				send_message_to_server(
-					user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY, user.getNickName().c_str(),
-					channel.getChannelName().c_str(), COL,
-					"ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD (+k)");	//@note check work
-				return true;
+				send_message_to_server(user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY,
+									   user.getNickName().c_str(), channel.getChannelName().c_str(),
+									   COL, W_CHANPASS);
+				return ACTIVEMODEERROR;
 			}
 		} else {
 			// WRONG NUMBER OF ARGUMENTS @todo
-			return true;
+			return ACTIVEMODEERROR;
 		}
 	}
-	if (channel.checkMode("i")) {
-		std::cout << "ONLY INVITE CHANNEL, PROVE YOUR WORTHYNESS TO ODYN" << std::endl;
-		send_message_to_server(
-			user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN, user.getNickName().c_str(),
-			channel.getChannelName().c_str(), COL,
-			"YOU NEED AN INVITE FROM THE RICK (+i)");  // should be checked if this is working
+	if (channel.checkMode("k") == true || channel.checkMode("l") == true) {
+		if (channel.checkMode("l") == true) channel.changeUserCount(++userCount);
+		user.joinChannel(user, channel.getChannelName(), 0);
 		return true;
 	}
 	return false;

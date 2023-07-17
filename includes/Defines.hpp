@@ -53,6 +53,11 @@
 // MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define COMMAND_NOT_FOUND "Command not found"
+#define ACTIVEMODEERROR -14
+#define INVITEONLY -15
+#define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
+#define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
+#define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"

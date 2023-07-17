@@ -1,8 +1,5 @@
 #include "../../includes/Channel.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
@@ -10,7 +7,7 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Channel::Channel(std::string name) : channelName(name), userCount(0), userLimit(5) {
+Channel::Channel(std::string name) : channelName(name), userCount(1), userLimit(5) {
 	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
 
 	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));

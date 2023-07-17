@@ -35,7 +35,7 @@ class Server {
 	std::map<std::string, Channel> channels;
 	void createChannel(User &user, std::string name);
 	void handleJoin(std::string message, User &user, std::string name);
-	bool isJoinedWithActiveMode(Channel &channel, User &user, std::string message);
+	int isJoinedWithActiveMode(Channel &channel, User &user, std::string message);
 
 	// MAIN LOOPS
 	void run();
