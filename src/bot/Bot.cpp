@@ -202,6 +202,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 	static int i = 1;
 	static int k = users.size();
 	std::string botname = getBotName() + "_the_Mad";
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, INITIATING);
 	while (i < 101) {
 		file.clear();
 		file.seekg(0);

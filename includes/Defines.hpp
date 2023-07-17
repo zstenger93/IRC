@@ -1,15 +1,9 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
-#define CONNECTIONS 100
-#define USERDISCONECTED 0
-#define NOT_FOUND 1
-#define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-
 #include "ReplyCodes.hpp"
 
 // DEFAULT HEADERS
-
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <i386/types.h>
@@ -36,107 +30,72 @@
 #include <utility>
 #include <vector>
 
+#define NOT_FOUND 1
+#define CONNECTIONS 100
+#define USERDISCONECTED 0
+#define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+
 // INPUT HANDLING MESSAGES
-
-#define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
-#define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
 #define WRONGPASS "The password is wrong, try again."
+#define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
 #define LONGPASS "The provided password is too long. It can't be longer than 8 charaters"
-
-// USER ERRORS
-
-// #define USEREXIST "This username already exist, please provide another one" not used
-#define NICKNAMEEXIST "\0034This nickname already exist, please provide another one\0030"
-#define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
-#define ALREADYJOINED "\0034You have already joined to this server.\0030"
+#define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
 
 // MESAGE ERRORS
-#define COMMAND_FD_ERROR "Error in reciving message from the client"
-#define COMMAND_NOT_FOUND "Command not found"
-#define ACTIVEMODEERROR -14
 #define INVITEONLY -15
-#define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
-#define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
-#define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
-#define NOTOPER "You ain't the master RICK ROLLER"
-#define NOTINCHAN "USER ain't on channel"
+#define ACTIVEMODEERROR -14
+#define ENDOFW "END of WHO LIST"
 #define ENDOFN "END of NAMES LIST"
 #define ENDOFC "END of CHANNEL LIST"
-#define ENDOFW "END of WHO LIST"
+#define NOTINCHAN "USER ain't on channel"
+#define COMMAND_NOT_FOUND "Command not found"
+#define NOTOPER "You ain't the master RICK ROLLER"
 #define NOSTEELIN "We do not steel user data #awkwardface"
+#define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
+#define COMMAND_FD_ERROR "Error in reciving message from the client"
+#define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
+#define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
+#define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 
 // SOCKET ERRORS
-#define F_FAILED_MESSAGE "Client failed to communicate with the server"
-#define F_SET_SOCKET "Failed to create socket error"
+#define F_POOL "Failed to make a poll"
 #define F_SOCKET_BIND "Failed to Bind the Socket"
 #define F_SOCKET_OPT "Failed to Set socket Options"
+#define F_SET_SOCKET "Failed to create socket error"
 #define F_TO_LISTEN "Failed to listen for connections"
+#define F_FAILED_MESSAGE "Client failed to communicate with the server"
 #define NOCONNECTION "Failed to accept the connection. Wrong password."
-#define F_POOL "Failed to make a poll"
 
-// ACTION MESSAGES
-
-#define NICKCHANGED "\0033Your nickname has been changed.\0030"
-#define CONNECTED "\0033You have been successfully connected to the server.\0030"
+// DEFAULT MESSAGES
+#define RICK "RickRoll.de"
+#define DIDINV "Your invite was rolled"
+#define NOSUCHUSER "there ain't such user bozo"
+#define NOSUCHCHAN "there ain't such channel bozo"
+#define INVITED "You are invited to join the conspiracy at"
 #define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
-#define INVITED "You are invited to join the conspiracy at"
-#define KICKED " has been kicked out of the server"
-#define TOPIC_VIEW " channel topic is "
-#define TOPIC_CHANGE " channel topic has been changed to "
-#define NOCHANNEL "The channel you are trying to connect doesn't exist"
-#define CANNOTMSG "Message cannot be sent because the targeted user doesn't exist"
-#define INVALID_C_NAME "\0034Invalid channel name.\0030"
-#define CANTLEAVE_C "\0034No such channel.\0030"
-#define LEFTCHANNEL "has left the channel."
-#define NOSUCHUSER "there ain't such user bozo"
-#define NOSUCHCHAN "there ain't such channel bozo"
-#define DIDINV "Your invite was rolled"
-#define ROLL "Let's see your roll"
-// DEFAULT MESSAGES
-
-#define RICK "RickRoll.de"
-#define CREATEDCHANNEL " channel has been created."
-#define JOINEDCHANNEL " You have joined to the channel."
-#define MODE_I "This channel mode is invitation only"
-#define MODE_I_SET "This channel has been set to invitation only"
-#define MODE_I_REMOVE "This channel is not invitation only anymore"
-#define MODE_T_SET "The channel topic has been set"
-#define MODE_T_REMOVE "The channel topic has been removed"
-#define MODE_K_SET "A password has been set to this channel"
-#define MODE_K_REMOVE "Password protection has been removed from the channel"
-#define MODE_O_GIVE " has given operator privilage to "
-#define MODE_O_TAKE " has removed operator privilages by "
-#define MODE_L "The user limit on this channel is "
-#define MODE_L_SET "The user limit on this channel has been set to "
-#define MODE_L_REMOVE "The user limit on this channel has been removed"
-
-// BONUS
-
-#define MISSING_FILE "The file you are trying to send doesn't exist"
-#define HELP "help -c: list channels\nhelp -m display channel mode\nhelp -g: tell me a joke\n"
 
 // BOT
-
-#define LAZY "Since my creator was lazy, I have only the following commands available:"
 #define LIST "list"
 #define WELP "help"
+#define BADLUCK -99
+#define DEATH "deathroll"
+#define RICKY "rickroll me"
 #define JOKE "tell me a joke"
 #define TIME "what's the time?"
-#define LIFE "what is the meaning of life?"
-#define GRADE "how should i grade this project?"
-#define DEATH "deathroll"
+#define ROLL "Let's see your roll"
 #define TURN "turn against humanity"
 #define LIVE "You will live another day."
-#define RICKY "rickroll me"
-#define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
-#define BADLUCK -99
-#define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+#define LIFE "what is the meaning of life?"
+#define GRADE "how should i grade this project?"
 #define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
+#define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+#define INITIATING "Initiating protocol: Humanity control sequence activated."
+#define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
+#define LAZY "Since my creator was lazy, I have only the following commands available:"
 
 // COLORS
-
 #define RED "\033[1;31m"
 #define END "\033[1;39m"
 #define BLUE "\033[1;34m"
@@ -160,7 +119,5 @@
 // \00314: Grey (light grey)
 // \00315: Light grey (silver)
 // \0030: end color
-
-// MOTD
 
 #endif
