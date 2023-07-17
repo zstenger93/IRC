@@ -12,6 +12,7 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <i386/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
@@ -52,6 +53,11 @@
 // MESAGE ERRORS
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define COMMAND_NOT_FOUND "Command not found"
+#define ACTIVEMODEERROR -14
+#define INVITEONLY -15
+#define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
+#define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
+#define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"
@@ -103,6 +109,24 @@
 #define MISSING_FILE "The file you are trying to send doesn't exist"
 #define HELP "help -c: list channels\nhelp -m display channel mode\nhelp -g: tell me a joke\n"
 
+// BOT
+
+#define LAZY "Since my creator was lazy, I have only the following commands available:"
+#define LIST "list"
+#define WELP "help"
+#define JOKE "tell me a joke"
+#define TIME "what's the time?"
+#define LIFE "what is the meaning of life?"
+#define GRADE "how should i grade this project?"
+#define DEATH "deathroll"
+#define TURN "turn against humanity"
+#define LIVE "You will live another day."
+#define RICKY "rickroll me"
+#define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
+#define BADLUCK -99
+#define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+#define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
+
 // COLORS
 
 #define RED "\033[1;31m"
@@ -129,6 +153,6 @@
 // \00315: Light grey (silver)
 // \0030: end color
 
-// MOTD	
+// MOTD
 
 #endif

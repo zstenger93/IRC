@@ -1,8 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Defines.hpp"
 #include "Bot.hpp"
+#include "Defines.hpp"
 
 class User;
 class Commands;
@@ -35,7 +35,7 @@ class Server {
 	std::map<std::string, Channel> channels;
 	void createChannel(User &user, std::string name);
 	void handleJoin(std::string message, User &user, std::string name);
-	bool isJoinedWithActiveMode(Channel &channel, User &user, std::string message);
+	int isJoinedWithActiveMode(Channel &channel, User &user, std::string message);
 
 	// MAIN LOOPS
 	void run();
@@ -56,11 +56,11 @@ class Server {
 	void listChannels(std::string userName);
 	void mode(std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
-	void sendMessage(std::string message, std::map<int, User> &users, int userFd);
+	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
+					 pollfd uPoll[CONNECTIONS], int uCount);
+	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);
-	void executeCommmandsToChannel(std::string channelName, User &user, int mode,
-								   std::string message);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void motd(int userFd, std::string channelName);
 	void whois(int userFd, std::string message);
@@ -122,7 +122,6 @@ class Server {
 
 	// OUR AI OVERLORD
 	Marvin bot;
-
 };
 
 #endif

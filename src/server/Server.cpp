@@ -3,7 +3,6 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 
-
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
 Server::Server() {}
@@ -13,7 +12,7 @@ Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setAdminDetails();	// kinda extra, not needed will decide later
 	Server::setConnectionLimits();
 	Server::inputParser(argc, argv);
-	bot.constructBot(); // creating our ai overlord
+	bot.constructBot();	 // creating our ai overlord
 }
 
 Server::~Server() {}
@@ -80,8 +79,6 @@ void Server::acceptConnection() {
 
 void Server::addUser(int userFd) {
 	static int i = 1;
-	// users.insert(std::make_pair(userFd, User(userFd, "\0037user" + std::to_string(i++) +
-	// "\0030")));
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
 }
 
