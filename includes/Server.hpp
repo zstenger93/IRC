@@ -15,20 +15,20 @@ class Server {
 	Server(int argc, char **argv);
 	~Server();
 	// INPUT PARSING
-	void inputParser(int argc, char **argv);
-	bool isRunning();
 	int getPort();
+	bool isRunning();
 	std::string getHostMask();
 	void setPort(int portNum);
 	std::string getPassword();
-	bool passwordCheck(std::string psswrd);
 	void removeUser(int pollId);
+	bool passwordCheck(std::string psswrd);
+	void inputParser(int argc, char **argv);
 
 	// USER
-	std::map<int, User> users;
 	void addUser(int userFd);
-	void authenticate(std::string message, std::map<int, User>::iterator it);
+	std::map<int, User> users;
 	bool getPass(std::string &msg);
+	void authenticate(std::string message, std::map<int, User>::iterator it);
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
@@ -38,55 +38,52 @@ class Server {
 
 	// MAIN LOOPS
 	void run();
-	bool shouldReset();
 	int setup();
+	bool shouldReset();
 	int getServerSocket();
+	void acceptConnection();
 	void setRunning(bool state);
 	void setServerSocket(int socket);
 	const Client &getClient(int clientNumb) const;
 
-	void setupPoll();  // do we need this?
-	void acceptConnection();
-
 	// COMMAND HANDLING
 	int processCommands(int pollId);
-	void commandParser(std::map<int, User>::iterator &it, std::string message, int fd, int pollId);
-	std::string getCommand(std::string message);
 	void listChannels(std::string userName);
+	void who(int userFd, std::string message);
 	void mode(std::string message, int userFd);
-	void channelTopic(std::string message, std::string channelName, int userFd);
-	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
-					 pollfd uPoll[CONNECTIONS], int uCount);
+	void whois(int userFd, std::string message);
+	std::string getCommand(std::string message);
+	void motd(int userFd, std::string channelName);
 	void sendFiles(std::map<int, User> users, std::string message, int userFd);
+	void channelTopic(std::string message, std::string channelName, int userFd);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
-	void motd(int userFd, std::string channelName);
-	void whois(int userFd, std::string message);
-	void who(int userFd, std::string message);
+	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
+					 pollfd uPoll[CONNECTIONS], int uCount);
+	void commandParser(std::map<int, User>::iterator &it, std::string message, int fd, int pollId);
 
 	// CONNECTION LIMITS
+	int getMaxlimit();
+	int getAllowedLimit();
 	void setConnectionLimits();
 	void setMaxLimit(int maxLimit);
 	void setAllowedLimit(int allowedLimit);
-	int getMaxlimit();
-	int getAllowedLimit();
 
 	// ADMIN
-	void createAdmin();	 // needs to be written
 	void setAdminDetails();
 	std::string getAdmin();
 	std::string getAdminPass();
+	void shutdown(std::string message);
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void shutdown(std::string message);
 	void setNick(std::map<int, User>::iterator &it, std::string newNickname);
 
 	// PASS
-	std::string extractWord(const std::string &line);
-	std::string base64Decode(const std::string &encodedData);
 	void setServerPassword();
 	void setPassword(std::string serverPassword);
+	std::string extractWord(const std::string &line);
+	std::string base64Decode(const std::string &encodedData);
 
 	class CustomException : public std::exception {
 	   private:
@@ -102,24 +99,18 @@ class Server {
 	// sockets
 	bool serverState;
 	int serverSocketFd;
-	pollfd userPoll[CONNECTIONS];
 	int onlineUserCount;
 	std::string hostmask;
+	pollfd userPoll[CONNECTIONS];
 	// Server info
-	std::string password;
 	int port;
-
-	bool reset;	 // first loop. always true
-
-	// Connection limits
 	int max_connections;
+	std::string password;
 	int allowed_connections;
-
-	// Server admin info
 	std::string operator_name;
 	std::string operator_password;
 
-	// OUR AI OVERLORD
+	bool reset;
 	Marvin bot;
 };
 
