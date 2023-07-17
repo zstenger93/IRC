@@ -1,5 +1,3 @@
-#include <variant>
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/Parser.hpp"
@@ -88,7 +86,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 									extractArgument(1, message, 3), fd);
 			break;
 		case 6:
-			removeUser(pollId);	 // quitServer();
+			removeUser(pollId);
 			break;
 		case 7:
 			setNick(user, extractArgument(1, message, 2));

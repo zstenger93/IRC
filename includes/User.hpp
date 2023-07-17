@@ -41,7 +41,6 @@ class User {
 	std::string nickName;
 	bool connected;
 	int userFd;
-	bool isInvited;
 	std::string activeChannels[2];	// save the channels user is joined to?
 };
 

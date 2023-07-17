@@ -1,4 +1,5 @@
 #include "../../includes/Bot.hpp"
+
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
@@ -149,8 +150,7 @@ void Marvin::listPossibleInput(int userFd, std::string userNick) {
 }
 
 int Marvin::deathRoll(int userFd, std::string userNick) {
-	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
-						   "Let's see your roll");
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, ROLL);
 	std::srand(static_cast<unsigned int>(std::time(0)));
 	int roll = rand() % 100;
 	std::stringstream ss;

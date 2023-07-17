@@ -58,6 +58,12 @@
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
+#define NOTOPER "You ain't the master RICK ROLLER"
+#define NOTINCHAN "USER ain't on channel"
+#define ENDOFN "END of NAMES LIST"
+#define ENDOFC "END of CHANNEL LIST"
+#define ENDOFW "END of WHO LIST"
+#define NOSTEELIN "We do not steel user data #awkwardface"
 
 // SOCKET ERRORS
 #define F_FAILED_MESSAGE "Client failed to communicate with the server"
@@ -75,7 +81,7 @@
 #define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
-#define INVITED " has been invited to the server"
+#define INVITED "You are invited to join the conspiracy at"
 #define KICKED " has been kicked out of the server"
 #define TOPIC_VIEW " channel topic is "
 #define TOPIC_CHANGE " channel topic has been changed to "
@@ -86,6 +92,8 @@
 #define LEFTCHANNEL "has left the channel."
 #define NOSUCHUSER "there ain't such user bozo"
 #define NOSUCHCHAN "there ain't such channel bozo"
+#define DIDINV "Your invite was rolled"
+#define ROLL "Let's see your roll"
 // DEFAULT MESSAGES
 
 #define RICK "RickRoll.de"

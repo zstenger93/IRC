@@ -29,7 +29,9 @@ CONFIG		= config/Config \
 USER		= user/User \
 
 COMMANDS	= commands/Commands \
+			  commands/CommandUtils \
 			  commands/ProcessCommands \
+			  commands/OnlyOperatorCommands \
 
 MESSAGES	= chat/Messages \
 

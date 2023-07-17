@@ -53,6 +53,7 @@ void Server::setAdminDetails() {
 			setAdminPass(base64Decode(extractWord(line)));
 		}
 	}
+	file.close();
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

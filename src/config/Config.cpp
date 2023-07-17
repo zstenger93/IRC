@@ -17,6 +17,7 @@ void Server::setConnectionLimits() {
 			setAllowedLimit(std::atoi(extractWord(line).c_str()));
 		}
 	}
+	file.close();
 }
 
 void Server::setServerPassword() {
@@ -28,6 +29,7 @@ void Server::setServerPassword() {
 			setPassword(base64Decode(extractWord(line)));
 		}
 	}
+	file.close();
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
