@@ -1,3 +1,5 @@
+#include <variant>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/Parser.hpp"
@@ -13,7 +15,6 @@ int Server::processCommands(int pollId) {
 	std::string message = "";
 	char buffer[512];
 	int buffer_len, stringLength = 0;
-
 	memset(buffer, 0, 512);
 	buffer_len = recv(userPoll[pollId].fd, buffer, 512, USERDISCONECTED);
 	message = buffer;
@@ -46,9 +47,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 						   int pollId) {
 	int caseId = 0;
 	std::string command = getCommand(message);
-	std::string commands[19] = {"NOTICE","PRIVMSG", "JOIN", "PART", "KICK",	"INVITE", "QUIT",
-								"NICK",	   "LIST", "MODE", "TOPIC", "CAP",	  "PASS",
-								"ADMIN",   "WHO",  "PING", "MOTD",	"WHOIS", "BOT"};
+	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
+								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
+	std::cout << message << std::endl;
+	int pos = message.find("DCC");
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -61,7 +64,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 		case 0:
 			break;
 		case 1:
-			sendMessage(message, users, fd);
+			std::cout << pos << std::endl;
+			if (pos == std::string::npos)
+				sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
+			else
+				sendFiles(users, message, fd);
 			break;
 		case 2:
 			if (Parser::getWordCount(message) == 2)
@@ -70,15 +77,15 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 				handleJoin(message, user->second, extractArgument(1, message, 3));
 			break;
 		case 3:
-			user->second.leaveChannel(users, user->second, extractArgument(1, message, 2));
+			user->second.leaveChannel(users, user->second, extractArgument(1, message, -1), 0);
 			break;
 		case 4:
-			user->second.kickUser(users, extractArgument(1, message, 3),
-								  extractArgument(2, message, 3), fd);
+			user->second.kickUser(users, extractArgument(2, message, 3),
+								  extractArgument(1, message, 3), fd);
 			break;
 		case 5:
-			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3), fd);
+			user->second.inviteUser(users, extractArgument(2, message, 3),
+									extractArgument(1, message, 3), fd);
 			break;
 		case 6:
 			removeUser(pollId);	 // quitServer();
@@ -118,7 +125,7 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 			whois(fd, message);
 			break;
 		case 18:
-			bot.runAi(fd, user->second.getNickName(), message);
+			bot.runAi(fd, message, user->second, users, pollId, userPoll, onlineUserCount);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
