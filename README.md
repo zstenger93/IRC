@@ -51,6 +51,10 @@ after the first /BOT command the bot will be available to talk with in a private
 
 It requires a very specific and quite often different layout for each type of returned message or group of messages which if isn't correct then it ain't gonna work at all
 
+## File transfer
+
+Have fun with it \_o_/
+
 <table>
   <tr>
     <th>Orders</th>
