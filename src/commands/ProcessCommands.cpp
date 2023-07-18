@@ -1,6 +1,3 @@
-#include <cstring>
-#include <string>
-
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/Parser.hpp"
@@ -102,6 +99,21 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 									extractArgument(1, message, 3), fd);
 			break;
 		case 6:
+		// THIS SHITSHOW NEEDS A CHECK
+			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+				 usersIt++) {
+				for (std::map<std::string, Channel>::iterator channelsIt = channels.begin();
+					 channelsIt != channels.end(); channelsIt++) {
+					if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
+						user->second.isInChannel(channelsIt->second.getChannelName())) {
+						if (usersIt->second.getUserName() != user->second.getUserName())
+							send_message_to_server(usersIt->first, 4, user->second.getNickName(),
+												   "PART",
+												   channelsIt->second.getChannelName().c_str(), COL,
+												   "User Rick Rolled Away");
+					}
+				}
+			}
 			removeUser(pollId);
 			break;
 		case 7:

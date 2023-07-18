@@ -26,7 +26,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
 		user.joinChannel(user, name, op);
 		loopTroughtTheUsersInChan(name, user.getUserFd(), 1, message, user);
-		channelTopic(message, channelIt->first, user.getUserFd());	// SENDS TOPIC TO THE USER
+		channelTopic(message, channelIt->first, user.getUserFd());
 		loopTroughtTheUsersInChan(name, user.getUserFd(), 2, message, user);
 		send_message_to_server(user.getUserFd(), 6, RICK, RPL_NAMREPLY, user.getNickName().c_str(),
 							   "=", name.c_str(), COL, "Marvin");
@@ -51,7 +51,7 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 		send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 		return;
 	}
-	std::string FileName = extractArgument(4, message, -1);	 //@note to be checked
+	std::string FileName = extractArgument(4, message, -1);
 	std::string IpAdress = extractArgument(5, message, -1);
 	std::string PortNumber = extractArgument(6, message, -1);
 	std::string FileSize = extractArgument(7, message, -1);
