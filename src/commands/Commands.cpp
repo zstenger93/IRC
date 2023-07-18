@@ -226,6 +226,20 @@ void Server::mode(std::string message, int userFd) {
 										   "MODE", channelName.c_str(), mode.c_str(),
 										   usersIt->second.getNickName().c_str());
 			}
+			// NEED TO CHECK THIS
+			if (mode.compare("o") == 0) {
+				if (Parser::getWordCount(message) == 4) {
+					std::map<int, User>::iterator userIt = users.find(extractArgument(3, message, 4));
+					userIt->second.giveOperatorPrivilage(extractArgument(1, message, 4));
+				} else {
+					// ERROR, WRONG ARGCOUNT...
+					return;
+				}
+			}
+			if (mode.compare("t") == 0) {
+				// then what the fuck?
+				// it literally does nothing ...
+			}
 		} else {
 			channelIt->second.addMode(mode, false);
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
