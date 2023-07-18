@@ -58,10 +58,9 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 	if (FileName.empty() == true || IpAdress.empty() == true || PortNumber.empty() == true ||
 		FileSize.empty() == true)
 		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
-	send_message_to_server(receiverIt->second.getUserFd(), 9, userIt->second.getNickName(),
-						   "PRIVMSG", receiverIt->second.getNickName().c_str(), "DCC", "ACCEPT",
-						   FileName.c_str(), IpAdress.c_str(), PortNumber.c_str(), FileSize.c_str(),
-						   COL, "File transfer");
+	send_message_to_server(receiverIt->second.getUserFd(), 10, userIt->second.getNickName(),
+						   "NOTICE", receiverIt->second.getNickName().c_str(), COL, "\x01 DCC", "SEND",
+						   FileName.c_str(), IpAdress.c_str(), PortNumber.c_str(), FileSize.c_str(), "\x01");
 }
 
 void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,

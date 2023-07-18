@@ -49,6 +49,7 @@
 #define ENDOFC "END of CHANNEL LIST"
 #define NOTINCHAN "USER ain't on channel"
 #define COMMAND_NOT_FOUND "Command not found"
+#define CANTLEAVE_C "\0034No such channel.\0030"
 #define NOTOPER "You ain't the master RICK ROLLER"
 #define NOSTEELIN "We do not steel user data #awkwardface"
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
@@ -72,6 +73,7 @@
 #define NOSUCHUSER "there ain't such user bozo"
 #define NOSUCHCHAN "there ain't such channel bozo"
 #define INVITED "You are invited to join the conspiracy at"
+#define CONNECTED "\0033You have been successfully connected to the server.\0030"
 #define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
 	"<password>"
