@@ -52,14 +52,19 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
-	@printf "$(RED)  [$(YELLOW)"
-	@for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64; do \
-		printf "="; \
+	@printf "   "
+	@for i in $$(seq 70); do \
+		percentage=$$(($$i * 100 / 70)); \
+		printf "$(YELLOW)\r%d%% " $$percentage; \
+		printf "$(YELLOW)"; \
+		for j in $$(seq $$i); do \
+			printf "$(BLUE)█"; \
+		done; \
 		sleep 0.1; \
 	done
-	@printf "$(RED)]$(BLUE)->$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n"
 	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
-	@echo "$(YELLOW)Be careful $(USER) not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@echo "$(YELLOW)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 # @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
 	@echo "$(GREEN)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
 
@@ -91,8 +96,8 @@ PURPLE = \033[1;35m
 BWhite = \033[1;37m
 RED = \033[1;91m
 GREEN = \033[1;92m
-CYAN2 = \x1B[1;36m
-CYAN = \033[1;96m
+CYAN = \x1B[1;36m
+BLUE = \033[1;34m
 
 RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
