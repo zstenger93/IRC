@@ -1,3 +1,6 @@
+#include <cstring>
+#include <string>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/Parser.hpp"
@@ -31,12 +34,26 @@ int Server::processCommands(int pollId) {
 		return USERDISCONECTED;
 	} else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
-	while (message.find("\r\n") == NOT_FOUND && buffer_len != 0) {
+	while (message.find("\n") == std::string::npos) {
 		memset(buffer, 0, 512);
-		buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
+		buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 		stringLength += buffer_len;
 		message += buffer;
+		if (message.find("\n") != std::string::npos) {
+			message = message.substr(0, message.length() - 1);
+			message = message + "\r\n";
+		}
 	}
+
+	std::cout << "FIND |";
+	if (message.find("\r\n") == std::string::npos)
+		std::cout << "npos";
+	else
+		std::cout << "pos";
+	std::cout << "|" << std::endl;
+	std::cout << "BUFFER LEN |" << buffer_len << "|" << std::endl;
+	std::cout << "STRING LEN |" << stringLength << "|" << std::endl;
+	std::cout << "MESSAGE IS |" << message << "|" << std::endl;
 	commandParser(it, message, it->first, pollId);
 	return 1;
 }
@@ -48,7 +65,6 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
 								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
 								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
-	std::cout << message << std::endl;
 	int pos = message.find("DCC");
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {

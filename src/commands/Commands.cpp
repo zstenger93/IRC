@@ -20,6 +20,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
+		channelIt = channels.find(name);
 		op = 1;
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
@@ -80,7 +81,7 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
 			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
-				send_message_to_server(receiverIt->first, 5, userIt->second.getNickName().c_str(),
+				send_message_to_server(receiverIt->first, 4, userIt->second.getNickName().c_str(),
 									   PRIVMSG, receiverIt->second.getNickName().c_str(), COL,
 									   extractMessage(message).c_str());
 				return;

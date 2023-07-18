@@ -48,7 +48,7 @@ bool Server::getPass(std::string& msg) {
 /*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Server::getCommand(std::string message) {
-	int pos = message.find_first_of(" \t\n");
+	int pos = message.find_first_of(" \r\t\n");
 	std::string command;
 	if (pos != NOT_FOUND)
 		command = message.substr(0, pos);

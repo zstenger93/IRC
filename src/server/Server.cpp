@@ -82,8 +82,11 @@ void Server::addUser(int userFd) {
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
 }
 
+	// send_message_to_server(usersIt->first, 4, user.getNickName(), "PART",
+	// 								   channelName.c_str(), COL, "User Rick Rolled Away");
 void Server::removeUser(int pollId) {
 	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
+
 	if (it != users.end()) users.erase(it);
 	close(userPoll[pollId].fd);
 	while (pollId < onlineUserCount) {
