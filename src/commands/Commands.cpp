@@ -231,6 +231,7 @@ void Server::mode(std::string message, int userFd) {
 				if (Parser::getWordCount(message) == 4) {
 					std::map<int, User>::iterator userIt = users.find(extractArgument(3, message, 4));
 					userIt->second.giveOperatorPrivilage(extractArgument(1, message, 4));
+					// send msg that the user is now operator ??
 				} else {
 					// ERROR, WRONG ARGCOUNT...
 					return;
@@ -239,6 +240,7 @@ void Server::mode(std::string message, int userFd) {
 			if (mode.compare("t") == 0) {
 				// then what the fuck?
 				// it literally does nothing ...
+				// shall we send msg about it ??
 			}
 		} else {
 			channelIt->second.addMode(mode, false);
