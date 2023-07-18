@@ -7,9 +7,8 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Channel::Channel(std::string name) : channelName(name), userCount(0), userLimit(5) {
+Channel::Channel(std::string name) : channelName(name), userCount(1), userLimit(5) {
 	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
-
 	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));
 }
 Channel::~Channel() {}
@@ -20,6 +19,10 @@ Channel::~Channel() {}
 
 void Server::createChannel(User& user, std::string name) {
 	channels.insert(std::make_pair(name, Channel(name)));
+	std::map<int, User>::iterator userIt = users.begin();
+	for (; userIt != users.end(); userIt++) {
+		listChannels(userIt->second.getNickName());
+	}
 }
 
 void User::joinChannel(User& user, std::string name, int op) {
@@ -36,7 +39,11 @@ void User::joinChannel(User& user, std::string name, int op) {
 	}
 }
 
-void Channel::addMode(std::string mode, bool value) { modes.insert(std::make_pair(mode, value)); }
+void Channel::addMode(std::string mode, bool value) {
+	std::map<std::string, bool>::iterator modesIt = modes.find(mode);
+	if (modesIt == modes.end()) return;
+	if (modesIt->second != value) modesIt->second = value;
+}
 
 bool Channel::checkMode(std::string mode) {
 	return (modes.find(mode) == modes.end() ? false : modes.find(mode)->second);
@@ -51,6 +58,8 @@ bool Channel::isPasswordCorrect(std::string inputPassword) {
 
 void Channel::setChannelTopic(std::string newChannelTopic) { channelTopic = newChannelTopic; }
 void Channel::changeUserCount(int count) { userCount = count; }
+void Channel::setChannelPassword(std::string setTo) { channelPassword = setTo; }
+void Channel::setChannelUserLimit(int setTo) { userLimit = setTo; }
 
 /*___________________________________________ GETTERS ___________________________________________*/
 

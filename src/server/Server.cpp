@@ -9,10 +9,10 @@ Server::Server() {}
 
 Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
-	Server::setAdminDetails();	// kinda extra, not needed will decide later
+	Server::setAdminDetails();
 	Server::setConnectionLimits();
 	Server::inputParser(argc, argv);
-	bot.constructBot();	 // creating our ai overlord
+	bot.constructBot();
 }
 
 Server::~Server() {}

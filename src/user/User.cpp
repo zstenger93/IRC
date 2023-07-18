@@ -25,7 +25,6 @@ std::string User::getNickName() { return nickName; }
 
 bool User::isOperatorInChannel(std::string channelName) {
 	std::map<std::string, bool>::iterator modeIt = channels.find(channelName);
-
 	if (modeIt != channels.end()) return modeIt->second;
 	return false;
 }
