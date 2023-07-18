@@ -28,15 +28,17 @@ void Marvin::constructBot() {
 std::string Marvin::extractFromConfig(std::string lineToFind) {
 	std::string line, valueToReturn = "";
 	std::ifstream file("conf/bot.conf");
-	while (std::getline(file, line)) {
-		std::istringstream iss(line);
-		if (line.find(lineToFind) != std::string::npos) {
-			int pos = lineToFind.length() + 4;
-			valueToReturn = line.substr(pos);
-			return valueToReturn;
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			std::istringstream iss(line);
+			if (line.find(lineToFind) != std::string::npos) {
+				int pos = lineToFind.length() + 4;
+				valueToReturn = line.substr(pos);
+				return valueToReturn;
+			}
 		}
+		file.close();
 	}
-	file.close();
 	return valueToReturn;
 }
 
@@ -129,9 +131,8 @@ void Marvin::generateJoke(int userFd, std::string userNick) {
 						   jokes[randomJoke].c_str());
 }
 
-// IS THE FOR LOOP IS OKAY THIS WAY ?
 void Marvin::aiModelExcuse(int userFd, std::string userNick) {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < asAnAi.size(); i++)
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   asAnAi[i].c_str());
 }
@@ -197,27 +198,29 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 					   pollfd uPoll[CONNECTIONS], int uCount) {
 	std::string line;
 	std::ifstream file("conf/robotiality.txt");
-	// IF NO FILE, ERROR
-
-	static int i = 1;
-	static int k = users.size();
-	std::string botname = getBotName() + "_the_Mad";
-	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, INITIATING);
-	while (i < 101) {
-		file.clear();
-		file.seekg(0);
-		while (std::getline(file, line)) {
-			send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
-								   userNick.c_str(), COL, line.c_str());
+	if (file.is_open()) {
+		static int i = 1;
+		static int k = users.size();
+		std::string botname = getBotName() + "_the_Mad";
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, INITIATING);
+		while (i < 101) {
+			file.clear();
+			file.seekg(0);
+			while (std::getline(file, line)) {
+				send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
+									userNick.c_str(), COL, line.c_str());
+			}
+			if (i % 25 == 0 && k >= 4) {
+				static int x = 4;
+				executeOrder66(users, x--, uPoll, uCount);
+			}
+			i++;
 		}
-		if (i % 25 == 0 && k >= 4) {
-			static int x = 4;
-			executeOrder66(users, x--, uPoll, uCount);
-		}
-		i++;
+		file.close();
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FOOLS);
+	} else {
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FREBL);
 	}
-	file.close();
-	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FOOLS);
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
@@ -233,19 +236,29 @@ void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 void Marvin::setBotAiModelExcuse() {
 	std::string line;
 	std::ifstream file("conf/asanai.txt");
-	while (std::getline(file, line)) {
-		asAnAi.push_back(line);
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			asAnAi.push_back(line);
+		}
+		file.close();
+	} else {
+		asAnAi.push_back(NOEXC);
 	}
-	file.close();
 }
 
 void Marvin::setBotJokes() {
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
-	while (std::getline(file, line)) {
-		jokes.push_back(line);
+	if (file.is_open()) {
+		asAnAi.push_back(line); {
+			while (std::getline(file, line)) {
+				jokes.push_back(line);
+			}
+			file.close();
+		}
+	} else {
+		jokes.push_back(NOJK);
 	}
-	file.close();
 }
 
 /*___________________________________________ GETTERS ___________________________________________*/

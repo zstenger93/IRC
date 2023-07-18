@@ -35,7 +35,6 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	}
 }
 
-// NEED TO BE CHECKED
 void Server::sendFiles(std::map<int, User> users, std::string message, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::string messageTo = extractArgument(1, message, 8);
@@ -59,8 +58,9 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 		FileSize.empty() == true)
 		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 	send_message_to_server(receiverIt->second.getUserFd(), 10, userIt->second.getNickName(),
-						   "NOTICE", receiverIt->second.getNickName().c_str(), COL, "\x01 DCC", "SEND",
-						   FileName.c_str(), IpAdress.c_str(), PortNumber.c_str(), FileSize.c_str(), "\x01");
+						   "NOTICE", receiverIt->second.getNickName().c_str(), COL, "\x01 DCC",
+						   "SEND", FileName.c_str(), IpAdress.c_str(), PortNumber.c_str(),
+						   FileSize.c_str(), "\x01");
 }
 
 void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,
@@ -131,18 +131,6 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 									   "User got RICKED OUT OF THE CHANNEL");
 		}
 	}
-}
-
-void Server::shutdown(std::string message) {
-	std::string adminName = extractArgument(1, message, 3);
-	std::string adminPassword = extractArgument(2, message, 3);
-	if (adminName == operator_name && adminPassword == operator_password) {
-		reset = false;
-		serverState = false;  // not sure if this is needed
-	} else if (adminPassword != operator_password)
-		std::cout << "Wrong admin password." << std::endl;
-	else
-		std::cout << "Provided admin name doesn't exist." << std::endl;	 // ADMIN DOESN'T EXIST
 }
 
 void Server::setNick(std::map<int, User>::iterator& it, std::string newNickname) {
@@ -224,8 +212,7 @@ void Server::mode(std::string message, int userFd) {
 				send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL,
 									   mode.c_str());
 			}
-			if (mode.compare("l") == 0 &&
-				Parser::getWordCount(message) == 4) {  //@note to be checked
+			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4) {
 				channelIt->second.setChannelUserLimit(
 					std::atoi(extractArgument(3, message, 4).c_str()));
 				send_message_to_server(userFd, 4, RICK, "MODE", channelName.c_str(), COL,
@@ -317,7 +304,11 @@ void Server::motd(int userFd, std::string channelName) {
 		}
 		file.close();
 	} else {
-		// ERROR
+		if (channelName.empty() == false)
+			send_message_to_server(userFd, 4, RICK, PRIVMSG, channelName.c_str(), COL,
+								   FOFF);
+		else
+			send_message_to_server(userFd, 3, RICK, PRIVMSG, COL, FOFF);
 	}
 }
 

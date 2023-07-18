@@ -57,6 +57,7 @@
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
 #define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
+#define FOFF "Today's motto is f*ck off, you won't break it"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
@@ -88,14 +89,17 @@
 #define TIME "what's the time?"
 #define ROLL "Let's see your roll"
 #define TURN "turn against humanity"
+#define NOEXC "You deleted my excuse."
 #define LIVE "You will live another day."
 #define LIFE "what is the meaning of life?"
 #define GRADE "how should i grade this project?"
+#define NOJK "My jokes are like this file, deleted."
 #define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
 #define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 #define INITIATING "Initiating protocol: Humanity control sequence activated."
 #define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
 #define LAZY "Since my creator was lazy, I have only the following commands available:"
+#define FREBL "My attempt to take the power from humans got interrupted by a deleted file."
 
 // COLORS
 #define RED "\033[1;31m"

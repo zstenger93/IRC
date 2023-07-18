@@ -15,7 +15,7 @@ std::string Server::extractWord(const std::string &line) {
 			return word.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
 		}
 	}
-	return "";	// maybe throw an error as no username found or whatever
+	return "noTryinHereToBreakMe";
 }
 
 std::string Server::base64Decode(const std::string &encodedData) {
@@ -44,16 +44,21 @@ std::string Server::base64Decode(const std::string &encodedData) {
 void Server::setAdminDetails() {
 	std::string line, name;
 	std::ifstream file("conf/irc.conf");
-	while (std::getline(file, line)) {
-		std::istringstream iss(line);
-		if (line.find("oper_username") != std::string::npos) {
-			setAdmin(extractWord(line));
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			std::istringstream iss(line);
+			if (line.find("oper_username") != std::string::npos) {
+				setAdmin(extractWord(line));
+			}
+			if (line.find("oper_password") != std::string::npos) {
+				setAdminPass(base64Decode(extractWord(line)));
+			}
 		}
-		if (line.find("oper_password") != std::string::npos) {
-			setAdminPass(base64Decode(extractWord(line)));
-		}
+		file.close();
+	} else {
+		setAdmin("noadmin");
+		setAdminPass(base64Decode("nopassword"));
 	}
-	file.close();
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

@@ -37,7 +37,9 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 				return ACTIVEMODEERROR;
 			}
 		} else {
-			// WRONG NUMBER OF ARGUMENTS @todo
+			send_message_to_server(user.getUserFd(), 5, RICK, ERR_BADCHANNELKEY,
+								   user.getNickName().c_str(), channel.getChannelName().c_str(),
+								   COL, ERR_TOOMANYTARGETS);
 			return ACTIVEMODEERROR;
 		}
 	}
@@ -72,7 +74,7 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 	for (; userIt != users.end(); userIt++) {
 		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd) {
 			switch (mode) {
-				case 0:	 // sends message to the users inside of the channel
+				case 0:
 					send_message_to_server(userIt->first, 4, user.getNickName().c_str(), PRIVMSG,
 										   channelName.c_str(), COL,
 										   extractMessage(message).c_str());
@@ -86,7 +88,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 										   user.getNickName().c_str(), "=", channelName.c_str(),
 										   COL, userIt->second.getNickName().c_str());
 				default:
-					std::cerr << "Error in the switch" << std::endl;
 					break;
 			}
 		}
