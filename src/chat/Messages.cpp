@@ -50,5 +50,6 @@ std::string extractMessage(std::string message) {
 	std::string parsedMessage = message.substr(message.find_first_of(':') + 1);
 	return parsedMessage;
 }
+
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/

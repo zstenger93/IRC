@@ -48,6 +48,8 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
 								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
 								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
+	std::cout << message << std::endl;
+	int pos = message.find("DCC");
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
@@ -60,7 +62,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 		case 0:
 			break;
 		case 1:
-			sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
+			std::cout << pos << std::endl;
+			if (pos == std::string::npos)
+				sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
+			else
+				sendFiles(users, message, fd);
 			break;
 		case 2:
 			if (Parser::getWordCount(message) == 2)
@@ -76,11 +82,11 @@ void Server::commandParser(std::map<int, User>::iterator& user, std::string mess
 								  extractArgument(1, message, 3), fd);
 			break;
 		case 5:
-			user->second.inviteUser(users, extractArgument(1, message, 3),
-									extractArgument(2, message, 3), fd);
+			user->second.inviteUser(users, extractArgument(2, message, 3),
+									extractArgument(1, message, 3), fd);
 			break;
 		case 6:
-			removeUser(pollId);	 // quitServer();
+			removeUser(pollId);
 			break;
 		case 7:
 			setNick(user, extractArgument(1, message, 2));

@@ -6,11 +6,16 @@ SRC_DIR	= src/
 OBJ_DIR	= objects/
 USER	= $(shell whoami)
 
-SRC		= $(MAIN) $(PARSING) \
-		  $(CLIENT) $(SERVER) \
-		  $(CONFIG) $(ADMIN) \
-		  $(CHANNEL) $(USER) \
-		  $(MESSAGES) $(COMMANDS) \
+SRC		= $(MAIN) \
+		  $(PARSING) \
+		  $(SERVER) \
+		  $(CONFIG) \
+		  $(ADMIN) \
+		  $(CLIENT) \
+		  $(CHANNEL) \
+		  $(USER) \
+		  $(COMMANDS) \
+		  $(MESSAGES) \
 		  $(BOT) \
 
 MAIN		= main/Irc \
@@ -29,7 +34,9 @@ CONFIG		= config/Config \
 USER		= user/User \
 
 COMMANDS	= commands/Commands \
+			  commands/CommandUtils \
 			  commands/ProcessCommands \
+			  commands/OnlyOperatorCommands \
 
 MESSAGES	= chat/Messages \
 
@@ -45,8 +52,22 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
+	@printf "   "
+	@for i in $$(seq 70); do \
+		percentage=$$(($$i * 100 / 70)); \
+		printf "$(YELLOW)\r%d%% " $$percentage; \
+		printf "$(YELLOW)"; \
+		for j in $$(seq $$i); do \
+			printf "$(BLUE)█"; \
+		done; \
+		sleep 0.1; \
+	done
+	@printf "$(GREEN) Done!\n"
 	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@echo "$(YELLOW)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 # @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
+	@echo "$(GREEN)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
+
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
@@ -68,11 +89,6 @@ re:
 	@make all
 	@echo "$(GREEN)The project has been recompiled.$(COLOR_END)"
 
-# remove it after testing
-run:
-	make
-	./ircserv 6667 secureaf
-
 COLOR_END = \033[0;39m
 CYAN3 = \033[1;4;96m
 YELLOW = \033[1;33m
@@ -80,9 +96,9 @@ PURPLE = \033[1;35m
 BWhite = \033[1;37m
 RED = \033[1;91m
 GREEN = \033[1;92m
-CYAN2 = \x1B[1;36m
-CYAN = \033[1;96m
+CYAN = \x1B[1;36m
+BLUE = \033[1;34m
 
 RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-.PHONY: all clean fclean re run
+.PHONY: all clean fclean re
