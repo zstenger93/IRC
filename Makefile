@@ -44,25 +44,49 @@ CHANNEL		= channel/Channel \
 
 BOT			= bot/Bot \
 
-SRCS	= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
-OBJS	= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
+SRCS		= $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC)))
+OBJS		= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@sleep 0.1
+	@echo "$(YELLOW)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
-	@printf "$(RED)  [$(YELLOW)"
-	@for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64; do \
-		printf "="; \
-		sleep 0.1; \
-	done
-	@printf "$(RED)]$(BLUE)->$(GREEN) Done!\n"
+	@printf "$(YELLOW)Mining sockets   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Cutting ears to have something to listen with   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Forging switch statements   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Cooking sphagetti, ala code   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Constructing the Bot service   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Creating General channel   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Creating users   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Begging to the server not to crash   $(COLOR_END)"
+	make displaypercent
+	@printf "$(YELLOW)Saying final prayers   $(COLOR_END)"
+	make displaypercent
+	@printf "$(GREEN) Done!\n"
 	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
-	@echo "$(YELLOW)Be careful $(USER) not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 # @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
 	@echo "$(GREEN)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
 
+displaypercent:
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\r%d%% " $$percentage; \
+		printf "$(YELLOW)"; \
+		for j in $$(seq $$i); do \
+			printf "$(BLUE)█"; \
+		done; \
+		sleep 0.05; \
+	done
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
@@ -96,4 +120,4 @@ CYAN = \033[1;96m
 
 RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re displaypercent
