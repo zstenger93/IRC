@@ -21,7 +21,7 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
 		channelIt = channels.find(name);
-		channelIt->second.setChannelTopic("Welcome to the channel bitch!");
+		channelIt->second.setChannelTopic(WELCOME);
 		op = 1;
 	}
 	if (!isJoinedWithActiveMode(channelIt->second, user, message)) {
@@ -101,7 +101,7 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 									  user.getNickName().c_str(), channelName.c_str(), COL,
 									  CANTLEAVE_C);
 	}
-	if (channelName.compare("#General") == 0) {
+	if (channelName.compare("#General") == 0 && mode != 1) {
 		return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
 									  CNTL);
 	}
@@ -153,8 +153,7 @@ void Server::listChannels(std::string userName) {
 	if (userIt == users.end()) {
 		return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 	}
-	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), "channel", COL,
-						   "NAME");
+	send_message_to_server(userIt->first, 5, RICK, RPL_STARTLIST, userName.c_str(), CH, COL, NM);
 	for (std::map<std::string, Channel>::iterator channelIt = channels.begin();
 		 channelIt != channels.end(); channelIt++) {
 		send_message_to_server(userIt->first, 3, RICK, RPL_LIST, userName.c_str(),
@@ -253,10 +252,8 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 		return send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
 	}
 	if (Parser::getWordCount(message) == 2) {
-		std::cout << "the message: " << message << std::endl;
-		std::cout << "topic is: " << channelIt->second.getChannelTopic() << std::endl;
 		send_message_to_server(userFd, 5, RICK, RPL_TOPIC, userIt->second.getNickName().c_str(),
-									   channelIt->second.getChannelName().c_str(), COL,
+							   channelIt->second.getChannelName().c_str(), COL,
 							   channelIt->second.getChannelTopic().c_str());
 	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName) &&

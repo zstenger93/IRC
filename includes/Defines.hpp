@@ -39,8 +39,10 @@
 #define N "NICK"
 #define T "TOPIC"
 #define PW "PASS"
+#define NM "NAME"
 #define NT "NOTICE"
 #define PM "PRIVMSG"
+#define CH "channel"
 #define DCC "\x01 DCC"
 
 // SERVER PRINTING
@@ -92,6 +94,7 @@
 #define NKCK "User got RICKED OUT OF THE CHANNEL"
 #define NOSUCHCHAN "there ain't such channel bozo"
 #define INVITED "You are invited to join the conspiracy at"
+#define WELCOME "Welcome to Rickland, get ready to get RIICKEED!"
 #define KCKD "KICKED FOR NOT APPRICIATING THE GREAT RICK ROLL CONSPIRACY"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
 #define LOGIN_REQUIRED                                                                      \
