@@ -106,7 +106,12 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 			handleJoin(msg, user, "#General");
 			break;
 		case 13:
-			if (Parser::getWordCount(msg) == 3) shutdown(msg);
+			if (Parser::getWordCount(msg) == 3)
+				shutdown(msg);
+			else
+				send_message_to_server(user.getUserFd(), 4, RICK, ERR_NEEDMOREPARAMS,
+									   user.getNickName().c_str(),
+									   extractArgument(0, msg, -1).c_str(), COL);
 			break;
 		case 14:
 			who(fd, msg);

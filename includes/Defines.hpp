@@ -41,7 +41,6 @@
 #define PW "PASS"
 #define NM "NAME"
 #define NT "NOTICE"
-#define PM "PRIVMSG"
 #define CH "channel"
 #define DCC "\x01 DCC"
 
@@ -52,10 +51,12 @@
 #define RECIEVED "\033[1;4;31mCommand recived from client: \033[1;39m"
 
 // INPUT HANDLING MESSAGES
-#define WRONGPASS "The password is wrong, try again."
-#define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
-#define LONGPASS "The provided password is too long. It can't be longer than 8 charaters"
-#define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
+#define WRONGPASS "\033[1;31mThe password is wrong, try again.\033[1;39m"
+#define BADNAME "\033[1;31mProvided admin name doesn't exist. Who are you?!\033[1;39m"
+#define BADPASS "\033[1;31mWrong admin password. Whom are you trying to Rick?\033[1;39m"
+#define WRONGPORT "\033[1;31mThe provided port is not valid, please use a standard port: 6660-6669\033[1;39m"
+#define LONGPASS "\033[1;31mThe provided password is too long. It can't be longer than 8 charaters\033[1;39m"
+#define WRONGINPUT "\033[1;31mWrong input, you can launch the program as: ./ircserv <port> <password>\033[1;39m"
 
 // MESAGE ERRORS
 #define INVITEONLY -15
