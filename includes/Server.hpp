@@ -20,13 +20,14 @@ class Server {
 	std::string getHostMask();
 	void setPort(int portNum);
 	std::string getPassword();
-	void removeUser(int pollId);
 	bool passwordCheck(std::string psswrd);
 	void inputParser(int argc, char **argv);
 
 	// USER
 	void addUser(int userFd);
 	std::map<int, User> users;
+	void removeUser(int pollId);
+	void sendUserRemoved(User &user);
 	bool getPass(std::string &msg);
 	void authenticate(std::string message, std::map<int, User>::iterator it);
 
@@ -61,7 +62,7 @@ class Server {
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
 					 pollfd uPoll[CONNECTIONS], int uCount);
-	void commandParser(std::map<int, User>::iterator &it, std::string message, int fd, int pollId);
+	void commandParser(User &user, std::string msg, int fd, int pollId);
 
 	// CONNECTION LIMITS
 	int getMaxlimit();
@@ -77,7 +78,7 @@ class Server {
 	void shutdown(std::string message);
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void setNick(std::map<int, User>::iterator &it, std::string newNickname);
+	void setNick(User &user, std::string newNickname);
 
 	// PASS
 	void setServerPassword();

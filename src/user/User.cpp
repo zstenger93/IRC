@@ -12,8 +12,8 @@ User::~User() {}
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
 void User::giveOperatorPrivilage(std::string channelName) {
-	map<std::string, bool>::iterator channelIt = channels.find(channelName);
-	channelIt->second = true;	
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	channelIt->second = true;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

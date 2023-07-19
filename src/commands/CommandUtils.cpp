@@ -61,7 +61,7 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	if (users.find(senderFd)->second.isInChannel(channelName) == false) {
 		send_message_to_server(senderFd, 3, RICK, ERR_USERNOTINCHANNEL,
 							   users.find(senderFd)->second.getNickName().c_str(),
-							   channelName.c_str(), COL, "USER ain't on channel");
+							   channelName.c_str(), COL, NOTINCHAN);
 		return false;
 	}
 	return true;

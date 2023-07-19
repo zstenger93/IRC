@@ -1,5 +1,5 @@
 #include "../../includes/Server.hpp"
-
+#include "../../includes/Commands.hpp"
 #include "../../includes/Channel.hpp"
 #include "../../includes/User.hpp"
 
@@ -80,6 +80,20 @@ void Server::acceptConnection() {
 void Server::addUser(int userFd) {
 	static int i = 1;
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
+}
+
+void Server::sendUserRemoved(User &user) {
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		for (std::map<std::string, Channel>::iterator channelsIt = channels.begin();
+			 channelsIt != channels.end(); channelsIt++) {
+			if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
+				user.isInChannel(channelsIt->second.getChannelName())) {
+				if (usersIt->second.getUserName() != user.getUserName())
+					send_message_to_server(usersIt->first, 4, user.getNickName().c_str(), P,
+										   channelsIt->second.getChannelName().c_str(), COL, LEFT);
+			}
+		}
+	}
 }
 
 void Server::removeUser(int pollId) {

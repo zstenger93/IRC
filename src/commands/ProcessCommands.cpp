@@ -18,11 +18,11 @@ int Server::processCommands(int pollId) {
 	message = buffer;
 	stringLength += buffer_len;
 
-	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-	if (it->second.isConnected() == false) {
-		authenticate(message, it);
+	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
+	if (userIt->second.isConnected() == false) {
+		authenticate(message, userIt);
 	}
-	if (it->second.isConnected() == false) {
+	if (userIt->second.isConnected() == false) {
 		return 1;
 	}
 	if (buffer_len == USERDISCONECTED) {
@@ -41,117 +41,87 @@ int Server::processCommands(int pollId) {
 			message = message + "\r\n";
 		}
 	}
-
-	std::cout << "FIND |";
-	if (message.find("\r\n") == std::string::npos)
-		std::cout << "npos";
-	else
-		std::cout << "pos";
-	std::cout << "|" << std::endl;
-	std::cout << "BUFFER LEN |" << buffer_len << "|" << std::endl;
-	std::cout << "STRING LEN |" << stringLength << "|" << std::endl;
-	std::cout << "MESSAGE IS |" << message << "|" << std::endl;
-	commandParser(it, message, it->first, pollId);
+	commandParser(userIt->second, message, userIt->first, pollId);
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator& user, std::string message, int fd,
-						   int pollId) {
-	int caseId = 0;
-	std::string command = getCommand(message);
+void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
+	int caseId = 0, pos = msg.find("DCC");
+	std::string command = getCommand(msg);
 	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
 								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
 								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
-	int pos = message.find("DCC");
 	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
-	std::cout << "Command recived: " << command << " Full message: " << message
-			  << "Option choosen: " << caseId << std::endl;
+	std::cout << RECIEVED << command << FULLMSG << msg << EXEC << caseId << std::endl;
 	switch (caseId) {
 		case 0:
 			break;
 		case 1:
-			std::cout << pos << std::endl;
 			if (pos == std::string::npos)
-				sendMessage(message, users, fd, pollId, userPoll, onlineUserCount);
+				sendMessage(msg, users, fd, pollId, userPoll, onlineUserCount);
 			else
-				sendFiles(users, message, fd);
+				sendFiles(users, msg, fd);
 			break;
 		case 2:
-			if (Parser::getWordCount(message) == 2)
-				handleJoin(message, user->second, extractArgument(1, message, 2));
+			if (Parser::getWordCount(msg) == 2)
+				handleJoin(msg, user, extractArgument(1, msg, 2));
 			else
-				handleJoin(message, user->second, extractArgument(1, message, 3));
+				handleJoin(msg, user, extractArgument(1, msg, 3));
 			break;
 		case 3:
-			user->second.leaveChannel(users, user->second, extractArgument(1, message, -1), 0);
+			user.leaveChannel(users, user, extractArgument(1, msg, -1), 0);
 			break;
 		case 4:
-			user->second.kickUser(users, extractArgument(2, message, 3),
-								  extractArgument(1, message, 3), fd);
+			user.kickUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
 		case 5:
-			user->second.inviteUser(users, extractArgument(2, message, 3),
-									extractArgument(1, message, 3), fd);
+			user.inviteUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
 		case 6:
-		// THIS SHITSHOW NEEDS A CHECK
-			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
-				 usersIt++) {
-				for (std::map<std::string, Channel>::iterator channelsIt = channels.begin();
-					 channelsIt != channels.end(); channelsIt++) {
-					if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
-						user->second.isInChannel(channelsIt->second.getChannelName())) {
-						if (usersIt->second.getUserName() != user->second.getUserName())
-							send_message_to_server(usersIt->first, 4, user->second.getNickName(),
-												   "PART",
-												   channelsIt->second.getChannelName().c_str(), COL,
-												   "User Rick Rolled Away");
-					}
-				}
-			}
+			sendUserRemoved(user);
 			removeUser(pollId);
 			break;
 		case 7:
-			setNick(user, extractArgument(1, message, 2));
+			setNick(user, extractArgument(1, msg, 2));
 			break;
 		case 8:
-			listChannels(user->second.getNickName());
+			listChannels(user.getNickName());
 			break;
 		case 9:
-			mode(message, fd);
+			mode(msg, fd);
 			break;
 		case 10:
-			channelTopic(message, extractArgument(1, message, -1), fd);
+			channelTopic(msg, extractArgument(1, msg, -1), fd);
 			break;
 		case 11:
 			// CAP
 			break;
 		case 12:
 			// to automaticly join to general after providing the right /PASS
-			handleJoin(message, user->second, "#General");
+			handleJoin(msg, user, "#General");
 			break;
 		case 13:
-			if (Parser::getWordCount(message) == 3) shutdown(message);
+			if (Parser::getWordCount(msg) == 3) shutdown(msg);
 			break;
 		case 14:
-			who(fd, message);
+			who(fd, msg);
 			break;
 		case 15:
-			user->second.ping(message, fd);
+			user.ping(msg, fd);
 			break;
 		case 16:
-			motd(fd, extractArgument(2, message, 3));
+			motd(fd, extractArgument(2, msg, 3));
 			break;
 		case 17:
-			whois(fd, message);
+			whois(fd, msg);
 			break;
 		case 18:
-			bot.runAi(fd, message, user->second, users, pollId, userPoll, onlineUserCount);
+			bot.runAi(fd, msg, user, users, pollId, userPoll, onlineUserCount);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);

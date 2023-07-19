@@ -50,7 +50,7 @@ bool Server::getPass(std::string& msg) {
 std::string Server::getCommand(std::string message) {
 	int pos = message.find_first_of(" \r\t\n");
 	std::string command;
-	if (pos != NOT_FOUND)
+	if (pos != 1)
 		command = message.substr(0, pos);
 	else
 		command = message;
