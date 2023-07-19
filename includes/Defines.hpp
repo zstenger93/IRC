@@ -30,16 +30,33 @@
 #include <utility>
 #include <vector>
 
-#define NOT_FOUND 1
-#define CONNECTIONS 100
-#define USERDISCONECTED 0
-#define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+// COMMANDS TO SEND()
+#define C "CAP"
+#define S "SEND"
+#define P "PART"
+#define K "KICK"
+#define M "MODE"
+#define N "NICK"
+#define T "TOPIC"
+#define PW "PASS"
+#define NM "NAME"
+#define NT "NOTICE"
+#define CH "channel"
+#define DCC "\x01 DCC"
+
+// SERVER PRINTING
+#define EXEC "\033[1;4;33mSwitch ID: \033[1;39m"
+#define FULLMSG "\n\033[1;4;32mFull message recieved: \033[1;39m"
+#define SENT "\033[1;34;4mMessage sent back to client:\n\033[1;39m"
+#define RECIEVED "\033[1;4;31mCommand recived from client: \033[1;39m"
 
 // INPUT HANDLING MESSAGES
-#define WRONGPASS "The password is wrong, try again."
-#define WRONGPORT "The provided port is not valid, please use a standard port: 6660-6669"
-#define LONGPASS "The provided password is too long. It can't be longer than 8 charaters"
-#define WRONGINPUT "Wrong input, you can launch the program as: ./ircserv <port> <password>"
+#define WRONGPASS "\033[1;31mThe password is wrong, try again.\033[1;39m"
+#define BADNAME "\033[1;31mProvided admin name doesn't exist. Who are you?!\033[1;39m"
+#define BADPASS "\033[1;31mWrong admin password. Whom are you trying to Rick?\033[1;39m"
+#define WRONGPORT "\033[1;31mThe provided port is not valid, please use a standard port: 6660-6669\033[1;39m"
+#define LONGPASS "\033[1;31mThe provided password is too long. It can't be longer than 8 charaters\033[1;39m"
+#define WRONGINPUT "\033[1;31mWrong input, you can launch the program as: ./ircserv <port> <password>\033[1;39m"
 
 // MESAGE ERRORS
 #define INVITEONLY -15
@@ -47,17 +64,18 @@
 #define ENDOFW "END of WHO LIST"
 #define ENDOFN "END of NAMES LIST"
 #define ENDOFC "END of CHANNEL LIST"
+#define NOMODE "No such mode, young RICK"
 #define NOTINCHAN "USER ain't on channel"
 #define COMMAND_NOT_FOUND "Command not found"
 #define CANTLEAVE_C "\0034No such channel.\0030"
 #define NOTOPER "You ain't the master RICK ROLLER"
 #define NOSTEELIN "We do not steel user data #awkwardface"
+#define FOFF "Today's motto is f*ck off, you won't break it"
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
 #define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
-#define FOFF "Today's motto is f*ck off, you won't break it"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
@@ -70,10 +88,15 @@
 
 // DEFAULT MESSAGES
 #define RICK "RickRoll.de"
+#define LEFT "User Rick Rolled Away"
+#define CNTL "Can Not Leave #General"
 #define DIDINV "Your invite was rolled"
 #define NOSUCHUSER "there ain't such user bozo"
+#define NKCK "User got RICKED OUT OF THE CHANNEL"
 #define NOSUCHCHAN "there ain't such channel bozo"
 #define INVITED "You are invited to join the conspiracy at"
+#define WELCOME "Welcome to Rickland, get ready to get RIICKEED!"
+#define KCKD "KICKED FOR NOT APPRICIATING THE GREAT RICK ROLL CONSPIRACY"
 #define CONNECTED "\0033You have been successfully connected to the server.\0030"
 #define LOGIN_REQUIRED                                                                      \
 	"\0030You have established the connection to the server. \0038Please login with /PASS " \
@@ -100,6 +123,11 @@
 #define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
 #define LAZY "Since my creator was lazy, I have only the following commands available:"
 #define FREBL "My attempt to take the power from humans got interrupted by a deleted file."
+
+// Settings
+#define CONNECTIONS 100
+#define USERDISCONECTED 0
+#define BASE64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
 // COLORS
 #define RED "\033[1;31m"

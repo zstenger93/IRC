@@ -202,13 +202,14 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		static int i = 1;
 		static int k = users.size();
 		std::string botname = getBotName() + "_the_Mad";
-		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, INITIATING);
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   INITIATING);
 		while (i < 101) {
 			file.clear();
 			file.seekg(0);
 			while (std::getline(file, line)) {
 				send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
-									userNick.c_str(), COL, line.c_str());
+									   userNick.c_str(), COL, line.c_str());
 			}
 			if (i % 25 == 0 && k >= 4) {
 				static int x = 4;
@@ -217,9 +218,11 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 			i++;
 		}
 		file.close();
-		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FOOLS);
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   FOOLS);
 	} else {
-		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, FREBL);
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   FREBL);
 	}
 }
 
@@ -250,7 +253,8 @@ void Marvin::setBotJokes() {
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
 	if (file.is_open()) {
-		asAnAi.push_back(line); {
+		asAnAi.push_back(line);
+		{
 			while (std::getline(file, line)) {
 				jokes.push_back(line);
 			}
