@@ -47,9 +47,9 @@
 
 // SERVER PRINTING
 #define EXEC "Switch ID: "
-#define FULLMSG " Full message: "
+#define FULLMSG "\nFull message: "
 #define SENT "Message sent back to client:\n"
-#define RECIEVED "Command recived from client:\n"
+#define RECIEVED "Command recived from client: "
 
 // INPUT HANDLING MESSAGES
 #define WRONGPASS "The password is wrong, try again."

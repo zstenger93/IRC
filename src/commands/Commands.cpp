@@ -196,23 +196,26 @@ void Server::mode(std::string message, int userFd) {
 			channelIt->second.addMode(mode, true);
 			if (mode.compare("k") == 0 && Parser::getWordCount(message) == 4) {
 				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
-				send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL, mode.c_str());
+				// send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL,
+				// mode.c_str());
 			}
 			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4) {
 				channelIt->second.setChannelUserLimit(
 					std::atoi(extractArgument(3, message, 4).c_str()));
-				send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL, mode.c_str());
+				// send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL,
+				// mode.c_str());
 			}
 			if ((mode.compare("i") == 0 || mode.compare("t") == 0) &&
 				Parser::getWordCount(message) == 3) {
-				send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL, mode.c_str());
+				// send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL,
+				// mode.c_str());
 			}
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true)
 					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
 										   M, channelName.c_str(), mode.c_str(),
-										   usersIt->second.getNickName().c_str());
+										   channelName.c_str());
 			}
 			if (mode.compare("o") == 0) {
 				if (Parser::getWordCount(message) == 4) {
@@ -233,13 +236,13 @@ void Server::mode(std::string message, int userFd) {
 				}
 			}
 		} else {
-			channelIt->second.addMode(mode, false);
+			channelIt->second.addMode(mode.substr(1), false);
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
-				if (usersIt->second.isInChannel(channelName) == true)
-					send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(),
-										   M, channelName.c_str(), mode.c_str(),
-										   usersIt->second.getNickName().c_str());
+				if (usersIt->second.isInChannel(channelName) == true) {
+					send_message_to_server(usersIt->first, 4, RICK,
+										   M, usersIt->second.getUserName().c_str(), mode.c_str(), channelName.c_str());
+				}
 			}
 		}
 	}
