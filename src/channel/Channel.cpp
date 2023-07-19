@@ -1,5 +1,4 @@
 #include "../../includes/Channel.hpp"
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
