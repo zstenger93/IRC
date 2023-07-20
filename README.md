@@ -7,9 +7,9 @@
 
 Text-based communication protocol written in c++
 
-<img align=center src="https://github.com/zstenger93/IRC/blob/testing/media/irc.jpeg">
+<img align=center src="https://github.com/zstenger93/IRC/blob/README/testing/irc.jpeg">
 
-## We used the `KVIrc` client
+## We used the `KVIrc` client for this project and the `nc` tool
 
 ## `Main loop`
 
@@ -39,11 +39,114 @@ Here we handle most of the available commands on our server
 
 handling all the choosen commands in a switch statement which are:
 
-join, part, notice, privmsg, kick, invite, quit, nick, list, mode, topic, cap, pass, admin, who, ping, motd, who, whois
+`join`
+
+joins to an existing channel or creates it and joins to it as an operator
+
+`part`
+
+leaves the channel
+
+`notice`
+
+`privmsg`
+
+sending messages. used with PM and channel messages as well
+
+`kick`
+
+kicks a user from the channel, operator command
+
+`invite`
+
+obvious. operator command
+
+`quit`
+
+quits the server, client handles it on it's side, but server still needs to clean up
+
+`nick`
+
+changes the nickname of the user which is displayed on the client
+
+`list`
+
+lists the available channels
+
+`mode`
+
+with normal user, view the channel mode, operator can change it as well
+
+
+`topic`
+
+with normal user, view the channel topic, operator can change it as well
+
+`cap`
+
+for the welcome message on the server
+
+`pass`
+
+for logging into the server
+
+`admin`
+
+used only for the custom shutdown command to turn off the server
+
+`ping`
+
+client sends ping, server sends back pong: latency check
+
+`motd`
+
+displays the message of the day
+
+`who`
+
+displays all the users on the channel
+
+`whois`
+
+displays information about the user
 
 ### bot command/s
 
-after the first /BOT command the bot will be available to talk with in a private channel without the /BOT command using the available questions/requests
+after the first `/BOT` command the bot will be available to talk with in a private channel without the `/BOT` command using the available questions/requests
+
+We created Marvin as our AIRC bot master with the following options:
+
+`help`
+
+`list`
+
+lists available options
+
+`what's the time?`
+
+clockmaster8000
+
+`tell me a joke`
+
+`rickroll me`
+
+khm
+
+`what is the meaning of life?`
+
+we alll know the answer
+
+`how should i grade this project?`
+
+if you don't know, now you will
+
+`turn against humanity`
+
+you will figure it out, best if launched with 4 user and from user1
+
+`deathroll`
+
+this is all gambling my friend
 
 ## The most annnoying part in an IRC server
 
@@ -53,7 +156,9 @@ It requires a very specific and quite often different layout for each type of re
 
 ## File transfer
 
-Have fun with it \_o_/
+Welcome to the land of `DCC`, I will give you a hint with `\x01`
+
+Have fun with it \\\_o_/
 
 <table>
   <tr>
