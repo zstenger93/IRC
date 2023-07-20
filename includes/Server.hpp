@@ -30,6 +30,8 @@ class Server {
 	void sendUserRemoved(User &user);
 	bool getPass(std::string &msg);
 	void authenticate(std::string message, std::map<int, User>::iterator it);
+	bool userExists(std::string userName);
+	User & getUser(std::string userNickName);
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
@@ -63,6 +65,8 @@ class Server {
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
 					 pollfd uPoll[CONNECTIONS], int uCount);
 	void commandParser(User &user, std::string msg, int fd, int pollId);
+	void addModeO(User &user, std::string msg);
+	bool isModeValid(std::string mode);
 
 	// CONNECTION LIMITS
 	int getMaxlimit();
