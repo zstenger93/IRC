@@ -11,10 +11,9 @@ User::~User() {}
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
 
-void User::giveOperatorPrivilage(std::string channelName) {
+void User::setOperatorPrivilage(std::string channelName, bool setTo) {
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
-	if (channelIt != channels.end())
-		channelIt->second = true;
+	channelIt->second = setTo;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

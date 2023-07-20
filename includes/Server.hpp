@@ -67,6 +67,8 @@ class Server {
 	void commandParser(User &user, std::string msg, int fd, int pollId);
 	void addModeO(User &user, std::string msg);
 	bool isModeValid(std::string mode);
+	void addMode(Channel &channel, User &user, std::string mode, std::string msg);
+	void removeMode(Channel &channel, User &user, std::string mode, std::string msg);
 
 	// CONNECTION LIMITS
 	int getMaxlimit();
