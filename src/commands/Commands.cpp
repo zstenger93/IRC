@@ -193,6 +193,27 @@ void Server::mode(std::string message, int userFd) {
 		}
 		if (add) {
 			mode = mode.substr(1);
+			if (mode.compare("o") == 0) {
+				if (Parser::getWordCount(message) == 4) {
+					for (std::map<int, User>::iterator usersIt = users.begin();
+						 usersIt != users.end(); usersIt++) {
+						if (usersIt->second.getNickName().compare(extractArgument(3, message, 4)) ==
+							0) {
+							if (checkIfCanBeExecuted(extractArgument(1, message, 4),
+													 usersIt->first)) {
+								userIt->second.giveOperatorPrivilage(
+									extractArgument(1, message, 4));
+								// send_message_to_server(usersIt->first, 3,
+								// 					   userIt->second.getNickName().c_str(), M,
+								// 					   channelName.c_str(), "o",
+								// 					   usersIt->second.getNickName().c_str());
+							}
+						}
+					}
+				} else
+					return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL,
+												  NOSUCHUSER);
+			}
 			channelIt->second.addMode(mode, true);
 			if (mode.compare("k") == 0 && Parser::getWordCount(message) == 4)
 				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
@@ -208,30 +229,19 @@ void Server::mode(std::string message, int userFd) {
 					send_message_to_server(usersIt->first, 3, userIt->second.getNickName().c_str(),
 										   M, channelName.c_str(), mode.c_str());
 			}
-			if (mode.compare("o") == 0) {
-				if (Parser::getWordCount(message) == 4) {
-					for (std::map<int, User>::iterator usersIt = users.begin();
-						 usersIt != users.end(); usersIt++) {
-						if (usersIt->second.getUserName() == extractArgument(3, message, 4)) {
-							if (checkIfCanBeExecuted(extractArgument(1, message, 4),
-													 usersIt->first))
-								userIt->second.giveOperatorPrivilage(
-									extractArgument(1, message, 4));
-						} else {
-							send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL,
-												   NOSUCHUSER);
-						}
-					}
-				} else
-					return;
-			}
 		} else {
 			channelIt->second.addMode(mode.substr(1), false);
 			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
 				 usersIt++) {
 				if (usersIt->second.isInChannel(channelName) == true) {
-					send_message_to_server(usersIt->first, 3, RICK, M,
-										   usersIt->second.getUserName().c_str(), mode.c_str());
+					if (mode == "o")
+						send_message_to_server(usersIt->first, 3,
+											   userIt->second.getNickName().c_str(), M,
+											   channelName.c_str(), mode.c_str(),
+											   usersIt->second.getNickName().c_str());
+					else
+						send_message_to_server(usersIt->first, 3, RICK, M,
+											   usersIt->second.getUserName().c_str(), mode.c_str());
 				}
 			}
 		}
@@ -251,6 +261,7 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName) &&
 		!channelIt->second.checkMode("t")) {
+			// NEED TO GET THE POS OF : TO FIX THE JOIN MISMATCH i guess
 		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
 		channelIt->second.setChannelTopic(message.substr(newTopicStartPos));
 		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();

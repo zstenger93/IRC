@@ -13,7 +13,8 @@ User::~User() {}
 
 void User::giveOperatorPrivilage(std::string channelName) {
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
-	channelIt->second = true;
+	if (channelIt != channels.end())
+		channelIt->second = true;
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
