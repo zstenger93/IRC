@@ -179,7 +179,7 @@ void Server::mode(std::string message, int userFd) {
 		}
 		send_message_to_server(userFd, 4, RICK, M, channelName.c_str(), COL, mode.c_str());
 	} else if ((Parser::getWordCount(message) == 3 || Parser::getWordCount(message) == 4) &&
-			   userIt->second.isOperatorInChannel(channelName)) {  // IS OPERATOR
+			   userIt->second.isOperatorInChannel(channelName)) {
 		mode = extractArgument(2, message, -1);
 
 		if (mode[0] == 'b' && mode.size() == 1) return;
@@ -207,7 +207,9 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName) &&
 		!channelIt->second.checkMode("t")) {
 		// NEED TO GET THE POS OF : TO FIX THE JOIN MISMATCH i guess
-		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
+		std::string command = extractArgument(0, message, -1);
+		int newTopicStartPos = command.length() + 1 + channelName.length() + 1 + 1;
+		if (command.compare(T) != 0) newTopicStartPos = newTopicStartPos - 1;
 		channelIt->second.setChannelTopic(message.substr(newTopicStartPos));
 
 		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
