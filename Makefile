@@ -50,43 +50,121 @@ OBJS		= $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC)))
 all: $(NAME)
 
 $(NAME): $(OBJS)
+	@echo "$(RED)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@sleep 0.1
-	@echo "$(YELLOW)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@echo "$(BWhite)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
-	@printf "$(YELLOW)Mining sockets   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Cutting ears to have something to listen with   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Forging switch statements   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Cooking sphagetti, ala code   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Constructing the Bot service   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Creating General channel   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Creating users   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Begging to the server not to crash   $(COLOR_END)"
-	make displaypercent
-	@printf "$(YELLOW)Saying final prayers   $(COLOR_END)"
-	make displaypercent
-	@printf "$(GREEN) Done!\n"
-	@echo "$(GREEN)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
-# @echo "$(GREEN)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)$(RICK)"
-	@echo "$(GREEN)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
-
-displaypercent:
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
-		printf "$(YELLOW)\r%d%% " $$percentage; \
-		printf "$(YELLOW)"; \
+		printf "$(YELLOW)\rMining sockets                       $(RED) %d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
-			printf "$(BLUE)█"; \
+			printf "█"; \
 		done; \
 		sleep 0.05; \
 	done
+	@printf "$(GREEN) Done!\n\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rSetting up listening ears             $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rForging switch statements             $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rCooking sphagetti, ala code           $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rConstructing the Bot service          $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rCreating General channel              $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rCreating users                        $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rRealizing send makes no sendse        $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rBegging to the server not to crash    $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 35); do \
+		percentage=$$(($$i * 100 / 35)); \
+		printf "$(YELLOW)\rSaying final prayers                  $(RED)%d%% $(BLUE)" $$percentage; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(GREEN) Done!\n"
+	@for i in $$(seq 25); do \
+		percentage=$$(($$i * 100 / 50)); \
+		if [ $$percentage -le 24 ]; then \
+			printf "$(YELLOW)\rAvoiding brain damage                $(RED) %d%%  $(BLUE)" $$percentage; \
+		else \
+			printf "$(YELLOW)\rAvoiding brain damage                $(RED) %d%%  $(RED)" $$percentage; \
+		fi; \
+		for j in $$(seq $$i); do \
+			printf "█"; \
+		done; \
+		sleep 0.05; \
+	done
+	@printf "$(RED) CRASH!\n"
+	@echo "$(BWhite)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@for i in $$(seq 1); do \
+		sleep 1; \
+	done
+	@echo "$(BWhite)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
+# $(RICK); \
+
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
@@ -116,8 +194,8 @@ BWhite = \033[1;37m
 RED = \033[1;91m
 GREEN = \033[1;92m
 CYAN2 = \x1B[1;36m
-CYAN = \033[1;96m
+BLUE = \033[1;34m
 
-RICK = $(shell open https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+RICK = open https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 .PHONY: all clean fclean re displaypercent
