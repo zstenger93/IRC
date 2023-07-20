@@ -7,7 +7,7 @@
 
 Text-based communication protocol written in c++
 
-<img align=center src="https://github.com/zstenger93/IRC/blob/README/testing/irc.jpeg">
+<img align=center src="https://github.com/zstenger93/IRC/blob/master/media/irc.jpeg">
 
 ## We used the `KVIrc` client for this project and the `nc` tool
 
