@@ -45,18 +45,21 @@
 #define DCC "\x01 DCC"
 
 // SERVER PRINTING
-#define EXEC "\033[1;4;33mSwitch ID: \033[1;39m"
-#define FULLMSG "\n\033[1;4;32mFull message recieved: \033[1;39m"
-#define SENT "\033[1;34;4mMessage sent back to client:\n\033[1;39m"
-#define RECIEVED "\033[1;4;31mCommand recived from client: \033[1;39m"
+#define EXEC "\033[1;4;33mSwitch ID:\033[1;0;39m "
+#define FULLMSG "\n\033[1;4;32mFull message recieved:\033[1;0;39m "
+#define SENT "\033[1;34;4mMessage sent back to client:\n\033[1;0;39m"
+#define RECIEVED "\033[1;4;31mCommand recived from client:\033[1;0;39m "
 
 // INPUT HANDLING MESSAGES
 #define WRONGPASS "\033[1;31mThe password is wrong, try again.\033[1;39m"
 #define BADNAME "\033[1;31mProvided admin name doesn't exist. Who are you?!\033[1;39m"
 #define BADPASS "\033[1;31mWrong admin password. Whom are you trying to Rick?\033[1;39m"
-#define WRONGPORT "\033[1;31mThe provided port is not valid, please use a standard port: 6660-6669\033[1;39m"
-#define LONGPASS "\033[1;31mThe provided password is too long. It can't be longer than 8 charaters\033[1;39m"
-#define WRONGINPUT "\033[1;31mWrong input, you can launch the program as: ./ircserv <port> <password>\033[1;39m"
+#define WRONGPORT \
+	"\033[1;31mThe provided port is not valid, please use a standard port: 6660-6669\033[1;39m"
+#define LONGPASS \
+	"\033[1;31mThe provided password is too long. It can't be longer than 8 charaters\033[1;39m"
+#define WRONGINPUT \
+	"\033[1;31mWrong input, you can launch the program as: ./ircserv <port> <password>\033[1;39m"
 
 // MESAGE ERRORS
 #define INVITEONLY -15

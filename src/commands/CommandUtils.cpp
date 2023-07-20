@@ -18,7 +18,6 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 							   INVITENEEDED);
 		return INVITEONLY;
 	}
-	// channel.checkMode("k");
 	if (userCount < userLimit && channel.checkMode("l") == true) {
 	} else if (userCount == userLimit && channel.checkMode("l")) {
 		send_message_to_server(user.getUserFd(), 5, RICK, ERR_CHANNELISFULL,
@@ -97,6 +96,65 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 
 bool User::isInChannel(std::string channelName) {
 	return (channels.find(channelName) != channels.end());
+}
+
+void Server::addModeO(User& user, std::string msg) {
+	if (Parser::getWordCount(msg) != 4) return;
+
+	std::string channelName = extractArgument(1, msg, 4);
+	std::string targetUser = extractArgument(3, msg, 4);
+
+	if (userExists(targetUser) == false)
+		return send_message_to_server(user.getUserFd(), 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+
+	User& secondUser = getUser(targetUser);
+
+	if (secondUser.isInChannel(channelName) == false)
+		return send_message_to_server(user.getUserFd(), 3, RICK, ERR_USERNOTINCHANNEL,
+									  users.find(user.getUserFd())->second.getNickName().c_str(),
+									  channelName.c_str(), COL, NOTINCHAN);
+
+	if (secondUser.isOperatorInChannel(channelName) == true)
+		return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
+									  NOTOPER);
+
+	secondUser.setOperatorPrivilage(channelName, true);
+}
+
+bool Server::isModeValid(std::string mode) {
+	if (mode.size() != 2) return false;
+	if (mode[1] == 'i' || mode[1] == 'o' || mode[1] == 'k' || mode[1] == 't' || mode[1] == 'l')
+		return true;
+	return false;
+}
+
+void Server::addMode(Channel& channel, User& user, std::string mode, std::string msg) {
+	mode = mode.substr(1);
+	if (mode.compare("o") == 0)
+		addModeO(user, msg);
+	else if (mode.compare("k") == 0 && Parser::getWordCount(msg) == 4)
+		channel.setChannelPassword(extractArgument(3, msg, 4));
+	else if (mode.compare("l") == 0 && Parser::getWordCount(msg) == 4)
+		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
+	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
+	}
+	channel.addMode(mode, true);
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channel.getChannelName()) == true)
+			send_message_to_server(usersIt->first, 3, user.getNickName().c_str(), M,
+								   channel.getChannelName().c_str(), mode.c_str());
+	}
+}
+
+void Server::removeMode(Channel& channel, User& user, std::string mode, std::string msg) {
+	channel.addMode(mode.substr(1), false);
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		if (usersIt->second.isInChannel(channel.getChannelName()) == true) {
+			if (mode == "-o") usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
+			send_message_to_server(usersIt->first, 3, user.getNickName().c_str(), M,
+								   channel.getChannelName().c_str(), mode.c_str());
+		}
+	}
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/

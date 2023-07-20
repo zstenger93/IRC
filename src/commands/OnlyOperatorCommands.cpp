@@ -86,8 +86,7 @@ void Server::shutdown(std::string message) {
 	if (adminName == operator_name && adminPassword == operator_password) {
 		serverState = false;
 		reset = false;
-	}
-	else if (adminPassword != operator_password)
+	} else if (adminPassword != operator_password)
 		std::cout << BADPASS << std::endl;
 	else
 		std::cout << BADNAME << std::endl;
