@@ -30,6 +30,8 @@ class Server {
 	void sendUserRemoved(User &user);
 	bool getPass(std::string &msg);
 	void authenticate(std::string message, std::map<int, User>::iterator it);
+	bool userExists(std::string userName);
+	User &getUser(std::string userNickName);
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
@@ -47,22 +49,31 @@ class Server {
 	void setServerSocket(int socket);
 	const Client &getClient(int clientNumb) const;
 
-	// COMMAND HANDLING
+	// PROCESS COMMANDS
 	int processCommands(int pollId);
+	void commandParser(User &user, std::string msg, int fd, int pollId);
+
+	// COMMAND HANDLING
 	void listChannels(std::string userName);
 	void who(int userFd, std::string message);
 	void mode(std::string message, int userFd);
 	void whois(int userFd, std::string message);
-	std::string getCommand(std::string message);
 	void motd(int userFd, std::string channelName);
+	void setNick(User &user, std::string newNickname, std::string msg);
 	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
-	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
-								   std::string message, User &user);
-	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
 					 pollfd uPoll[CONNECTIONS], int uCount);
-	void commandParser(User &user, std::string msg, int fd, int pollId);
+
+	// COMMAND UTILS
+	bool isModeValid(std::string mode);
+	void addModeO(User &user, std::string msg);
+	std::string getCommand(std::string message);
+	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
+	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
+								   std::string message, User &user);
+	void addMode(Channel &channel, User &user, std::string mode, std::string msg);
+	void removeMode(Channel &channel, User &user, std::string mode, std::string msg);
 
 	// CONNECTION LIMITS
 	int getMaxlimit();
@@ -78,7 +89,6 @@ class Server {
 	void shutdown(std::string message);
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void setNick(User &user, std::string newNickname);
 
 	// PASS
 	void setServerPassword();

@@ -13,10 +13,10 @@
 
 void Server::handleJoin(std::string message, User& user, std::string name) {
 	int op = 0;
-	if (name.length() == 0) {
-		send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN, COL);
-		return;
-	}
+
+	if (name.length() == 0)
+		return send_message_to_server(user.getUserFd(), 3, RICK, ERR_NEEDMOREPARAMS, COMMAND, JOIN,
+									  COL);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(name);
 	if (channelIt == channels.end()) {
 		createChannel(user, name);
@@ -40,22 +40,20 @@ void Server::handleJoin(std::string message, User& user, std::string name) {
 void Server::sendFiles(std::map<int, User> users, std::string message, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::string messageTo = extractArgument(1, message, 8);
-	if (messageTo.empty() == true) {
-		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
-		return;
-	}
+
+	if (messageTo.empty() == true)
+		return send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 	std::map<int, User>::iterator receiverIt = users.begin();
-	for (; receiverIt != users.end(); receiverIt++) {
+	for (; receiverIt != users.end(); receiverIt++)
 		if (receiverIt->second.getUserName().compare(messageTo) == 0) break;
-	}
-	if (receiverIt == users.end()) {
-		send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
-		return;
-	}
+	if (receiverIt == users.end())
+		return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
+
 	std::string FileName = extractArgument(4, message, -1);
 	std::string IpAdress = extractArgument(5, message, -1);
 	std::string PortNumber = extractArgument(6, message, -1);
 	std::string FileSize = extractArgument(7, message, -1);
+
 	if (FileName.empty() == true || IpAdress.empty() == true || PortNumber.empty() == true ||
 		FileSize.empty() == true)
 		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
@@ -127,7 +125,7 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 	}
 }
 
-void Server::setNick(User& user, std::string newNickname) {
+void Server::setNick(User& user, std::string newNickname, std::string msg) {
 	if (newNickname.length() != 0) {
 		std::map<int, User>::iterator userIt = users.begin();
 		for (; userIt != users.end(); userIt++) {
@@ -141,7 +139,6 @@ void Server::setNick(User& user, std::string newNickname) {
 
 	} else {
 		send_message_to_server(user.getUserFd(), 2, RICK, user.getNickName().c_str(), NICKEMPTYSTR);
-		user.setNickName(newNickname);
 	}
 }
 
@@ -168,10 +165,11 @@ void Server::mode(std::string message, int userFd) {
 	std::string mode = "";
 	std::map<int, User>::iterator userIt = users.find(userFd);
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
-	if (channelIt == channels.end()) {
-		return send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
-	}
 	bool add = false;
+
+	if (channelIt == channels.end())
+		return send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
+
 	if (Parser::getWordCount(message) == 2) {
 		const std::map<std::string, bool> modes = channelIt->second.getChannelModes();
 		for (std::map<std::string, bool>::const_iterator modeIt = modes.begin();
@@ -182,84 +180,42 @@ void Server::mode(std::string message, int userFd) {
 	} else if ((Parser::getWordCount(message) == 3 || Parser::getWordCount(message) == 4) &&
 			   userIt->second.isOperatorInChannel(channelName)) {
 		mode = extractArgument(2, message, -1);
-		if (mode[0] == '+')
-			add = true;
-		else if (mode[0] == '-')
-			add = false;
-		else if (mode[0] == 'b' && mode.length() == 1)
-			return;
-		else {
-			send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHSERVICE, COL, NOMODE);
-		}
-		if (add) {
-			mode = mode.substr(1);
-			channelIt->second.addMode(mode, true);
-			if (mode.compare("k") == 0 && Parser::getWordCount(message) == 4)
-				channelIt->second.setChannelPassword(extractArgument(3, message, 4));
-			if (mode.compare("l") == 0 && Parser::getWordCount(message) == 4)
-				channelIt->second.setChannelUserLimit(
-					std::atoi(extractArgument(3, message, 4).c_str()));
-			if ((mode.compare("i") == 0 || mode.compare("t") == 0) &&
-				Parser::getWordCount(message) == 3) {
-			}
-			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
-				 usersIt++) {
-				if (usersIt->second.isInChannel(channelName) == true)
-					send_message_to_server(usersIt->first, 3, userIt->second.getNickName().c_str(),
-										   M, channelName.c_str(), mode.c_str());
-			}
-			if (mode.compare("o") == 0) {
-				if (Parser::getWordCount(message) == 4) {
-					for (std::map<int, User>::iterator usersIt = users.begin();
-						 usersIt != users.end(); usersIt++) {
-						if (usersIt->second.getUserName() == extractArgument(3, message, 4)) {
-							if (checkIfCanBeExecuted(extractArgument(1, message, 4),
-													 usersIt->first))
-								userIt->second.giveOperatorPrivilage(
-									extractArgument(1, message, 4));
-						} else {
-							send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL,
-												   NOSUCHUSER);
-						}
-					}
-				} else
-					return;
-			}
-		} else {
-			channelIt->second.addMode(mode.substr(1), false);
-			for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
-				 usersIt++) {
-				if (usersIt->second.isInChannel(channelName) == true) {
-					send_message_to_server(usersIt->first, 3, RICK, M,
-										   usersIt->second.getUserName().c_str(), mode.c_str());
-				}
-			}
+
+		if (mode[0] == 'b' && mode.size() == 1) return;
+		if (isModeValid(mode) == false)
+			return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHSERVICE, COL, NOMODE);
+
+		if (mode[0] == '+') {
+			addMode(channelIt->second, userIt->second, mode, message);
+		} else if (mode[0] == '-') {
+			removeMode(channelIt->second, userIt->second, mode, message);
 		}
 	}
 }
 
 void Server::channelTopic(std::string message, std::string channelName, int userFd) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
+
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
-	if (channelIt == channels.end()) {
+	if (channelIt == channels.end())
 		return send_message_to_server(userFd, 3, RICK, ERR_NOSUCHCHANNEL, COL, NOSUCHCHAN);
-	}
-	if (Parser::getWordCount(message) == 2) {
+	if (Parser::getWordCount(message) == 2)
 		send_message_to_server(userFd, 5, RICK, RPL_TOPIC, userIt->second.getNickName().c_str(),
 							   channelIt->second.getChannelName().c_str(), COL,
 							   channelIt->second.getChannelTopic().c_str());
-	}
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName) &&
 		!channelIt->second.checkMode("t")) {
-		int newTopicStartPos = 5 + 1 + channelName.length() + 1 + 1;
+		std::string command = extractArgument(0, message, -1);
+		int newTopicStartPos = command.length() + 1 + channelName.length() + 1 + 1;
+		if (command.compare(T) != 0) newTopicStartPos = newTopicStartPos - 1;
 		channelIt->second.setChannelTopic(message.substr(newTopicStartPos));
+
 		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
-			 usersIt++) {
+			 usersIt++)
 			if (usersIt->second.isInChannel(channelName) == true)
 				send_message_to_server(usersIt->first, 4, userIt->second.getNickName().c_str(), T,
 									   channelIt->second.getChannelName().c_str(), COL,
 									   channelIt->second.getChannelTopic().c_str());
-		}
 	}
 }
 

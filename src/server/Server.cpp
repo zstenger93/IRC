@@ -1,6 +1,7 @@
 #include "../../includes/Server.hpp"
-#include "../../includes/Commands.hpp"
+
 #include "../../includes/Channel.hpp"
+#include "../../includes/Commands.hpp"
 #include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -123,3 +124,23 @@ bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 std::string Server::getHostMask() { return hostmask; }
 int Server::getServerSocket() { return serverSocketFd; }
+
+bool Server::userExists(std::string userNickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(userNickName) == 0) return true;
+	}
+	return false;
+}
+
+User &Server::getUser(std::string userNickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(userNickName) == 0) return usersIt->second;
+	}
+	throw CustomException("getUser() -> NoSuchUser");
+	
+	return usersIt->second;
+}
