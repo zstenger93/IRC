@@ -206,7 +206,6 @@ void Server::channelTopic(std::string message, std::string channelName, int user
 							   channelIt->second.getChannelTopic().c_str());
 	if (Parser::getWordCount(message) > 2 && userIt->second.isOperatorInChannel(channelName) &&
 		!channelIt->second.checkMode("t")) {
-		// NEED TO GET THE POS OF : TO FIX THE JOIN MISMATCH i guess
 		std::string command = extractArgument(0, message, -1);
 		int newTopicStartPos = command.length() + 1 + channelName.length() + 1 + 1;
 		if (command.compare(T) != 0) newTopicStartPos = newTopicStartPos - 1;

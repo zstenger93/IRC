@@ -24,8 +24,8 @@ class User {
 	bool isInChannel(std::string channelName);
 	void ping(std::string message, int userFd);
 	bool isOperatorInChannel(std::string channelName);
-	void setOperatorPrivilage(std::string channelName, bool setTo);
 	void joinChannel(User& user, std::string name, int op);
+	void setOperatorPrivilage(std::string channelName, bool setTo);
 	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName, int mode);
 	void kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName,
 				  int senderFd);
