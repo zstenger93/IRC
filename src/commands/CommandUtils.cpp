@@ -109,9 +109,14 @@ void Server::addModeO(User& user, std::string msg) {
 
 	User& secondUser = getUser(targetUser);
 
-	if (secondUser.isInChannel(channelName) == false) return;
+	if (secondUser.isInChannel(channelName) == false)
+		return send_message_to_server(user.getUserFd(), 3, RICK, ERR_USERNOTINCHANNEL,
+									  users.find(user.getUserFd())->second.getNickName().c_str(),
+									  channelName.c_str(), COL, NOTINCHAN);
 
-	if (secondUser.isOperatorInChannel(channelName) == true) return;
+	if (secondUser.isOperatorInChannel(channelName) == true)
+		return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
+									  NOTOPER);
 
 	secondUser.setOperatorPrivilage(channelName, true);
 }
