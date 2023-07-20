@@ -10,6 +10,12 @@ User::~User() {}
 /*_____________________________________ OPERATOR OVERLOADS ______________________________________*/
 /*_______________________________________ NESTED CLASSES ________________________________________*/
 /*__________________________________________ FUNCTIONS __________________________________________*/
+
+void User::setOperatorPrivilage(std::string channelName, bool setTo) {
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	channelIt->second = setTo;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void User::connectUser(bool isConnected) { connected = isConnected; }
@@ -25,7 +31,6 @@ std::string User::getNickName() { return nickName; }
 
 bool User::isOperatorInChannel(std::string channelName) {
 	std::map<std::string, bool>::iterator modeIt = channels.find(channelName);
-
 	if (modeIt != channels.end()) return modeIt->second;
 	return false;
 }
