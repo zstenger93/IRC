@@ -59,6 +59,7 @@ class Server {
 	void mode(std::string message, int userFd);
 	void whois(int userFd, std::string message);
 	void motd(int userFd, std::string channelName);
+	void setNick(User &user, std::string newNickname, std::string msg);
 	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
@@ -88,7 +89,6 @@ class Server {
 	void shutdown(std::string message);
 	void setAdmin(std::string adminName);
 	void setAdminPass(std::string adminPass);
-	void setNick(User &user, std::string newNickname);
 
 	// PASS
 	void setServerPassword();

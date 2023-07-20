@@ -14,7 +14,7 @@ int Server::processCommands(int pollId) {
 	char buffer[512];
 	int buffer_len, stringLength = 0;
 	memset(buffer, 0, 512);
-	buffer_len = recv(userPoll[pollId].fd, buffer, 512, USERDISCONECTED);
+	buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 	message = buffer;
 	stringLength += buffer_len;
 
@@ -87,7 +87,7 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 			removeUser(pollId);
 			break;
 		case 7:
-			setNick(user, extractArgument(1, msg, 2));
+			setNick(user, extractArgument(1, msg, 2), msg);
 			break;
 		case 8:
 			listChannels(user.getNickName());

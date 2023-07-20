@@ -125,7 +125,7 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 	}
 }
 
-void Server::setNick(User& user, std::string newNickname) {
+void Server::setNick(User& user, std::string newNickname, std::string msg) {
 	if (newNickname.length() != 0) {
 		std::map<int, User>::iterator userIt = users.begin();
 		for (; userIt != users.end(); userIt++) {
@@ -139,7 +139,6 @@ void Server::setNick(User& user, std::string newNickname) {
 
 	} else {
 		send_message_to_server(user.getUserFd(), 2, RICK, user.getNickName().c_str(), NICKEMPTYSTR);
-		user.setNickName(newNickname);
 	}
 }
 
