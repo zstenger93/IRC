@@ -10,16 +10,18 @@ class Channel {
 	Channel(std::string name);
 	~Channel();
 
-	std::string getChannelName();
-	void addMode(std::string mode, bool value);
-	bool checkMode(std::string mode);
-	const std::map<std::string, bool> &getChannelModes();
-	const std::string getChannelTopic();
-	void setChannelTopic(std::string newChannelTopic);
-	void changeUserCount(int count);
 	int getUserCount();
 	int getUserLimit();
+	std::string getChannelName();
+	void changeUserCount(int count);
+	bool checkMode(std::string mode);
+	const std::string getChannelTopic();
+	void setChannelUserLimit(int setTo);
+	void setChannelPassword(std::string setTo);
+	void addMode(std::string mode, bool value);
+	void setChannelTopic(std::string newChannelTopic);
 	bool isPasswordCorrect(std::string inputPassword);
+	const std::map<std::string, bool> &getChannelModes();
 
    private:
 	std::string channelName;

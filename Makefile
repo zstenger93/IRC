@@ -165,7 +165,6 @@ $(NAME): $(OBJS)
 	@echo "$(BWhite)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
 # $(RICK); \
 
-
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c $< -o $@

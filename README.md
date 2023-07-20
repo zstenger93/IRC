@@ -7,28 +7,53 @@
 
 Text-based communication protocol written in c++
 
-<img align=center src="https://github.com/zstenger93/IRC/blob/commands/media/irc.jpeg">
+<img align=center src="https://github.com/zstenger93/IRC/blob/testing/media/irc.jpeg">
 
-## Main loop
+## We used the `KVIrc` client
 
-server.setup
-server.run
-close serversocket
+## `Main loop`
+
+`server.setup`
+
+`server.run`
+
+`close serversocket`
 
 This loop should never stop since your server should be nonstop available
 
-## server.setup()
+## `server.setup()`
 
 Setup of the server socket we will listen to, basically a bunch of fd's
 
-## server.run()
+## `server.run()`
 
-Listening to all users with `poll()` if it is a new connection we authenticate whoever is trying to join
-our server else
+##  `poll()`
 
-## processCommands()
+Listening to all requests with it. If it is a new connection we authenticate whoever is trying to join our server else we
+
+## `processCommands()`
 
 Here we handle most of the available commands on our server
+
+### normal client commands
+
+handling all the choosen commands in a switch statement which are:
+
+join, part, notice, privmsg, kick, invite, quit, nick, list, mode, topic, cap, pass, admin, who, ping, motd, who, whois
+
+### bot command/s
+
+after the first /BOT command the bot will be available to talk with in a private channel without the /BOT command using the available questions/requests
+
+## The most annnoying part in an IRC server
+
+`send()`
+
+It requires a very specific and quite often different layout for each type of returned message or group of messages which if isn't correct then it ain't gonna work at all
+
+## File transfer
+
+Have fun with it \_o_/
 
 <table>
   <tr>
@@ -157,8 +182,8 @@ Google format
 
 ## VSCode
 
-Updating branches to master if they are behind, use this 2 command on the relevant branch:
+Updating branches to master if they are behind and it's required, use this 2 command on the relevant branch:
 ```
 git fetch
-git merge master
+git merge master or relevant branch
 ```
