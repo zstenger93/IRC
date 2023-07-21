@@ -77,8 +77,8 @@
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
-#define NICKEMPTYSTR "\0034The nickname cannot be an empty string.\0030"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
+#define ALREADYTAKEN "\0034The nickname is already in use, choose another one.\0030"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
