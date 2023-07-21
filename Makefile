@@ -51,9 +51,9 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@echo "$(RED)Welcome to Interdimensional Rickroll Conspiracy.. ಥ⁠‿⁠ಥ$(COLOR_END)"
-	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@sleep 0.1
 	@echo "$(BWhite)Be careful not to get rickrolled ಥ⁠‿⁠ಥ$(COLOR_END)"
+	@echo "$(YELLOW)Compiling.. ಥ⁠‿⁠ಥ\n$(COLOR_END)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
@@ -61,7 +61,7 @@ $(NAME): $(OBJS)
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
 	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
@@ -70,7 +70,7 @@ $(NAME): $(OBJS)
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
 	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
@@ -79,7 +79,7 @@ $(NAME): $(OBJS)
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
 	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
@@ -88,63 +88,63 @@ $(NAME): $(OBJS)
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rConstructing the Bot service          $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rCreating General channel              $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rCreating users                        $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rRealizing send makes no sendse        $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rBegging to the server not to crash    $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 35); do \
 		percentage=$$(($$i * 100 / 35)); \
 		printf "$(YELLOW)\rSaying final prayers                  $(RED)%d%% $(BLUE)" $$percentage; \
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(GREEN) Done!\n"
+	@printf "$(GREEN) Done!\n\n"
 	@for i in $$(seq 25); do \
 		percentage=$$(($$i * 100 / 50)); \
 		if [ $$percentage -le 24 ]; then \
@@ -155,14 +155,13 @@ $(NAME): $(OBJS)
 		for j in $$(seq $$i); do \
 			printf "█"; \
 		done; \
-		sleep 0.05; \
+		sleep 0.02; \
 	done
-	@printf "$(RED) CRASH!\n"
+	@printf "$(RED) CRASH!\n\n"
 	@echo "$(BWhite)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@for i in $$(seq 1); do \
 		sleep 1; \
 	done
-	@echo "$(BWhite)Well I guess it's too late ಥ⁠‿⁠ಥ$(COLOR_END)"
 # $(RICK); \
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
