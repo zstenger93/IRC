@@ -172,25 +172,86 @@ It requires a very specific and quite often different layout for each type of re
     <th>1 user to other 1 user loop trought all users in channel</th>
   </tr>
   <tr>
-    <th>JOINING 1</th>
+    <th>Joining 1</th>
     <th>:Nick_sender JOIN Channel_name :Channel_name</th>
     <th>User to user loop trought all users in channel</th>
   </tr>
 <tr>
-    <th>JOINING 2</th>
+    <th>Joining 2</th>
     <th>:Nick_sender TOPIC Channel_name :Topic message</th>
     <th>send the topic of channel to the user, so the client is updated</th>
   </tr>
 <tr>
-    <th>JOINING 3</th>
+    <th>Joining 3</th>
     <th>:Server_prefix 353 Nick_sender = Channel_name : User in channel</th>
-    <th>Sends a list of users inside of the channel, to the user that joins, this is alsp how we add bots, by saying that bot is in channel for each of the users.</th>
+    <th>Sends a list of users inside of the channel, to the user that joins, this is also this is how we add bots, by saying that bot is in channel for each of the users.</th>
   </tr>
-	<tr>
-    <th>JOINING 4</th>
+<tr>
+    <th>Joining 4</th>
     <th>:Server_prefix 366 Sender_nick Channel_name</th>
     <th>End of the list of users in the channel</th>
   </tr>
+<tr>
+    <th> Part 1</th>
+    <th>:Nick_sender PART Channel_name</th>
+    <th>To sender</th>
+  </tr>
+<tr>
+    <th> Part 2</th>
+    <th>:Nick_sender PART Sender_nick Channel_name : Message</th>
+    <th>To other users of the channel</th>
+  </tr>
+<tr>
+    <th> Kick 1</th>
+    <th>:Server_prefix KICK Channel_name, Sender_nick: Reason</th>
+    <th>To Kicked person</th>
+  </tr>
+<tr>
+    <th> Kick 2</th>
+    <th>:Server_prefix KICK Channel_name, Sender_nick: Reaso</th>
+    <th>To other users of the channel</th>
+  </tr>
+<tr>
+    <th> NICK</th>
+    <th>:Nick_sender NICK New_sender_nick</th>
+    <th>Iterates trought all users</th>
+  </tr>
+<tr>
+    <th> LIST 1</th>
+    <th>:Server_prefix 321 Nick_sender channel:NAME</th>
+    <th>Start of the list for the caller user</th>
+  </tr>
+<tr>
+    <th> LIST 2</th>
+    <th>:Server_prefix 322 Nick_sender channel_names</th>
+    <th>Iterates trought all channels and sends info about them</th>
+  </tr>
+<tr>
+    <th> LIST 3</th>
+    <th>:Server_prefix 323 Nick_sender: Message you want to type </th>
+    <th>GIves info that it is end of list of channels</th>
+  </tr>
+<tr>
+    <th> Topic</th>
+    <th>:Nick_sender TOPIC Channel_name :Topic message</th>
+    <th>send the topic of channel to the user, so the client is updated</th>
+  </tr>
+  <tr>
+    <th> Ping</th>
+    <th>:Server_prefix PONG: sent message</th>
+    <th>Shows connection between the server</th>
+  </tr>
+<tr>
+    <th> Who 1</th>
+    <th>:Nick_sender 352 Server_prefix, Other_user_nicks: Other_user_nicks</th>
+    <th>Iterates trought all users and send information about them</th>
+  </tr>
+  <tr>
+    <th> Who 2</th>
+    <th>:Nick_sender 315: Message</th>
+    <th>SEnds info to user that it is end of who list</th>
+  </tr>
+
   </table>
 
 ## File transfer
