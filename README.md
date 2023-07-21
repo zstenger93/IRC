@@ -172,14 +172,9 @@ It requires a very specific and quite often different layout for each type of re
     <th>1 user to other 1 user loop trought all users in channel</th>
   </tr>
   <tr>
-    <th>JOINING 1 command</th>
+    <th>JOINING 1</th>
     <th>:Nick_sender JOIN Channel_name :Channel_name</th>
     <th>User to user loop trought all users in channel</th>
-  </tr>
-<tr>
-    <th>JOINING 2</th>
-    <th>:Nick_sender TOPIC Channel_name :Topic message</th>
-    <th>send the topic of channel to the user, so the client is updated</th>
   </tr>
 <tr>
     <th>JOINING 2</th>
