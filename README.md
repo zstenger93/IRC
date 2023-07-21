@@ -154,6 +154,19 @@ this is all gambling my friend
 
 It requires a very specific and quite often different layout for each type of returned message or group of messages which if isn't correct then it ain't gonna work at all
 
+<table>
+  <tr>
+    <th>SEND COMMAND</th>
+    <th>FORMAT</th>
+    <th>Who should recive this command</th>
+  </tr>
+    <tr>
+    <th>PRIVMSG</th>
+    <th>:NICK_SENDER PRIVMSG NICK_RECEIVER :Message you want to send</th>
+    <th>1 user to other user</th>
+  </tr>
+  </table>
+
 ## File transfer
 
 Welcome to the land of `DCC`, I will give you a hint with `\x01`
