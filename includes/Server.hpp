@@ -69,6 +69,7 @@ class Server {
 	bool isModeValid(std::string mode);
 	void addModeO(User &user, std::string msg);
 	std::string getCommand(std::string message);
+	bool isNickNameAvailable(std::string nickName);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);

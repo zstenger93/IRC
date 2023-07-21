@@ -23,7 +23,7 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 	}
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(addUserName) == 0) break;
+		if (userIt->second.getNickName().compare(addUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
 		return send_message_to_server(senderFd, 2, RICK, ERR_NOSUCHNICK, addUserName.c_str());
@@ -67,7 +67,7 @@ void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::s
 	}
 	std::map<int, User>::iterator userIt;
 	for (userIt = users.begin(); userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(kickUserName) == 0) break;
+		if (userIt->second.getNickName().compare(kickUserName) == 0) break;
 	}
 	if (userIt == users.end()) {
 		send_message_to_server(senderFd, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);

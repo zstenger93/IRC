@@ -1,5 +1,7 @@
 #include "../../includes/Server.hpp"
 
+#include <string>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/User.hpp"
@@ -89,7 +91,7 @@ void Server::sendUserRemoved(User &user) {
 			 channelsIt != channels.end(); channelsIt++) {
 			if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
 				user.isInChannel(channelsIt->second.getChannelName())) {
-				if (usersIt->second.getUserName() != user.getUserName())
+				if (usersIt->second.getNickName() != user.getNickName())
 					send_message_to_server(usersIt->first, 4, user.getNickName().c_str(), P,
 										   channelsIt->second.getChannelName().c_str(), COL, LEFT);
 			}
@@ -113,6 +115,24 @@ void Server::removeUser(int pollId) {
 	userPoll[pollId].fd = 0;
 }
 
+bool Server::userExists(std::string userNickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(userNickName) == 0) return true;
+	}
+	return false;
+}
+
+bool Server::isNickNameAvailable(std::string nickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(nickName) == 0) return false;
+	}
+	return true;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setRunning(bool state) { serverState = state; }
@@ -125,15 +145,6 @@ bool Server::isRunning() { return serverState; }
 std::string Server::getHostMask() { return hostmask; }
 int Server::getServerSocket() { return serverSocketFd; }
 
-bool Server::userExists(std::string userNickName) {
-	std::map<int, User>::iterator usersIt = users.begin();
-
-	for (; usersIt != users.end(); usersIt++) {
-		if (usersIt->second.getNickName().compare(userNickName) == 0) return true;
-	}
-	return false;
-}
-
 User &Server::getUser(std::string userNickName) {
 	std::map<int, User>::iterator usersIt = users.begin();
 
@@ -141,6 +152,6 @@ User &Server::getUser(std::string userNickName) {
 		if (usersIt->second.getNickName().compare(userNickName) == 0) return usersIt->second;
 	}
 	throw CustomException("getUser() -> NoSuchUser");
-	
+
 	return usersIt->second;
 }

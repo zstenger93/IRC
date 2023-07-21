@@ -80,7 +80,7 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 										   extractMessage(message).c_str());
 					break;
 				case 1:
-					send_message_to_server(userIt->first, 4, user.getUserName(), "JOIN",
+					send_message_to_server(userIt->first, 4, user.getNickName(), "JOIN",
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
 				case 2:
