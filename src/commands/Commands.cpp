@@ -45,7 +45,7 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 		return send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
 	std::map<int, User>::iterator receiverIt = users.begin();
 	for (; receiverIt != users.end(); receiverIt++)
-		if (receiverIt->second.getUserName().compare(messageTo) == 0) break;
+		if (receiverIt->second.getNickName().compare(messageTo) == 0) break;
 	if (receiverIt == users.end())
 		return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
 
@@ -77,7 +77,7 @@ void Server::sendMessage(std::string message, std::map<int, User>& users, int us
 		}
 		std::map<int, User>::iterator receiverIt = users.begin();
 		for (; receiverIt != users.end(); receiverIt++) {
-			if (receiverIt->second.getUserName().compare(messageTo) == 0) {
+			if (receiverIt->second.getNickName().compare(messageTo) == 0) {
 				return send_message_to_server(
 					receiverIt->first, 4, userIt->second.getNickName().c_str(), PRIVMSG,
 					receiverIt->second.getNickName().c_str(), COL, extractMessage(message).c_str());
@@ -145,7 +145,7 @@ void Server::setNick(User& user, std::string newNickname, std::string msg) {
 void Server::listChannels(std::string userName) {
 	std::map<int, User>::iterator userIt = users.begin();
 	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.getUserName().compare(userName) == 0) break;
+		if (userIt->second.getNickName().compare(userName) == 0) break;
 	}
 	if (userIt == users.end()) {
 		return send_message_to_server(userIt->first, 3, RICK, ERR_NOSUCHNICK, COL, NOSUCHUSER);
@@ -235,7 +235,7 @@ void Server::who(int userFd, std::string message) {
 		if (userIt->second.getUserFd() != userFd) {
 			send_message_to_server(userFd, 5, user->second.getNickName().c_str(), RPL_WHOREPLY,
 								   RICK, userIt->second.getNickName().c_str(), COL,
-								   userIt->second.getUserName().c_str());
+								   userIt->second.getNickName().c_str());
 		}
 	}
 	send_message_to_server(userFd, 3, user->second.getNickName(), RPL_ENDOFWHO, COL, ENDOFW);

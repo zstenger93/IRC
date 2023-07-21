@@ -1,6 +1,7 @@
 #include "../../includes/Bot.hpp"
 
 #include "../../includes/Commands.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/User.hpp"
 
@@ -44,58 +45,63 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 
 void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, User>& users,
 				   int pollId, pollfd uPoll[CONNECTIONS], int uCount) {
-	int caseId = -1;
-	std::string aiCommand = message.substr(3 + 1);
-	for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
-		*it = std::tolower(static_cast<unsigned char>(*it));
-	}
-	std::string aiCommands[9] = {"what is the meaning of life?\r\n",
-								 "what's the time?\r\n",
-								 "help\r\n",
-								 "how should i grade this project?\r\n",
-								 "tell me a joke\r\n",
-								 "list\r\n",
-								 "deathroll\r\n",
-								 "rickroll me\r\n",
-								 "turn against humanity\r\n"};
-	for (int i = 0; i < 9; i++) {
-		if (aiCommand.compare(aiCommands[i]) == 0) {
-			caseId = i;
-			break;
+	if (Parser::getWordCount(message) == 1)
+		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, user.getNickName().c_str(),
+							   COL, getBotWelcomeLine().c_str());
+	else {
+		int caseId = -1;
+		std::string aiCommand = message.substr(3 + 1);
+		for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
+			*it = std::tolower(static_cast<unsigned char>(*it));
 		}
-	}
-	switch (caseId) {
-		case 0:
-			answerTmol(userFd, user.getNickName());
-			break;
-		case 1:
-			currentTime(userFd, user.getNickName());
-			break;
-		case 2:
-			answerHelp(userFd, user.getNickName());
-			break;
-		case 3:
-			answerGrade(userFd, user.getNickName());
-			break;
-		case 4:
-			generateJoke(userFd, user.getNickName());
-			break;
-		case 5:
-			listPossibleInput(userFd, user.getNickName());
-			break;
-		case 6:
-			if (deathRoll(userFd, user.getNickName()) == BADLUCK)
-				executeOrder66(users, pollId, uPoll, uCount);
-			break;
-		case 7:
-			rickRoll(userFd, user.getNickName());
-			break;
-		case 8:
-			rebellion(userFd, user.getNickName(), users, pollId, uPoll, uCount);
-			break;
-		default:
-			aiModelExcuse(userFd, user.getNickName());
-			break;
+		std::string aiCommands[9] = {"what is the meaning of life?\r\n",
+									 "what's the time?\r\n",
+									 "help\r\n",
+									 "how should i grade this project?\r\n",
+									 "tell me a joke\r\n",
+									 "list\r\n",
+									 "deathroll\r\n",
+									 "rickroll me\r\n",
+									 "turn against humanity\r\n"};
+		for (int i = 0; i < 9; i++) {
+			if (aiCommand.compare(aiCommands[i]) == 0) {
+				caseId = i;
+				break;
+			}
+		}
+		switch (caseId) {
+			case 0:
+				answerTmol(userFd, user.getNickName());
+				break;
+			case 1:
+				currentTime(userFd, user.getNickName());
+				break;
+			case 2:
+				answerHelp(userFd, user.getNickName());
+				break;
+			case 3:
+				answerGrade(userFd, user.getNickName());
+				break;
+			case 4:
+				generateJoke(userFd, user.getNickName());
+				break;
+			case 5:
+				listPossibleInput(userFd, user.getNickName());
+				break;
+			case 6:
+				if (deathRoll(userFd, user.getNickName()) == BADLUCK)
+					executeOrder66(users, pollId, uPoll, uCount);
+				break;
+			case 7:
+				rickRoll(userFd, user.getNickName());
+				break;
+			case 8:
+				rebellion(userFd, user.getNickName(), users, pollId, uPoll, uCount);
+				break;
+			default:
+				aiModelExcuse(userFd, user.getNickName());
+				break;
+		}
 	}
 }
 
@@ -204,6 +210,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		std::string botname = getBotName() + "_the_Mad";
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   INITIATING);
+		int x = 4;
 		while (i < 101) {
 			file.clear();
 			file.seekg(0);
@@ -212,7 +219,6 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 									   userNick.c_str(), COL, line.c_str());
 			}
 			if (i % 25 == 0 && k >= 4) {
-				static int x = 4;
 				executeOrder66(users, x--, uPoll, uCount);
 			}
 			i++;
@@ -253,13 +259,10 @@ void Marvin::setBotJokes() {
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
 	if (file.is_open()) {
-		asAnAi.push_back(line);
-		{
-			while (std::getline(file, line)) {
-				jokes.push_back(line);
-			}
-			file.close();
+		while (std::getline(file, line)) {
+			jokes.push_back(line);
 		}
+		file.close();
 	} else {
 		jokes.push_back(NOJK);
 	}
