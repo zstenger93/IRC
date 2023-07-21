@@ -169,7 +169,7 @@ The FD in send command should be the receiver fd.
   <tr>
     <th>Privmsg channel</th>
     <th>:Nick_sender PRIVMSG Channel_name :Message you want to send</th>
-    <th>1 user to other 1 user</th>
+    <th>1 user to other 1 user loop trought all users in channel</th>
   </tr>
   </table>
 
