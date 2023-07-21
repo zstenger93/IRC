@@ -154,7 +154,7 @@ this is all gambling my friend
 
 It requires a very specific and quite often different layout for each type of returned message or group of messages which if isn't correct then it ain't gonna work at all
 
-The FD in send command should be the receiver fd.
+#### The FD in send command should be the receiver fd.
 <table>
   <tr>
     <th>Send Command</th>
@@ -170,6 +170,31 @@ The FD in send command should be the receiver fd.
     <th>Privmsg channel</th>
     <th>:Nick_sender PRIVMSG Channel_name :Message you want to send</th>
     <th>1 user to other 1 user loop trought all users in channel</th>
+  </tr>
+  <tr>
+    <th>JOINING 1 command</th>
+    <th>:Nick_sender JOIN Channel_name :Channel_name</th>
+    <th>User to user loop trought all users in channel</th>
+  </tr>
+<tr>
+    <th>JOINING 2</th>
+    <th>:Nick_sender TOPIC Channel_name :Topic message</th>
+    <th>send the topic of channel to the user, so the client is updated</th>
+  </tr>
+<tr>
+    <th>JOINING 2</th>
+    <th>:Nick_sender TOPIC Channel_name :Topic message</th>
+    <th>send the topic of channel to the user, so the client is updated</th>
+  </tr>
+<tr>
+    <th>JOINING 3</th>
+    <th>:Server_prefix 353 Nick_sender = Channel_name : User in channel</th>
+    <th>Sends a list of users inside of the channel, to the user that joins, this is alsp how we add bots, by saying that bot is in channel for each of the users.</th>
+  </tr>
+	<tr>
+    <th>JOINING 4</th>
+    <th>:Server_prefix 366 Sender_nick Channel_name</th>
+    <th>End of the list of users in the channel</th>
   </tr>
   </table>
 
