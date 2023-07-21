@@ -154,16 +154,22 @@ this is all gambling my friend
 
 It requires a very specific and quite often different layout for each type of returned message or group of messages which if isn't correct then it ain't gonna work at all
 
+The FD in send command should be the receiver fd.
 <table>
   <tr>
-    <th>SEND COMMAND</th>
-    <th>FORMAT</th>
+    <th>Send Command</th>
+    <th>Format</th>
     <th>Who should recive this command</th>
   </tr>
     <tr>
-    <th>PRIVMSG</th>
-    <th>:NICK_SENDER PRIVMSG NICK_RECEIVER :Message you want to send</th>
-    <th>1 user to other user</th>
+    <th>Privmsg</th>
+    <th>:Nick_sender PRIVMSG Nick_receiver :Message you want to send</th>
+    <th>1 user to other 1 user</th>
+  </tr>
+  <tr>
+    <th>Privmsg channel</th>
+    <th>:Nick_sender PRIVMSG Channel_name :Message you want to send</th>
+    <th>1 user to other 1 user</th>
   </tr>
   </table>
 
