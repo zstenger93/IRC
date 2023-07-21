@@ -1,5 +1,7 @@
 #include "../../includes/Server.hpp"
 
+#include <string>
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/User.hpp"
@@ -122,6 +124,15 @@ bool Server::userExists(std::string userNickName) {
 	return false;
 }
 
+bool Server::isNickNameAvailable(std::string nickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(nickName) == 0) return false;
+	}
+	return true;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setRunning(bool state) { serverState = state; }
@@ -141,6 +152,6 @@ User &Server::getUser(std::string userNickName) {
 		if (usersIt->second.getNickName().compare(userNickName) == 0) return usersIt->second;
 	}
 	throw CustomException("getUser() -> NoSuchUser");
-	
+
 	return usersIt->second;
 }
