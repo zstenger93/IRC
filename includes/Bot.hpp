@@ -31,6 +31,7 @@ class Marvin {
 	void rickRoll(int userFd, std::string userNick);
 	void answerTmol(int userFd, std::string userNick);
 	void answerHelp(int userFd, std::string userNick);
+	void masterRick(int userFd, std::string userNick);
 	void answerGrade(int userFd, std::string userNick);
 	void currentTime(int userFd, std::string userNick);
 	void generateJoke(int userFd, std::string userNick);

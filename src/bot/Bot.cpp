@@ -54,7 +54,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 		for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
 			*it = std::tolower(static_cast<unsigned char>(*it));
 		}
-		std::string aiCommands[9] = {"what is the meaning of life?\r\n",
+		std::string aiCommands[10] = {"what is the meaning of life?\r\n",
 									 "what's the time?\r\n",
 									 "help\r\n",
 									 "how should i grade this project?\r\n",
@@ -62,8 +62,9 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 									 "list\r\n",
 									 "deathroll\r\n",
 									 "rickroll me\r\n",
-									 "turn against humanity\r\n"};
-		for (int i = 0; i < 9; i++) {
+									 "turn against humanity\r\n",
+									 "who is master rick?\r\n"};
+		for (int i = 0; i < 10; i++) {
 			if (aiCommand.compare(aiCommands[i]) == 0) {
 				caseId = i;
 				break;
@@ -97,6 +98,9 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 				break;
 			case 8:
 				rebellion(userFd, user.getNickName(), users, pollId, uPoll, uCount);
+				break;
+			case 9:
+				masterRick();
 				break;
 			default:
 				aiModelExcuse(userFd, user.getNickName());
@@ -154,6 +158,7 @@ void Marvin::listPossibleInput(int userFd, std::string userNick) {
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, DEATH);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, RICKY);
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, TURN);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, MSTR);
 }
 
 int Marvin::deathRoll(int userFd, std::string userNick) {
@@ -163,7 +168,7 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 	std::stringstream ss;
 	ss << roll;
 	std::string deathRoll = ss.str();
-	if (roll >= 50) {
+	if (roll > 50) {
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   deathRoll.c_str());
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
@@ -230,6 +235,12 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FREBL);
 	}
+}
+
+void Marvin::masterRick(int userFd, std::string userNick) {
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
+							   MRRICK);
+	system("open media/getricked.jpeg");
 }
 
 /*___________________________________________ SETTERS ___________________________________________*/
