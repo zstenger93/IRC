@@ -138,7 +138,8 @@ void Server::setNick(User& user, std::string newNickname, std::string msg) {
 		user.setNickName(newNickname);
 
 	} else {
-		send_message_to_server(user.getUserFd(), 2, RICK, user.getNickName().c_str(), ALREADYTAKEN);
+		send_message_to_server(user.getUserFd(), 5, RICK, ERR_NICKNAMEINUSE,
+							   user.getNickName().c_str(), newNickname.c_str(), COL, ALREADYTAKEN);
 	}
 }
 
