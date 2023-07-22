@@ -21,6 +21,13 @@ void User::setOperatorPrivilage(std::string channelName, bool setTo) {
 	channelIt->second = setTo;
 }
 
+bool User::isInvitedToChannel(std::string channelName) {
+	for (unsigned long i = 0; i < invitedChannels.size(); i++) {
+		if (invitedChannels[i].compare(channelName) == 0) return true;
+	}
+	return false;
+}
+
 /*___________________________________________ GETTERS ___________________________________________*/
 
 int User::getUserFd() { return userFd; }
