@@ -31,26 +31,12 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 	if (userIt->second.isInChannel(channelName) == true) {
 		return send_message_to_server(senderFd, 2, RICK, ERR_USERONCHANNEL, addUserName.c_str());
 	}
+	userIt->second.invitedChannels.push_back(channelName);
 	send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL, DIDINV);
-	send_message_to_server(userIt->first, 5, RICK, "NOTICE", userIt->second.getNickName().c_str(),
-						   COL, INVITED, channelName.c_str());
-	userIt->second.joinChannel(userIt->second, channelName, 0);
-	std::map<int, User>::iterator usersIt;
-	for (usersIt = users.begin(); userIt != users.end(); userIt++) {
-		if (userIt->first != usersIt->first) {
-			send_message_to_server(usersIt->first, 4, userIt->second.getNickName(), "JOIN",
-								   channelName.c_str(), COL, channelName.c_str());
-			send_message_to_server(userIt->first, 6, RICK, RPL_NAMREPLY,
-								   userIt->second.getNickName().c_str(), "=", channelName.c_str(),
-								   COL, usersIt->second.getNickName().c_str());
-		}
-		send_message_to_server(userIt->second.getUserFd(), 6, RICK, RPL_NAMREPLY,
-							   userIt->second.getNickName().c_str(), "=", channelName.c_str(), COL,
-							   "Marvin");
-		send_message_to_server(userIt->second.getUserFd(), 3, RICK, RPL_ENDOFNAMES,
-							   userIt->second.getNickName().c_str(), channelName.c_str(), COL,
-							   ENDOFN);
-	}
+	send_message_to_server(userIt->first, 3, RICK, RPL_INVITING,
+						   userIt->second.getNickName().c_str(), channelName.c_str());
+	send_message_to_server(userIt->first, 3, RICK, "INVITE", userIt->second.getNickName().c_str(),
+						   channelName.c_str());
 }
 
 void User::kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName,

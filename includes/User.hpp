@@ -23,6 +23,7 @@ class User {
 	void setNickName(std::string nName);
 	bool isInChannel(std::string channelName);
 	void ping(std::string message, int userFd);
+	bool isInvitedToChannel(std::string channelName);
 	bool isOperatorInChannel(std::string channelName);
 	void joinChannel(User& user, std::string name, int op);
 	void setOperatorPrivilage(std::string channelName, bool setTo);
@@ -37,6 +38,7 @@ class User {
 	std::string nickName;
 	bool connected;
 	int userFd;
+	std::vector<std::string> invitedChannels;
 };
 
 #endif
