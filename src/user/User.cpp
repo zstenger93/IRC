@@ -16,6 +16,11 @@ void User::connectUser(bool isConnected) { connected = isConnected; }
 void User::setUserName(std::string uName) { userName = uName; }
 void User::setNickName(std::string nName) { nickName = nName; }
 
+void User::setOperatorPrivilage(std::string channelName, bool setTo) {
+	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
+	channelIt->second = setTo;
+}
+
 /*___________________________________________ GETTERS ___________________________________________*/
 
 int User::getUserFd() { return userFd; }
@@ -25,7 +30,6 @@ std::string User::getNickName() { return nickName; }
 
 bool User::isOperatorInChannel(std::string channelName) {
 	std::map<std::string, bool>::iterator modeIt = channels.find(channelName);
-
 	if (modeIt != channels.end()) return modeIt->second;
 	return false;
 }

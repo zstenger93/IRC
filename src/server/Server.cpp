@@ -1,6 +1,9 @@
 #include "../../includes/Server.hpp"
 
+#include <string>
+
 #include "../../includes/Channel.hpp"
+#include "../../includes/Commands.hpp"
 #include "../../includes/User.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -9,10 +12,10 @@ Server::Server() {}
 
 Server::Server(int argc, char **argv) : reset(true), hostmask("127.0.0.1") {
 	Server::setServerPassword();
-	Server::setAdminDetails();	// kinda extra, not needed will decide later
+	Server::setAdminDetails();
 	Server::setConnectionLimits();
 	Server::inputParser(argc, argv);
-	bot.constructBot();	 // creating our ai overlord
+	bot.constructBot();
 }
 
 Server::~Server() {}
@@ -82,9 +85,23 @@ void Server::addUser(int userFd) {
 	users.insert(std::make_pair(userFd, User(userFd, "user" + std::to_string(i++))));
 }
 
+void Server::sendUserRemoved(User &user) {
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		for (std::map<std::string, Channel>::iterator channelsIt = channels.begin();
+			 channelsIt != channels.end(); channelsIt++) {
+			if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
+				user.isInChannel(channelsIt->second.getChannelName())) {
+				if (usersIt->second.getNickName() != user.getNickName())
+					send_message_to_server(usersIt->first, 4, user.getNickName().c_str(), P,
+										   channelsIt->second.getChannelName().c_str(), COL, LEFT);
+			}
+		}
+	}
+}
+
 void Server::removeUser(int pollId) {
-	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-	if (it != users.end()) users.erase(it);
+	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
+	if (userIt != users.end()) users.erase(userIt);
 	close(userPoll[pollId].fd);
 	while (pollId < onlineUserCount) {
 		userPoll[pollId].events = userPoll[pollId + 1].events;
@@ -98,6 +115,24 @@ void Server::removeUser(int pollId) {
 	userPoll[pollId].fd = 0;
 }
 
+bool Server::userExists(std::string userNickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(userNickName) == 0) return true;
+	}
+	return false;
+}
+
+bool Server::isNickNameAvailable(std::string nickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(nickName) == 0) return false;
+	}
+	return true;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setRunning(bool state) { serverState = state; }
@@ -109,3 +144,14 @@ bool Server::shouldReset() { return reset; }
 bool Server::isRunning() { return serverState; }
 std::string Server::getHostMask() { return hostmask; }
 int Server::getServerSocket() { return serverSocketFd; }
+
+User &Server::getUser(std::string userNickName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getNickName().compare(userNickName) == 0) return usersIt->second;
+	}
+	throw CustomException("getUser() -> NoSuchUser");
+
+	return usersIt->second;
+}

@@ -1,5 +1,3 @@
-#include <cstring>
-
 #include "../../includes/Server.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
@@ -20,7 +18,7 @@ void send_message_to_server(int fd, int count, std::string prefix, ...) {
 	}
 	va_end(arguments);
 	message += "\r\n";
-	std::cout << message << std::endl;
+	std::cout << SENT << message << std::endl;
 	send(fd, message.c_str(), message.length(), 0);
 }
 
@@ -50,5 +48,6 @@ std::string extractMessage(std::string message) {
 	std::string parsedMessage = message.substr(message.find_first_of(':') + 1);
 	return parsedMessage;
 }
+
 /*___________________________________________ SETTERS ___________________________________________*/
 /*___________________________________________ GETTERS ___________________________________________*/

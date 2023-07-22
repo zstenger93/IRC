@@ -1,5 +1,4 @@
 #include "../../includes/Channel.hpp"
-
 #include "../../includes/Commands.hpp"
 #include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
@@ -9,7 +8,6 @@
 
 Channel::Channel(std::string name) : channelName(name), userCount(1), userLimit(5) {
 	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
-
 	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));
 }
 Channel::~Channel() {}
@@ -42,13 +40,8 @@ void User::joinChannel(User& user, std::string name, int op) {
 
 void Channel::addMode(std::string mode, bool value) {
 	std::map<std::string, bool>::iterator modesIt = modes.find(mode);
-
-	if (modesIt == modes.end()) {
-		return;
-	}
-	if (modesIt->second != value) {
-		modesIt->second = value;
-	}
+	if (modesIt == modes.end()) return;
+	if (modesIt->second != value) modesIt->second = value;
 }
 
 bool Channel::checkMode(std::string mode) {
