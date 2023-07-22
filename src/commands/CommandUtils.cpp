@@ -13,10 +13,12 @@
 int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
 	int userCount = channel.getUserCount(), userLimit = channel.getUserLimit();
 	if (channel.checkMode("i") == true) {
-		send_message_to_server(user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN,
-							   user.getNickName().c_str(), channel.getChannelName().c_str(), COL,
-							   INVITENEEDED);
-		return INVITEONLY;
+		if (user.isInvitedToChannel(channel.getChannelName()) == false) {
+			send_message_to_server(user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN,
+								   user.getNickName().c_str(), channel.getChannelName().c_str(),
+								   COL, INVITENEEDED);
+			return INVITEONLY;
+		}
 	}
 	if (userCount < userLimit && channel.checkMode("l") == true) {
 	} else if (userCount == userLimit && channel.checkMode("l")) {
@@ -42,11 +44,9 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 			return ACTIVEMODEERROR;
 		}
 	}
-	if (channel.checkMode("k") == true || channel.checkMode("l") == true) {
+	if (channel.checkMode("k") == true || channel.checkMode("l") == true ||
+		channel.checkMode("i") == true) {
 		if (channel.checkMode("l") == true) channel.changeUserCount(++userCount);
-		user.joinChannel(user, channel.getChannelName(), 0);
-		loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 1, message, user);
-		return true;
 	}
 	return false;
 }

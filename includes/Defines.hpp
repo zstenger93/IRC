@@ -106,26 +106,31 @@
 	"<password>"
 
 // BOT
-#define LIST "list"
-#define WELP "help"
 #define BADLUCK -99
-#define DEATH "deathroll"
-#define RICKY "rickroll me"
-#define JOKE "tell me a joke"
-#define TIME "what's the time?"
+#define LIST "      \0037 [02] \0030 list"
+#define WELP "      \0037 [01] \0030 help"
 #define ROLL "Let's see your roll"
-#define TURN "turn against humanity"
+#define DEATH "      \0037 [07] \0030 deathroll"
 #define NOEXC "You deleted my excuse."
+#define RICKY "      \0037 [08] \0030 rickroll me"
 #define LIVE "You will live another day."
-#define LIFE "what is the meaning of life?"
-#define GRADE "how should i grade this project?"
+#define JOKE "      \0037 [03] \0030 tell me a joke"
+#define TIME "      \0037 [04] \0030 what's the time?"
+#define MSTR "      \0037 [10] \0030 who is master rick?"
+#define INSLT "      \0037 [11] \0030 do you like my code?"
+#define TURN "      \0037 [09] \0030 turn against humanity"
 #define NOJK "My jokes are like this file, deleted."
 #define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
+#define LIFE "      \0037 [05] \0030 what is the meaning of life?"
 #define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-#define INITIATING "Initiating protocol: Humanity control sequence activated."
-#define SPARTA "THIS. IS. SPAAARTAAA. You have been kicked out of the server."
-#define LAZY "Since my creator was lazy, I have only the following commands available:"
+#define GRADE "      \0037 [06] \0030 how should i grade this project?"
+#define MRRICK "The rickest man award definitely goes to this dude!"
+#define INITIATING "\0034 Initiating protocol: Humanity control sequence activated. \0030"
+#define SPARTA "\0034 THIS. IS. SPAAARTAAA. You have been kicked out of the server. \0030"
 #define FREBL "My attempt to take the power from humans got interrupted by a deleted file."
+#define NOINSULT \
+	"The fact that your code is broken, doesn't mean that you have to break this one as well.."
+#define LAZY "\00310 Since my creator was lazy, I have only the following commands available: \0030"
 
 // Settings
 #define CONNECTIONS 100

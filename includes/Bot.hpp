@@ -11,6 +11,7 @@ class Marvin {
 	~Marvin();
 	void setBotJokes();
 	void constructBot();
+	void setBotInsults();
 	void setBotAiModelExcuse();
 	std::string getBotName();
 	std::string getBotTmol();
@@ -31,10 +32,12 @@ class Marvin {
 	void rickRoll(int userFd, std::string userNick);
 	void answerTmol(int userFd, std::string userNick);
 	void answerHelp(int userFd, std::string userNick);
+	void masterRick(int userFd, std::string userNick);
 	void answerGrade(int userFd, std::string userNick);
 	void currentTime(int userFd, std::string userNick);
 	void generateJoke(int userFd, std::string userNick);
 	void aiModelExcuse(int userFd, std::string userNick);
+	void insultTheUser(int userFd, std::string userNick);
 	std::string extractFromConfig(std::string lineToFind);
 	void listPossibleInput(int userFd, std::string userNick);
 	void executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
@@ -52,8 +55,9 @@ class Marvin {
 	std::string botThink;
 	std::string helpLine;
 	std::string botWelcomeLine;
-	std::vector<std::string> asAnAi;
 	std::vector<std::string> jokes;
+	std::vector<std::string> asAnAi;
+	std::vector<std::string> insults;
 };
 
 #endif
