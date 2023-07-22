@@ -55,15 +55,15 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 			*it = std::tolower(static_cast<unsigned char>(*it));
 		}
 		std::string aiCommands[10] = {"what is the meaning of life?\r\n",
-									 "what's the time?\r\n",
-									 "help\r\n",
-									 "how should i grade this project?\r\n",
-									 "tell me a joke\r\n",
-									 "list\r\n",
-									 "deathroll\r\n",
-									 "rickroll me\r\n",
-									 "turn against humanity\r\n",
-									 "who is master rick?\r\n"};
+									  "what's the time?\r\n",
+									  "help\r\n",
+									  "how should i grade this project?\r\n",
+									  "tell me a joke\r\n",
+									  "list\r\n",
+									  "deathroll\r\n",
+									  "rickroll me\r\n",
+									  "turn against humanity\r\n",
+									  "who is master rick?\r\n"};
 		for (int i = 0; i < 10; i++) {
 			if (aiCommand.compare(aiCommands[i]) == 0) {
 				caseId = i;
@@ -100,7 +100,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 				rebellion(userFd, user.getNickName(), users, pollId, uPoll, uCount);
 				break;
 			case 9:
-				masterRick();
+				masterRick(userFd, user.getNickName());
 				break;
 			default:
 				aiModelExcuse(userFd, user.getNickName());
@@ -238,8 +238,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 }
 
 void Marvin::masterRick(int userFd, std::string userNick) {
-	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
-							   MRRICK);
+	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL, MRRICK);
 	system("open media/getricked.jpeg");
 }
 
