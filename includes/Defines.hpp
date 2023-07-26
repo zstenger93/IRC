@@ -43,6 +43,8 @@
 #define NT "NOTICE"
 #define CH "channel"
 #define DCC "\x01 DCC"
+#define ADDOP "+o"
+#define REMOVEOP "-o"
 
 // SERVER PRINTING
 #define EXEC "\033[1;4;33mSwitch ID:\033[1;0;39m "
