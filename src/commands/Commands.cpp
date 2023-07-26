@@ -42,7 +42,7 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 	std::string messageTo = extractArgument(1, message, 8);
 
 	if (messageTo.empty() == true)
-		return send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+		return send_message_to_server(userIt->first, 2, RICK, ERR_NEEDMOREPARAMS, COL);
 	std::map<int, User>::iterator receiverIt = users.begin();
 	for (; receiverIt != users.end(); receiverIt++)
 		if (receiverIt->second.getNickName().compare(messageTo) == 0) break;
@@ -56,7 +56,7 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 
 	if (FileName.empty() == true || IpAdress.empty() == true || PortNumber.empty() == true ||
 		FileSize.empty() == true)
-		send_message_to_server(userIt->first, 3, RICK, ERR_NEEDMOREPARAMS, COL);
+		send_message_to_server(userIt->first, 2, RICK, ERR_NEEDMOREPARAMS, COL);
 	send_message_to_server(receiverIt->second.getUserFd(), 10, userIt->second.getNickName(), NT,
 						   receiverIt->second.getNickName().c_str(), COL, DCC, S, FileName.c_str(),
 						   IpAdress.c_str(), PortNumber.c_str(), FileSize.c_str(), "\x01");
