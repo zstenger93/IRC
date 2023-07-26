@@ -189,6 +189,7 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 	return 0;
 }
 
+// NEED TO NOTIFY USERS. IF LEFT ANY xD @todo
 void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
 							int uCount) {
 	std::map<int, User>::iterator userIt = users.find(uPoll[pollId].fd);

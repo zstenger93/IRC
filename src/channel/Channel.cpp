@@ -31,7 +31,10 @@ void User::joinChannel(User& user, std::string name, int op) {
 		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
 							   name.c_str());
 		if (op == 1)
+		{
 			channels.insert(std::make_pair(name, true));
+			send_message_to_server(user.getUserFd(), 4, RICK, M, name.c_str(), ADDOP, user.getNickName().c_str());
+		}
 		else
 			channels.insert(std::make_pair(name, false));
 	} else {
