@@ -66,7 +66,18 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	}
 	return true;
 }
+/*
+case 0:
 
+case 1:
+
+case 2:
+
+case 3:
+
+case 4:
+
+*/
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
 	if (checkIfCanBeExecuted(channelName, senderFd) == false) return;
@@ -102,6 +113,10 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
 										   channelName.c_str(), REMOVEOP, message.c_str());
 					break;
+				// case 5:
+				// 	send_message_to_server(userIt->second.getUserFd(), 3, user.getNickName(), M,
+				// 						   channelName.c_str(), message.c_str());
+				// 	break;
 				default:
 					break;
 			}
@@ -177,7 +192,12 @@ void Server::removeMode(Channel& channel, User& user, std::string mode, std::str
 					send_message_to_server(user.getUserFd(), 4, RICK, M,
 										   channel.getChannelName().c_str(), REMOVEOP,
 										   usersIt->second.getNickName().c_str());
+					break;
 				}
+			} else {
+				send_message_to_server(usersIt->second.getUserFd(), 4, user.getNickName(), M,
+									   channel.getChannelName().c_str(), mode.c_str(),
+									   usersIt->second.getNickName().c_str());
 			}
 		}
 	}
