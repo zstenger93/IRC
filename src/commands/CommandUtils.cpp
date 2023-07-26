@@ -169,12 +169,15 @@ void Server::removeMode(Channel& channel, User& user, std::string mode, std::str
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channel.getChannelName()) == true) {
 			if (mode == "-o") {
-				usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
-				loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 4,
-										  usersIt->second.getNickName(), user);
-				send_message_to_server(user.getUserFd(), 4, RICK, M,
-									   channel.getChannelName().c_str(), REMOVEOP,
-									   usersIt->second.getNickName().c_str());
+				std::string userToRemoveFrom = extractArgument(3, msg, 4);
+				if (usersIt->second.getNickName().compare(userToRemoveFrom) == 0) {
+					usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
+					loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 4,
+											  usersIt->second.getNickName(), user);
+					send_message_to_server(user.getUserFd(), 4, RICK, M,
+										   channel.getChannelName().c_str(), REMOVEOP,
+										   usersIt->second.getNickName().c_str());
+				}
 			}
 		}
 	}
