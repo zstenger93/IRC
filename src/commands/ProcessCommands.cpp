@@ -1,5 +1,6 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
+#include "../../includes/Parser.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -12,18 +13,16 @@ int Server::processCommands(int pollId) {
 	std::string message = "";
 	char buffer[512];
 	int buffer_len, stringLength = 0;
-
 	memset(buffer, 0, 512);
-	buffer_len = recv(userPoll[pollId].fd, buffer, 512, USERDISCONECTED);
+	buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 	message = buffer;
 	stringLength += buffer_len;
 
-	std::map<int, User>::iterator it = users.find(userPoll[pollId].fd);
-
-	if (it->second.isConnected() == false) {
-		authenticate(message, it);
+	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
+	if (userIt->second.isConnected() == false) {
+		authenticate(message, userIt);
 	}
-	if (it->second.isConnected() == false) {
+	if (userIt->second.isConnected() == false) {
 		return 1;
 	}
 	if (buffer_len == USERDISCONECTED) {
@@ -32,83 +31,105 @@ int Server::processCommands(int pollId) {
 		return USERDISCONECTED;
 	} else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
-	while (message.find("\r\n") == NOT_FOUND && buffer_len != 0) {
+	while (message.find("\n") == std::string::npos) {
 		memset(buffer, 0, 512);
-		buffer_len = recv(userPoll[pollId].fd, buffer, 512, 0);
+		buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 		stringLength += buffer_len;
 		message += buffer;
+		if (message.find("\n") != std::string::npos) {
+			message = message.substr(0, message.length() - 1);
+			message = message + "\r\n";
+		}
 	}
-	commandParser(it, message, it->first, pollId);
+	commandParser(userIt->second, message, userIt->first, pollId);
 	return 1;
 }
 
-void Server::commandParser(std::map<int, User>::iterator user, std::string message, int fd, int pollId) {
-	int caseId = 0;
-	std::string command = getCommand(message);
-	// MODE_USER?? TOPIC_USER ?? TOPUC_OPER?? ADMIN??
-	// MISSING COMMANDS PING, WHO, TOPIC, OPER. MOTD
-	std::string commands[15] = {"PRIVMSG",	  "JOIN",		"PART", "KICK",	  "INVITE",
-								"QUIT",		  "NICK",		"LIST",	 "MODE_USER", "MODE_OPER",
-								"TOPIC_USER", "TOPIC_OPER", "CAP",	 "PASS", "ADMIN"};
-	for (int i = 0; i < 15; i++) {
+void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
+	int caseId = 0, pos = msg.find("DCC");
+	std::string command = getCommand(msg);
+	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
+								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
+	for (int i = 0; i < 19; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
 		}
 	}
-
+	std::cout << RECIEVED << command << FULLMSG << msg << EXEC << caseId << std::endl;
 	switch (caseId) {
 		case 0:
-			user->second.sendMessage();
 			break;
 		case 1:
-			handleJoin(user->second, extractArgument(1, message, 2));
+			if (pos == std::string::npos)
+				sendMessage(msg, users, fd, pollId, userPoll, onlineUserCount);
+			else
+				sendFiles(users, msg, fd);
 			break;
 		case 2:
-			user->second.leaveChannel(user->second, extractArgument(1, message, 2));
+			if (Parser::getWordCount(msg) == 2)
+				handleJoin(msg, user, extractArgument(1, msg, 2));
+			else
+				handleJoin(msg, user, extractArgument(1, msg, 3));
 			break;
 		case 3:
-			user->second.kickUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user.leaveChannel(users, user, extractArgument(1, msg, -1), 0);
 			break;
 		case 4:
-			user->second.inviteUser(users, extractArgument(1, message, 3), extractArgument(2, message, 3));
+			user.kickUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
 		case 5:
-			// user->second.quitServer();
-			// users.erase(users.find(user->second.getUserFd()));My fault this is already implemented don't need to worry about that
-			removeUser(pollId);
+			user.inviteUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
 		case 6:
-			user->second.setNick(user, extractArgument(1, message, 2));
+			sendUserRemoved(user);
+			removeUser(pollId);
 			break;
 		case 7:
-			user->second.listChannels(); 
+			setNick(user, extractArgument(1, msg, 2), msg);
 			break;
 		case 8:
-			user->second.modeUser(); 
+			listChannels(user.getNickName());
 			break;
 		case 9:
-			user->second.modeOper();
+			mode(msg, fd);
 			break;
 		case 10:
-			user->second.topicUser();
+			channelTopic(msg, extractArgument(1, msg, -1), fd);
 			break;
 		case 11:
-			user->second.topicOper();
+			// CAP
 			break;
-		case 12:;
-			// just for silence the error, handled in authentication for /CAP
-			user->second.quitServer();
+		case 12:
+			// to automaticly join to general after providing the right /PASS
+			handleJoin(msg, user, "#General");
 			break;
-		case 13:;
-			//to automaticly join to general after providing the right /PASS
-			handleJoin(user->second, "#General");
+		case 13:
+			if (Parser::getWordCount(msg) == 3)
+				shutdown(msg);
+			else
+				send_message_to_server(user.getUserFd(), 4, RICK, ERR_NEEDMOREPARAMS,
+									   user.getNickName().c_str(),
+									   extractArgument(0, msg, -1).c_str(), COL);
 			break;
 		case 14:
-			shutdown();
+			who(fd, msg);
+			break;
+		case 15:
+			user.ping(msg, fd);
+			break;
+		case 16:
+			motd(fd, extractArgument(2, msg, 3));
+			break;
+		case 17:
+			whois(fd, msg);
+			break;
+		case 18:
+			bot.runAi(fd, msg, user, users, pollId, userPoll, onlineUserCount);
 			break;
 		default:
-			send_message_to_server(fd, 1, COMMAND_NOT_FOUND);
+			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
 			break;
 	}
 }

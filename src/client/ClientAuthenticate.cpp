@@ -1,5 +1,6 @@
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
+#include "../../includes/ReplyCodes.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
@@ -14,16 +15,17 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 	if (command.compare("PASS") == 0) {
 		if (pass == true) {
 			it->second.connectUser(true);
-			send_message_to_server(it->first, 5, "001", it->second.getNickName().c_str(), ":",
+			send_message_to_server(it->first, 5, RICK, RPL_WELCOME,
+								   it->second.getNickName().c_str(), COL,
 								   it->second.getUserName().c_str(), CONNECTED);
-			it->second.motd(it->second);
 			return;
 		} else {
-			send_message_to_server(it->first, 2, "464 server :", NOCONNECTION);
+			send_message_to_server(it->first, 4, RICK, ERR_PASSWDMISMATCH, SERVER, COL,
+								   NOCONNECTION);
 			throw(CustomException(WRONGPASS));
 		}
 	} else if (command.compare("CAP") == 0) {
-		send_message_to_server(it->first, 2, "462 : ", LOGIN_REQUIRED);
+		send_message_to_server(it->first, 3, RICK, ERR_ALREADYREGISTRED, COL, LOGIN_REQUIRED);
 	}
 }
 
@@ -46,9 +48,9 @@ bool Server::getPass(std::string& msg) {
 /*___________________________________________ GETTERS ___________________________________________*/
 
 std::string Server::getCommand(std::string message) {
-	int pos = message.find_first_of(" \t\n");
+	int pos = message.find_first_of(" \r\t\n");
 	std::string command;
-	if (pos != NOT_FOUND)
+	if (pos != 1)
 		command = message.substr(0, pos);
 	else
 		command = message;
