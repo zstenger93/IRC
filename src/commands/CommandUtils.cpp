@@ -51,6 +51,8 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 	return false;
 }
 
+// checks if there is a channel or that user is inside of channel, if not returns an error else continiues execution process of cases
+
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
