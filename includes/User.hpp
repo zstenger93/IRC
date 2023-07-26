@@ -31,6 +31,7 @@ class User {
 				  int senderFd);
 	void inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName,
 					int senderFd);
+	void userRemovedFromServerMsg(User &user, User &usersIt);
 
    private:
 	std::string userName;

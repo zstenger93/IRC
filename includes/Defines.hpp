@@ -131,6 +131,7 @@
 #define NOINSULT \
 	"The fact that your code is broken, doesn't mean that you have to break this one as well.."
 #define LAZY "\00310 Since my creator was lazy, I have only the following commands available: \0030"
+#define RMVDBYMARV "\0034Marvin the Mad removed it's existence from the server.\0030"
 
 // Settings
 #define CONNECTIONS 100
