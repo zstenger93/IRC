@@ -96,11 +96,11 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					break;
 				case 3:
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
-										   user.getNickName().c_str(), ADDOP, message.c_str());
+										   channelName.c_str(), ADDOP, message.c_str());
 					break;
 				case 4:
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
-										   user.getNickName().c_str(), REMOVEOP, message.c_str());
+										   channelName.c_str(), REMOVEOP, message.c_str());
 					break;
 				default:
 					break;
@@ -134,7 +134,7 @@ void Server::addModeO(User& user, std::string msg) {
 									  ALREADYOPER);
 
 	secondUser.setOperatorPrivilage(channelName, true);
-	send_message_to_server(user.getUserFd(), 4, RICK, M, user.getNickName().c_str(), ADDOP,
+	send_message_to_server(user.getUserFd(), 4, RICK, M, channelName.c_str(), ADDOP,
 						   targetUser.c_str());
 	loopTroughtTheUsersInChan(channelName, user.getUserFd(), 3, targetUser, user);
 }
@@ -172,8 +172,9 @@ void Server::removeMode(Channel& channel, User& user, std::string mode, std::str
 				usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
 				loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 4,
 										  usersIt->second.getNickName(), user);
-				send_message_to_server(user.getUserFd(), 4, RICK, M, user.getNickName().c_str(),
-									   REMOVEOP, usersIt->second.getNickName().c_str());
+				send_message_to_server(user.getUserFd(), 4, RICK, M,
+									   channel.getChannelName().c_str(), REMOVEOP,
+									   usersIt->second.getNickName().c_str());
 			}
 		}
 	}
