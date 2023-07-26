@@ -191,8 +191,11 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 
 void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
 							int uCount) {
-	std::map<int, User>::iterator it = users.find(uPoll[pollId].fd);
-	if (it != users.end()) users.erase(it);
+	std::map<int, User>::iterator userIt = users.find(uPoll[pollId].fd);
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+		usersIt->second.userRemovedFromServerMsg(userIt->second, usersIt->second);
+	}
+	if (userIt != users.end()) users.erase(userIt);
 	close(uPoll[pollId].fd);
 	while (pollId < uCount) {
 		uPoll[pollId].events = uPoll[pollId + 1].events;
