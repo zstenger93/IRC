@@ -131,10 +131,11 @@ void Server::addModeO(User& user, std::string msg) {
 
 	if (secondUser.isOperatorInChannel(channelName) == true)
 		return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
-									  NOTOPER);
+									  ALREADYOPER);
 
 	secondUser.setOperatorPrivilage(channelName, true);
-	
+	send_message_to_server(user.getUserFd(), 4, RICK, M, user.getNickName().c_str(), ADDOP,
+						   targetUser.c_str());
 	loopTroughtTheUsersInChan(channelName, user.getUserFd(), 3, targetUser, user);
 }
 

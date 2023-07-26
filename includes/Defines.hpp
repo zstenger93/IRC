@@ -81,6 +81,7 @@
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 #define ALREADYTAKEN "\0034The nickname is already in use, choose another one.\0030"
+#define ALREADYOPER "\0034The user is already an operator.\0030"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
