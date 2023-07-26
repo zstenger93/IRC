@@ -51,6 +51,8 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 	return false;
 }
 
+// checks if there is a channel or that user is inside of channel, if not returns an error else continiues execution process of cases
+
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
@@ -68,14 +70,15 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 }
 /*
 case 0:
-
+ send message to the users in side of the selected channel
 case 1:
-
+sends message that the user has JOINED the channel
 case 2:
-
+sends message about the users inside of the channel and wheather they are opperators or not
 case 3:
-
+sends message that the users has become an op
 case 4:
+sends message that the users no longer is an op
 
 */
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
@@ -113,10 +116,6 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
 										   channelName.c_str(), REMOVEOP, message.c_str());
 					break;
-				// case 5:
-				// 	send_message_to_server(userIt->second.getUserFd(), 3, user.getNickName(), M,
-				// 						   channelName.c_str(), message.c_str());
-				// 	break;
 				default:
 					break;
 			}
