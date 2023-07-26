@@ -132,9 +132,13 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 	mode = mode.substr(1);
 	if (mode.compare("o") == 0)
 		addModeO(user, msg);
-	else if (mode.compare("k") == 0 && Parser::getWordCount(msg) == 4)
+	if (mode.compare("k") == 0 || mode.compare("l") == 0) {
+		if (Parser::getWordCount(msg) != 4)
+			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
+	}
+	else if (mode.compare("k") == 0)
 		channel.setChannelPassword(extractArgument(3, msg, 4));
-	else if (mode.compare("l") == 0 && Parser::getWordCount(msg) == 4)
+	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
 	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
 	}
