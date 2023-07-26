@@ -13,10 +13,12 @@
 int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string message) {
 	int userCount = channel.getUserCount(), userLimit = channel.getUserLimit();
 	if (channel.checkMode("i") == true) {
-		send_message_to_server(user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN,
-							   user.getNickName().c_str(), channel.getChannelName().c_str(), COL,
-							   INVITENEEDED);
-		return INVITEONLY;
+		if (user.isInvitedToChannel(channel.getChannelName()) == false) {
+			send_message_to_server(user.getUserFd(), 5, RICK, ERR_INVITEONLYCHAN,
+								   user.getNickName().c_str(), channel.getChannelName().c_str(),
+								   COL, INVITENEEDED);
+			return INVITEONLY;
+		}
 	}
 	if (userCount < userLimit && channel.checkMode("l") == true) {
 	} else if (userCount == userLimit && channel.checkMode("l")) {
@@ -42,11 +44,9 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 			return ACTIVEMODEERROR;
 		}
 	}
-	if (channel.checkMode("k") == true || channel.checkMode("l") == true) {
+	if (channel.checkMode("k") == true || channel.checkMode("l") == true ||
+		channel.checkMode("i") == true) {
 		if (channel.checkMode("l") == true) channel.changeUserCount(++userCount);
-		user.joinChannel(user, channel.getChannelName(), 0);
-		loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 1, message, user);
-		return true;
 	}
 	return false;
 }
@@ -132,9 +132,13 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 	mode = mode.substr(1);
 	if (mode.compare("o") == 0)
 		addModeO(user, msg);
-	else if (mode.compare("k") == 0 && Parser::getWordCount(msg) == 4)
+	if (mode.compare("k") == 0 || mode.compare("l") == 0) {
+		if (Parser::getWordCount(msg) != 4)
+			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
+	}
+	else if (mode.compare("k") == 0)
 		channel.setChannelPassword(extractArgument(3, msg, 4));
-	else if (mode.compare("l") == 0 && Parser::getWordCount(msg) == 4)
+	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
 	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
 	}
