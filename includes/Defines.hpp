@@ -43,6 +43,8 @@
 #define NT "NOTICE"
 #define CH "channel"
 #define DCC "\x01 DCC"
+#define ADDOP "+o"
+#define REMOVEOP "-o"
 
 // SERVER PRINTING
 #define EXEC "\033[1;4;33mSwitch ID:\033[1;0;39m "
@@ -79,6 +81,7 @@
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 #define ALREADYTAKEN "\0034The nickname is already in use, choose another one.\0030"
+#define ALREADYOPER "\0034The user is already an operator.\0030"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
@@ -131,6 +134,7 @@
 #define NOINSULT \
 	"The fact that your code is broken, doesn't mean that you have to break this one as well.."
 #define LAZY "\00310 Since my creator was lazy, I have only the following commands available: \0030"
+#define RMVDBYMARV "\0034Marvin the Mad removed it's existence from the server.\0030"
 
 // Settings
 #define CONNECTIONS 100

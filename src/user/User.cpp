@@ -1,4 +1,5 @@
 #include "../../includes/User.hpp"
+#include "../../includes/Commands.hpp"
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
@@ -19,6 +20,15 @@ void User::setNickName(std::string nName) { nickName = nName; }
 void User::setOperatorPrivilage(std::string channelName, bool setTo) {
 	std::map<std::string, bool>::iterator channelIt = channels.find(channelName);
 	channelIt->second = setTo;
+}
+
+void User::userRemovedFromServerMsg(User &user, User &usersIt) {
+	for (std::map<std::string, bool>::iterator channelsIt = channels.begin(); channelsIt != channels.end(); channelsIt++) {
+		if (user.isInChannel(channelsIt->first) && usersIt.isInChannel(channelsIt->first))
+			if (usersIt.getNickName().compare(user.getNickName()) != 0)
+				send_message_to_server(usersIt.getUserFd(), 4, user.getNickName().c_str(), P,
+										   channelsIt->first.c_str(), COL, RMVDBYMARV);
+	}
 }
 
 bool User::isInvitedToChannel(std::string channelName) {

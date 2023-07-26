@@ -1,6 +1,7 @@
 #include "../../includes/Server.hpp"
 
 #include <string>
+#include <variant>
 
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
@@ -126,7 +127,7 @@ bool Server::userExists(std::string userNickName) {
 
 bool Server::isNickNameAvailable(std::string nickName) {
 	std::map<int, User>::iterator usersIt = users.begin();
-
+	if (nickName.find("Marvin") != std::string::npos) return false;
 	for (; usersIt != users.end(); usersIt++) {
 		if (usersIt->second.getNickName().compare(nickName) == 0) return false;
 	}

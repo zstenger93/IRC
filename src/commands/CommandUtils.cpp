@@ -51,6 +51,8 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 	return false;
 }
 
+// checks if there is a channel or that user is inside of channel, if not returns an error else continiues execution process of cases
+
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
@@ -66,7 +68,19 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	}
 	return true;
 }
+/*
+case 0:
+ send message to the users in side of the selected channel
+case 1:
+sends message that the user has JOINED the channel
+case 2:
+sends message about the users inside of the channel and wheather they are opperators or not
+case 3:
+sends message that the users has become an op
+case 4:
+sends message that the users no longer is an op
 
+*/
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
 	if (checkIfCanBeExecuted(channelName, senderFd) == false) return;
@@ -84,9 +98,24 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
 				case 2:
-					send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
-										   user.getNickName().c_str(), "=", channelName.c_str(),
-										   COL, userIt->second.getNickName().c_str());
+					if (userIt->second.isOperatorInChannel(channelName)) {
+						std::string name = "@" + userIt->second.getNickName();
+						send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
+											   user.getNickName().c_str(), "=", channelName.c_str(),
+											   COL, name.c_str());
+					} else
+						send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
+											   user.getNickName().c_str(), "=", channelName.c_str(),
+											   COL, userIt->second.getNickName().c_str());
+					break;
+				case 3:
+					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
+										   channelName.c_str(), ADDOP, message.c_str());
+					break;
+				case 4:
+					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
+										   channelName.c_str(), REMOVEOP, message.c_str());
+					break;
 				default:
 					break;
 			}
@@ -116,9 +145,12 @@ void Server::addModeO(User& user, std::string msg) {
 
 	if (secondUser.isOperatorInChannel(channelName) == true)
 		return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG, channelName.c_str(), COL,
-									  NOTOPER);
+									  ALREADYOPER);
 
 	secondUser.setOperatorPrivilage(channelName, true);
+	send_message_to_server(user.getUserFd(), 4, RICK, M, channelName.c_str(), ADDOP,
+						   targetUser.c_str());
+	loopTroughtTheUsersInChan(channelName, user.getUserFd(), 3, targetUser, user);
 }
 
 bool Server::isModeValid(std::string mode) {
@@ -132,9 +164,13 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 	mode = mode.substr(1);
 	if (mode.compare("o") == 0)
 		addModeO(user, msg);
-	else if (mode.compare("k") == 0 && Parser::getWordCount(msg) == 4)
+	if (mode.compare("k") == 0 || mode.compare("l") == 0) {
+		if (Parser::getWordCount(msg) != 4)
+			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
+	}
+	else if (mode.compare("k") == 0)
 		channel.setChannelPassword(extractArgument(3, msg, 4));
-	else if (mode.compare("l") == 0 && Parser::getWordCount(msg) == 4)
+	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
 	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
 	}
@@ -150,9 +186,22 @@ void Server::removeMode(Channel& channel, User& user, std::string mode, std::str
 	channel.addMode(mode.substr(1), false);
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channel.getChannelName()) == true) {
-			if (mode == "-o") usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
-			send_message_to_server(usersIt->first, 3, user.getNickName().c_str(), M,
-								   channel.getChannelName().c_str(), mode.c_str());
+			if (mode == "-o") {
+				std::string userToRemoveFrom = extractArgument(3, msg, 4);
+				if (usersIt->second.getNickName().compare(userToRemoveFrom) == 0) {
+					usersIt->second.setOperatorPrivilage(channel.getChannelName(), false);
+					loopTroughtTheUsersInChan(channel.getChannelName(), user.getUserFd(), 4,
+											  usersIt->second.getNickName(), user);
+					send_message_to_server(user.getUserFd(), 4, RICK, M,
+										   channel.getChannelName().c_str(), REMOVEOP,
+										   usersIt->second.getNickName().c_str());
+					break;
+				}
+			} else {
+				send_message_to_server(usersIt->second.getUserFd(), 4, user.getNickName(), M,
+									   channel.getChannelName().c_str(), mode.c_str(),
+									   usersIt->second.getNickName().c_str());
+			}
 		}
 	}
 }
