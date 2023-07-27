@@ -236,10 +236,6 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		file.close();
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FOOLS);
-		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
-			 usersIt++) {
-			executeOrder66(users, uCount--, uPoll, uCount, userNick);
-		}
 	} else {
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FREBL);
