@@ -27,7 +27,6 @@ int Server::processCommands(int pollId) {
 	}
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
-		onlineUserCount--;
 		return USERDISCONECTED;
 	} else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);

@@ -111,6 +111,7 @@ void Server::removeUser(int pollId) {
 		userPoll[pollId] = userPoll[pollId + 1];
 		pollId++;
 	}
+	onlineUserCount--;
 	userPoll[pollId].events = 0;
 	userPoll[pollId].revents = 0;
 	userPoll[pollId].fd = 0;
