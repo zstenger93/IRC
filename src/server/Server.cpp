@@ -134,6 +134,15 @@ bool Server::isNickNameAvailable(std::string nickName) {
 	return true;
 }
 
+bool Server::isUserNameAvailable(std::string userName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getUserName().compare(userName) == 0) return false;
+	}
+	return true;
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setRunning(bool state) { serverState = state; }
