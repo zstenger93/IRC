@@ -97,6 +97,7 @@
 #define NOSUCHUSER "there ain't such user bozo"
 #define NKCK "User got RICKED OUT OF THE CHANNEL"
 #define NOSUCHCHAN "there ain't such channel bozo"
+#define CHANGE "Your username has been changed to "
 #define INVITED "You are invited to join the conspiracy at"
 #define WELCOME "Welcome to Rickland, get ready to get RIICKEED!"
 #define KCKD "KICKED FOR NOT APPRICIATING THE GREAT RICK ROLL CONSPIRACY"
