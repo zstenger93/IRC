@@ -41,7 +41,7 @@ class Marvin {
 	std::string extractFromConfig(std::string lineToFind);
 	void listPossibleInput(int userFd, std::string userNick);
 	void executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
-						int uCount);
+						int uCount, std::string userNick);
 	void rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId,
 				   pollfd uPoll[CONNECTIONS], int uCount);
 	void runAi(int userFd, std::string message, User& user, std::map<int, User>& users, int pollId,

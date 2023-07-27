@@ -110,6 +110,7 @@
 
 // BOT
 #define BADLUCK -99
+#define AT "AtTheEndDoesntEvenMatter"
 #define LIST "      \0037 [02] \0030 list"
 #define WELP "      \0037 [01] \0030 help"
 #define ROLL "Let's see your roll"

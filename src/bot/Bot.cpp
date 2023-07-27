@@ -93,7 +93,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 				break;
 			case 6:
 				if (deathRoll(userFd, user.getNickName()) == BADLUCK)
-					executeOrder66(users, pollId, uPoll, uCount);
+					executeOrder66(users, pollId, uPoll, uCount, AT);
 				break;
 			case 7:
 				rickRoll(userFd, user.getNickName());
@@ -191,8 +191,9 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 
 // NEED TO NOTIFY USERS. IF LEFT ANY xD @todo
 void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
-							int uCount) {
+							int uCount, std::string userNick) {
 	std::map<int, User>::iterator userIt = users.find(uPoll[pollId].fd);
+	if (userIt->second.getNickName().compare(userNick) == 0) return;
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		usersIt->second.userRemovedFromServerMsg(userIt->second, usersIt->second);
 	}
@@ -234,7 +235,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 									   userNick.c_str(), COL, line.c_str());
 			}
 			if (i % 25 == 0 && k >= 5) {
-				executeOrder66(users, x--, uPoll, uCount);
+				executeOrder66(users, x--, uPoll, uCount, userNick);
 			}
 			i++;
 		}
