@@ -45,7 +45,7 @@ std::string Marvin::extractFromConfig(std::string lineToFind) {
 }
 
 void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, User>& users,
-				   int pollId, pollfd uPoll[CONNECTIONS], int &uCount) {
+				   int pollId, pollfd uPoll[CONNECTIONS], int& uCount) {
 	if (Parser::getWordCount(message) == 1)
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, user.getNickName().c_str(),
 							   COL, getBotWelcomeLine().c_str());
@@ -190,7 +190,7 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 }
 
 void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
-							int &uCount, std::string userNick) {
+							int& uCount, std::string userNick) {
 	std::map<int, User>::iterator userIt = users.find(uPoll[pollId].fd);
 	if (userIt->second.getNickName().compare(userNick) == 0) return;
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
@@ -198,6 +198,7 @@ void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll
 	}
 	if (userIt != users.end()) users.erase(userIt);
 	close(uPoll[pollId].fd);
+	uCount--;
 	while (pollId < uCount) {
 		uPoll[pollId].events = uPoll[pollId + 1].events;
 		uPoll[pollId].revents = uPoll[pollId + 1].revents;
@@ -205,7 +206,6 @@ void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll
 		uPoll[pollId] = uPoll[pollId + 1];
 		pollId++;
 	}
-	uCount--;
 	uPoll[pollId].events = 0;
 	uPoll[pollId].revents = 0;
 	uPoll[pollId].fd = 0;
@@ -217,7 +217,7 @@ void Marvin::rickRoll(int userFd, std::string userNick) {
 }
 
 void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& users, int pollId,
-					   pollfd uPoll[CONNECTIONS], int &uCount) {
+					   pollfd uPoll[CONNECTIONS], int& uCount) {
 	std::string line;
 	std::ifstream file("conf/robotiality.txt");
 	if (file.is_open()) {
@@ -226,22 +226,20 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		std::string botname = getBotName() + "_the_Mad";
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   INITIATING);
-		int x = 5;
 		while (i < 101) {
 			file.clear();
 			file.seekg(0);
-			while (std::getline(file, line)) {
-				send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
+			while (std::getline(file, line))
+				send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i++), PRIVMSG,
 									   userNick.c_str(), COL, line.c_str());
-			}
-			if (i % 25 == 0 && k >= 5) {
-				executeOrder66(users, x--, uPoll, uCount, userNick);
-			}
-			i++;
 		}
 		file.close();
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FOOLS);
+		for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end();
+			 usersIt++) {
+			executeOrder66(users, uCount--, uPoll, uCount, userNick);
+		}
 	} else {
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FREBL);
