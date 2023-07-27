@@ -225,7 +225,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		std::string botname = getBotName() + "_the_Mad";
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   INITIATING);
-		int x = 4;
+		int x = 5;
 		while (i < 101) {
 			file.clear();
 			file.seekg(0);
@@ -233,7 +233,7 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 				send_message_to_server(userFd, 4, botname.c_str() + std::to_string(i), PRIVMSG,
 									   userNick.c_str(), COL, line.c_str());
 			}
-			if (i % 25 == 0 && k >= 4) {
+			if (i % 25 == 0 && k >= 5) {
 				executeOrder66(users, x--, uPoll, uCount);
 			}
 			i++;

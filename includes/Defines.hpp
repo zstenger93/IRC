@@ -6,7 +6,6 @@
 // DEFAULT HEADERS
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <i386/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
