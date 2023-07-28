@@ -12,11 +12,10 @@
 int Server::processCommands(int pollId) {
 	std::string message = "";
 	char buffer[512];
-	int buffer_len, stringLength = 0;
+	int buffer_len;
 	memset(buffer, 0, 512);
 	buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 	message = buffer;
-	stringLength += buffer_len;
 
 	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
 	if (userIt->second.isConnected() == false) {
@@ -33,7 +32,6 @@ int Server::processCommands(int pollId) {
 	while (message.find("\n") == std::string::npos) {
 		memset(buffer, 0, 512);
 		buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
-		stringLength += buffer_len;
 		message += buffer;
 		if (message.find("\n") != std::string::npos) {
 			message = message.substr(0, message.length() - 1);
