@@ -29,9 +29,9 @@ class Server {
 	void removeUser(int pollId);
 	void sendUserRemoved(User &user);
 	bool getPass(std::string &msg);
-	void authenticate(std::string message, std::map<int, User>::iterator it);
 	bool userExists(std::string userName);
 	User &getUser(std::string userNickName);
+	void authenticate(std::string message, std::map<int, User>::iterator it);
 
 	// CHANNEL
 	std::map<std::string, Channel> channels;
@@ -59,7 +59,8 @@ class Server {
 	void mode(std::string message, int userFd);
 	void whois(int userFd, std::string message);
 	void motd(int userFd, std::string channelName);
-	void setNick(User &user, std::string newNickname, std::string msg);
+	void setNick(User &user, std::string newNickName, std::string msg);
+	void setUserName(User& user, std::string newUserName, std::string msg);
 	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,
@@ -70,6 +71,7 @@ class Server {
 	void addModeO(User &user, std::string msg);
 	std::string getCommand(std::string message);
 	bool isNickNameAvailable(std::string nickName);
+	bool isUserNameAvailable(std::string userName);
 	bool checkIfCanBeExecuted(std::string channelName, int senderFd);
 	void loopTroughtTheUsersInChan(std::string chanName, int senderFd, int mode,
 								   std::string message, User &user);

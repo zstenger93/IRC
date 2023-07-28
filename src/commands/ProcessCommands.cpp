@@ -12,11 +12,10 @@
 int Server::processCommands(int pollId) {
 	std::string message = "";
 	char buffer[512];
-	int buffer_len, stringLength = 0;
+	int buffer_len;
 	memset(buffer, 0, 512);
 	buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
 	message = buffer;
-	stringLength += buffer_len;
 
 	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
 	if (userIt->second.isConnected() == false) {
@@ -27,14 +26,12 @@ int Server::processCommands(int pollId) {
 	}
 	if (buffer_len == USERDISCONECTED) {
 		removeUser(pollId);
-		onlineUserCount--;
 		return USERDISCONECTED;
 	} else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
 	while (message.find("\n") == std::string::npos) {
 		memset(buffer, 0, 512);
 		buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
-		stringLength += buffer_len;
 		message += buffer;
 		if (message.find("\n") != std::string::npos) {
 			message = message.substr(0, message.length() - 1);
@@ -48,10 +45,10 @@ int Server::processCommands(int pollId) {
 void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 	int caseId = 0, pos = msg.find("DCC");
 	std::string command = getCommand(msg);
-	std::string commands[19] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
+	std::string commands[20] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
 								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
-								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT"};
-	for (int i = 0; i < 19; i++) {
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT", "USER"};
+	for (int i = 0; i < 20; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
 			break;
@@ -127,6 +124,9 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 			break;
 		case 18:
 			bot.runAi(fd, msg, user, users, pollId, userPoll, onlineUserCount);
+			break;
+		case 19:
+			setUserName(user, extractArgument(1, msg, 2), msg);
 			break;
 		default:
 			send_message_to_server(fd, 1, RICK, COMMAND_NOT_FOUND);
