@@ -6,7 +6,6 @@
 // DEFAULT HEADERS
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <i386/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
@@ -100,6 +99,7 @@
 #define NOSUCHUSER "there ain't such user bozo"
 #define NKCK "User got RICKED OUT OF THE CHANNEL"
 #define NOSUCHCHAN "there ain't such channel bozo"
+#define CHANGE "Your username has been changed to "
 #define INVITED "You are invited to join the conspiracy at"
 #define WELCOME "Welcome to Rickland, get ready to get RIICKEED!"
 #define KCKD "KICKED FOR NOT APPRICIATING THE GREAT RICK ROLL CONSPIRACY"
@@ -110,6 +110,7 @@
 
 // BOT
 #define BADLUCK -99
+#define AT "AtTheEndDoesntEvenMatter"
 #define LIST "      \0037 [02] \0030 list"
 #define WELP "      \0037 [01] \0030 help"
 #define ROLL "Let's see your roll"

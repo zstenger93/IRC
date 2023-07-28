@@ -168,7 +168,7 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 		if (Parser::getWordCount(msg) != 4)
 			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
 	}
-	else if (mode.compare("k") == 0)
+	if (mode.compare("k") == 0)
 		channel.setChannelPassword(extractArgument(3, msg, 4));
 	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));

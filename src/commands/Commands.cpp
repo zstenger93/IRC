@@ -125,21 +125,40 @@ void User::leaveChannel(std::map<int, User>& users, User& user, std::string chan
 	}
 }
 
-void Server::setNick(User& user, std::string newNickname, std::string msg) {
-	if (isNickNameAvailable(newNickname)) {
+void Server::setNick(User& user, std::string newNickName, std::string msg) {
+	if (isNickNameAvailable(newNickName)) {
 		std::map<int, User>::iterator userIt = users.begin();
 		for (; userIt != users.end(); userIt++) {
 			if (userIt->first != user.getUserFd())
 				send_message_to_server(userIt->first, 2, user.getNickName().c_str(), N,
-									   newNickname.c_str());
+									   newNickName.c_str());
 		}
 		send_message_to_server(user.getUserFd(), 2, user.getNickName().c_str(), N,
-							   newNickname.c_str());
-		user.setNickName(newNickname);
+							   newNickName.c_str());
+		user.setNickName(newNickName);
 
 	} else {
 		send_message_to_server(user.getUserFd(), 5, RICK, ERR_NICKNAMEINUSE,
-							   user.getNickName().c_str(), newNickname.c_str(), COL, ALREADYTAKEN);
+							   user.getNickName().c_str(), newNickName.c_str(), COL, ALREADYTAKEN);
+	}
+}
+
+void Server::setUserName(User& user, std::string newUserName, std::string msg) {
+	if (isUserNameAvailable(newUserName)) {
+		std::map<int, User>::iterator userIt = users.begin();
+		for (; userIt != users.end(); userIt++) {
+			if (userIt->first == user.getUserFd()) {
+				std::string yourNameChangedTo = CHANGE + newUserName + ".";
+				send_message_to_server(userIt->first, 4, RICK, PRIVMSG,
+									   userIt->second.getNickName().c_str(), COL,
+									   yourNameChangedTo.c_str());
+			}
+		}
+		user.setUserName(newUserName);
+
+	} else {
+		send_message_to_server(user.getUserFd(), 5, RICK, ERR_NICKNAMEINUSE,
+							   user.getNickName().c_str(), newUserName.c_str(), COL, ALREADYTAKEN);
 	}
 }
 

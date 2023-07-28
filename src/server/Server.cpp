@@ -111,6 +111,7 @@ void Server::removeUser(int pollId) {
 		userPoll[pollId] = userPoll[pollId + 1];
 		pollId++;
 	}
+	onlineUserCount--;
 	userPoll[pollId].events = 0;
 	userPoll[pollId].revents = 0;
 	userPoll[pollId].fd = 0;
@@ -130,6 +131,15 @@ bool Server::isNickNameAvailable(std::string nickName) {
 	if (nickName.find("Marvin") != std::string::npos) return false;
 	for (; usersIt != users.end(); usersIt++) {
 		if (usersIt->second.getNickName().compare(nickName) == 0) return false;
+	}
+	return true;
+}
+
+bool Server::isUserNameAvailable(std::string userName) {
+	std::map<int, User>::iterator usersIt = users.begin();
+
+	for (; usersIt != users.end(); usersIt++) {
+		if (usersIt->second.getUserName().compare(userName) == 0) return false;
 	}
 	return true;
 }
