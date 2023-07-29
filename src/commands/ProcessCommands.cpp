@@ -11,34 +11,20 @@
 
 int Server::processCommands(int pollId) {
 	std::string message = "";
-	char buffer[512];
+	char buffer[1024];
 	int buffer_len;
-	memset(buffer, 0, 512);
-	buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
+	memset(buffer, 0, 1024);
+	buffer_len = recv(userPoll[pollId].fd, buffer, 1024, MSG_DONTWAIT);
 	message = buffer;
-
 	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
-	if (userIt->second.isConnected() == false) {
-		authenticate(message, userIt);
-	}
-	if (userIt->second.isConnected() == false) {
-		return 1;
-	}
-	if (buffer_len == USERDISCONECTED) {
-		removeUser(pollId);
-		return USERDISCONECTED;
-	} else if (buffer_len == -1)
+
+	if (userIt->second.isConnected() == false) authenticate(message, userIt);
+	if (userIt->second.isConnected() == false) return 1;
+	if (buffer_len == USERDISCONECTED)
+		return removeUser(pollId), USERDISCONECTED;
+	else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
-	while (message.find("\n") == std::string::npos) {
-		memset(buffer, 0, 512);
-		buffer_len = recv(userPoll[pollId].fd, buffer, 512, MSG_DONTWAIT);
-		message += buffer;
-		if (message.find("\n") != std::string::npos) {
-			message = message.substr(0, message.length() - 1);
-			message = message + "\r\n";
-		}
-	}
-	commandParser(userIt->second, message, userIt->first, pollId);
+	getCommand(userIt->second, message, pollId, buffer_len, buffer);
 	return 1;
 }
 
@@ -47,7 +33,7 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 	std::string command = getCommand(msg);
 	std::string commands[20] = {"NOTICE", "PRIVMSG", "JOIN", "PART",  "KICK", "INVITE", "QUIT",
 								"NICK",	  "LIST",	 "MODE", "TOPIC", "CAP",  "PASS",	"ADMIN",
-								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT", "USER"};
+								"WHO",	  "PING",	 "MOTD", "WHOIS", "BOT",  "USER"};
 	for (int i = 0; i < 20; i++) {
 		if (command.compare(commands[i]) == 0) {
 			caseId = i;
