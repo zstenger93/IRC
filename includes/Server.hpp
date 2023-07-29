@@ -51,6 +51,7 @@ class Server {
 
 	// PROCESS COMMANDS
 	int processCommands(int pollId);
+	void getCommand( User &user, std::string message, int pollId, int buffer_len, char *buffer);
 	void commandParser(User &user, std::string msg, int fd, int pollId);
 
 	// COMMAND HANDLING
