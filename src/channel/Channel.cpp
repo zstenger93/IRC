@@ -20,30 +20,29 @@ Channel::~Channel() {}
 void Server::createChannel(User& user, std::string name) {
 	channels.insert(std::make_pair(name, Channel(name)));
 	std::map<int, User>::iterator userIt = users.begin();
-	for (; userIt != users.end(); userIt++) {
-		listChannels(userIt->second.getNickName());
-	}
+
+	for (; userIt != users.end(); userIt++) listChannels(userIt->second.getNickName());
 }
 
 void User::joinChannel(User& user, std::string name, int op) {
 	std::map<std::string, bool>::iterator it = channels.find(name);
+
 	if (it == channels.end()) {
 		send_message_to_server(user.getUserFd(), 4, user.getNickName(), JOIN, name.c_str(), COL,
 							   name.c_str());
-		if (op == 1)
-		{
+		if (op == 1) {
 			channels.insert(std::make_pair(name, true));
-			send_message_to_server(user.getUserFd(), 4, RICK, M, name.c_str(), ADDOP, user.getNickName().c_str());
-		}
-		else
+			send_message_to_server(user.getUserFd(), 4, RICK, M, name.c_str(), ADDOP,
+								   user.getNickName().c_str());
+		} else
 			channels.insert(std::make_pair(name, false));
-	} else {
+	} else
 		send_message_to_server(user.getUserFd(), 2, RICK, ERR_USERONCHANNEL, name.c_str());
-	}
 }
 
 void Channel::addMode(std::string mode, bool value) {
 	std::map<std::string, bool>::iterator modesIt = modes.find(mode);
+
 	if (modesIt == modes.end()) return;
 	if (modesIt->second != value) modesIt->second = value;
 }

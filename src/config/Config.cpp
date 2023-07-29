@@ -8,6 +8,7 @@
 void Server::setConnectionLimits() {
 	std::string line, limitType;
 	std::ifstream file("conf/irc.conf");
+
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			std::istringstream iss(line);
@@ -26,6 +27,7 @@ void Server::setConnectionLimits() {
 void Server::setServerPassword() {
 	std::string line, limitType;
 	std::ifstream file("conf/irc.conf");
+
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			std::istringstream iss(line);

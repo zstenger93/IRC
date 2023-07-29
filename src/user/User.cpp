@@ -24,12 +24,11 @@ void User::setOperatorPrivilage(std::string channelName, bool setTo) {
 
 void User::userRemovedFromServerMsg(User &user, User &usersIt) {
 	for (std::map<std::string, bool>::iterator channelsIt = channels.begin();
-		 channelsIt != channels.end(); channelsIt++) {
+		 channelsIt != channels.end(); channelsIt++)
 		if (user.isInChannel(channelsIt->first) && usersIt.isInChannel(channelsIt->first))
 			if (usersIt.getNickName().compare(user.getNickName()) != 0)
 				send_message_to_server(usersIt.getUserFd(), 4, user.getNickName().c_str(), P,
 									   channelsIt->first.c_str(), COL, RMVDBYMARV);
-	}
 }
 
 bool User::isInvitedToChannel(std::string channelName) {

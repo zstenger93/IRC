@@ -27,8 +27,8 @@ class Server {
 	void addUser(int userFd);
 	std::map<int, User> users;
 	void removeUser(int pollId);
-	void sendUserRemoved(User &user);
 	bool getPass(std::string &msg);
+	void sendUserRemoved(User &user);
 	bool userExists(std::string userName);
 	User &getUser(std::string userNickName);
 	void authenticate(std::string message, std::map<int, User>::iterator it);
@@ -51,8 +51,8 @@ class Server {
 
 	// PROCESS COMMANDS
 	int processCommands(int pollId);
-	void getCommand( User &user, std::string message, int pollId, int buffer_len, char *buffer);
 	void commandParser(User &user, std::string msg, int fd, int pollId);
+	void getCommand(User &user, std::string message, int pollId, int buffer_len, char *buffer);
 
 	// COMMAND HANDLING
 	void listChannels(std::string userName);
@@ -61,7 +61,7 @@ class Server {
 	void whois(int userFd, std::string message);
 	void motd(int userFd, std::string channelName);
 	void setNick(User &user, std::string newNickName, std::string msg);
-	void setUserName(User& user, std::string newUserName, std::string msg);
+	void setUserName(User &user, std::string newUserName, std::string msg);
 	void sendFiles(std::map<int, User> users, std::string message, int userFd);
 	void channelTopic(std::string message, std::string channelName, int userFd);
 	void sendMessage(std::string message, std::map<int, User> &users, int userFd, int pollId,

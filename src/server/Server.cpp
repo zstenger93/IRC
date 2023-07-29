@@ -1,4 +1,5 @@
 #include "../../includes/Server.hpp"
+
 #include "../../includes/Channel.hpp"
 #include "../../includes/Commands.hpp"
 #include "../../includes/User.hpp"
@@ -47,11 +48,10 @@ void Server::run() {
 		for (int pollId = 0; pollId < onlineUserCount; pollId++) {
 			try {
 				if (userPoll[pollId].revents & POLLIN) {
-					if (userPoll[pollId].fd == serverSocketFd) {
+					if (userPoll[pollId].fd == serverSocketFd)
 						acceptConnection();
-					} else {
-						if (processCommands(pollId) == USERDISCONECTED) pollId--;
-					}
+					else if (processCommands(pollId) == USERDISCONECTED)
+						pollId--;
 				}
 			} catch (const std::exception &error) {
 				std::cout << RED << error.what() << END << std::endl;
@@ -78,17 +78,14 @@ void Server::addUser(int userFd) {
 }
 
 void Server::sendUserRemoved(User &user) {
-	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++)
 		for (std::map<std::string, Channel>::iterator channelsIt = channels.begin();
-			 channelsIt != channels.end(); channelsIt++) {
+			 channelsIt != channels.end(); channelsIt++)
 			if (usersIt->second.isInChannel(channelsIt->second.getChannelName()) &&
-				user.isInChannel(channelsIt->second.getChannelName())) {
+				user.isInChannel(channelsIt->second.getChannelName()))
 				if (usersIt->second.getNickName() != user.getNickName())
 					send_message_to_server(usersIt->first, 4, user.getNickName().c_str(), P,
 										   channelsIt->second.getChannelName().c_str(), COL, LEFT);
-			}
-		}
-	}
 }
 
 void Server::removeUser(int pollId) {
@@ -164,9 +161,8 @@ int Server::getServerSocket() { return serverSocketFd; }
 User &Server::getUser(std::string userNickName) {
 	std::map<int, User>::iterator usersIt = users.begin();
 
-	for (; usersIt != users.end(); usersIt++) {
+	for (; usersIt != users.end(); usersIt++)
 		if (usersIt->second.getNickName().compare(userNickName) == 0) return usersIt->second;
-	}
 	throw CustomException("getUser() -> NoSuchUser");
 
 	return usersIt->second;

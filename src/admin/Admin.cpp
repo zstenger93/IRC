@@ -7,13 +7,13 @@
 
 std::string Server::extractWord(const std::string &line) {
 	std::string::size_type pos = line.find('=');
+
 	if (pos != std::string::npos) {
 		std::string word = line.substr(pos + 1);
 		std::string::size_type firstNonSpace = word.find_first_not_of(" \t"),
 							   lastNonSpace = word.find_last_not_of(" \t");
-		if (firstNonSpace != std::string::npos && lastNonSpace != std::string::npos) {
+		if (firstNonSpace != std::string::npos && lastNonSpace != std::string::npos)
 			return word.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
-		}
 	}
 	return "noTryinHereToBreakMe";
 }
@@ -23,10 +23,10 @@ std::string Server::base64Decode(const std::string &encodedData) {
 	std::string decodedData;
 	std::string::size_type encodedLength = encodedData.length(), i = 0;
 	unsigned char buffer[3], temp[4];
+
 	while (i < encodedLength) {
-		for (int j = 0; j < 4; ++j) {
+		for (int j = 0; j < 4; ++j)
 			temp[j] = static_cast<unsigned char>(base64Chars.find(encodedData[i++]));
-		}
 		buffer[0] = (temp[0] << 2) | (temp[1] >> 4);
 		decodedData += buffer[0];
 		if (temp[2] < 64) {
@@ -44,15 +44,13 @@ std::string Server::base64Decode(const std::string &encodedData) {
 void Server::setAdminDetails() {
 	std::string line, name;
 	std::ifstream file("conf/irc.conf");
+
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			std::istringstream iss(line);
-			if (line.find("oper_username") != std::string::npos) {
-				setAdmin(extractWord(line));
-			}
-			if (line.find("oper_password") != std::string::npos) {
+			if (line.find("oper_username") != std::string::npos) setAdmin(extractWord(line));
+			if (line.find("oper_password") != std::string::npos)
 				setAdminPass(base64Decode(extractWord(line)));
-			}
 		}
 		file.close();
 	} else {

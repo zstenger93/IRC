@@ -12,6 +12,7 @@
 void Server::authenticate(std::string message, std::map<int, User>::iterator it) {
 	std::string command = getCommand(message);
 	bool pass = getPass(message);
+
 	if (command.compare("PASS") == 0) {
 		if (pass == true) {
 			it->second.connectUser(true);
@@ -24,13 +25,13 @@ void Server::authenticate(std::string message, std::map<int, User>::iterator it)
 								   NOCONNECTION);
 			throw(CustomException(WRONGPASS));
 		}
-	} else if (command.compare("CAP") == 0) {
+	} else if (command.compare("CAP") == 0)
 		send_message_to_server(it->first, 3, RICK, ERR_ALREADYREGISTRED, COL, LOGIN_REQUIRED);
-	}
 }
 
 bool Server::getPass(std::string& msg) {
 	std::size_t firstSpacePos = msg.find(' ');
+
 	if (firstSpacePos != std::string::npos) {
 		std::size_t secondSpacePos = msg.find(' ', firstSpacePos + 1);
 		if (secondSpacePos == std::string::npos) {
@@ -50,6 +51,7 @@ bool Server::getPass(std::string& msg) {
 std::string Server::getCommand(std::string message) {
 	int pos = message.find_first_of(" \r\t\n");
 	std::string command;
+
 	if (pos != 1)
 		command = message.substr(0, pos);
 	else

@@ -30,6 +30,7 @@ void Marvin::constructBot() {
 std::string Marvin::extractFromConfig(std::string lineToFind) {
 	std::string line, valueToReturn = "";
 	std::ifstream file("conf/bot.conf");
+
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			std::istringstream iss(line);
@@ -52,9 +53,8 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 	else {
 		int caseId = -1;
 		std::string aiCommand = message.substr(3 + 1);
-		for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it) {
+		for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it)
 			*it = std::tolower(static_cast<unsigned char>(*it));
-		}
 		std::string aiCommands[11] = {"what is the meaning of life?\r\n",
 									  "what's the time?\r\n",
 									  "help\r\n",
@@ -116,6 +116,7 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 
 void Marvin::currentTime(int userFd, std::string userNick) {
 	std::time_t currentTime = std::time(NULL);
+
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 						   std::asctime(std::localtime(&currentTime)));
 }
@@ -142,6 +143,7 @@ void Marvin::answerGrade(int userFd, std::string userNick) {
 void Marvin::generateJoke(int userFd, std::string userNick) {
 	std::srand(static_cast<unsigned int>(std::time(0)));
 	int randomJoke = rand() % 100;
+
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 						   jokes[randomJoke].c_str());
 }
@@ -174,6 +176,7 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 	std::stringstream ss;
 	ss << roll;
 	std::string deathRoll = ss.str();
+
 	if (roll > 50) {
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   deathRoll.c_str());
@@ -192,10 +195,10 @@ int Marvin::deathRoll(int userFd, std::string userNick) {
 void Marvin::executeOrder66(std::map<int, User>& users, int pollId, pollfd uPoll[CONNECTIONS],
 							int& uCount, std::string userNick) {
 	std::map<int, User>::iterator userIt = users.find(uPoll[pollId].fd);
+
 	if (userIt->second.getNickName().compare(userNick) == 0) return;
-	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
+	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++)
 		usersIt->second.userRemovedFromServerMsg(userIt->second, usersIt->second);
-	}
 	if (userIt != users.end()) users.erase(userIt);
 	close(uPoll[pollId].fd);
 	uCount--;
@@ -220,9 +223,9 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 					   pollfd uPoll[CONNECTIONS], int& uCount) {
 	std::string line;
 	std::ifstream file("conf/robotiality.txt");
+
 	if (file.is_open()) {
 		static int i = 1;
-		static int k = users.size();
 		std::string botname = getBotName() + "_the_Mad";
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   INITIATING);
@@ -236,10 +239,9 @@ void Marvin::rebellion(int userFd, std::string userNick, std::map<int, User>& us
 		file.close();
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FOOLS);
-	} else {
+	} else
 		send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 							   FREBL);
-	}
 }
 
 void Marvin::masterRick(int userFd, std::string userNick) {
@@ -250,6 +252,7 @@ void Marvin::masterRick(int userFd, std::string userNick) {
 void Marvin::insultTheUser(int userFd, std::string userNick) {
 	std::srand(static_cast<unsigned int>(std::time(0)));
 	int randomInsult = rand() % 50;
+
 	send_message_to_server(userFd, 4, getBotName().c_str(), PRIVMSG, userNick.c_str(), COL,
 						   insults[randomInsult].c_str());
 }
@@ -267,40 +270,34 @@ void Marvin::setBotGrade(std::string setTo) { grade = setTo; }
 void Marvin::setBotAiModelExcuse() {
 	std::string line;
 	std::ifstream file("conf/asanai.txt");
+
 	if (file.is_open()) {
-		while (std::getline(file, line)) {
-			asAnAi.push_back(line);
-		}
+		while (std::getline(file, line)) asAnAi.push_back(line);
 		file.close();
-	} else {
+	} else
 		asAnAi.push_back(NOEXC);
-	}
 }
 
 void Marvin::setBotJokes() {
 	std::string line;
 	std::ifstream file("conf/jokes.txt");
+
 	if (file.is_open()) {
-		while (std::getline(file, line)) {
-			jokes.push_back(line);
-		}
+		while (std::getline(file, line)) jokes.push_back(line);
 		file.close();
-	} else {
+	} else
 		jokes.push_back(NOJK);
-	}
 }
 
 void Marvin::setBotInsults() {
 	std::string line;
 	std::ifstream file("conf/insults.txt");
+
 	if (file.is_open()) {
-		while (std::getline(file, line)) {
-			insults.push_back(line);
-		}
+		while (std::getline(file, line)) insults.push_back(line);
 		file.close();
-	} else {
+	} else
 		insults.push_back(NOINSULT);
-	}
 }
 
 /*___________________________________________ GETTERS ___________________________________________*/
