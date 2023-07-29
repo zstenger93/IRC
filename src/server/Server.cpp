@@ -144,6 +144,22 @@ bool Server::isUserNameAvailable(std::string userName) {
 	return true;
 }
 
+void Server::getCommand(User &user, std::string message, int pollId, int buffer_len, char *buffer) {
+	while (message.empty() == false && buffer_len != 0) {
+		if (message.find("\n") != std::string::npos && message.find("\r\n") == std::string::npos) {
+			message = message.substr(0, message.length() - 1) + "\r\n";
+		}
+		while (message.find("\n") != std::string::npos && message.find("\r") != std::string::npos) {
+			commandParser(user, message.substr(0, message.find("\r")), user.getUserFd(), pollId);
+			message = message.substr(message.find("\n") + 1, message.length());
+		}
+		memset(buffer, 0, 1024);
+		buffer_len = recv(userPoll[pollId].fd, buffer, 1024, MSG_DONTWAIT);
+		message += buffer;
+	}
+	commandParser(user, message, user.getUserFd(), pollId);
+}
+
 /*___________________________________________ SETTERS ___________________________________________*/
 
 void Server::setRunning(bool state) { serverState = state; }
