@@ -16,39 +16,15 @@ int Server::processCommands(int pollId) {
 	memset(buffer, 0, 1024);
 	buffer_len = recv(userPoll[pollId].fd, buffer, 1024, MSG_DONTWAIT);
 	message = buffer;
-	// while (message.find("\n") != std::string::npos) {
-	// 	message = message.substr(0, message.length() - 1);
-	// 	message = message + "\r\n";
-	// }
-
 	std::map<int, User>::iterator userIt = users.find(userPoll[pollId].fd);
-	if (userIt->second.isConnected() == false) {
-		authenticate(message, userIt);
-	}
-	if (userIt->second.isConnected() == false) {
-		return 1;
-	}
-	if (buffer_len == USERDISCONECTED) {
-		removeUser(pollId);
-		return USERDISCONECTED;
-	} else if (buffer_len == -1)
+
+	if (userIt->second.isConnected() == false) authenticate(message, userIt);
+	if (userIt->second.isConnected() == false) return 1;
+	if (buffer_len == USERDISCONECTED)
+		return removeUser(pollId), USERDISCONECTED;
+	else if (buffer_len == -1)
 		throw CustomException(F_FAILED_MESSAGE);
-	std::cout << RED << "Check the buffer state" << message << END << std::endl;
-	while (message.empty() == false && buffer_len != 0) {
-		if (message.find("\n") != std::string::npos && message.find("\r\n") == std::string::npos) {
-			message = message.substr(0, message.length() - 1);
-			message = message + "\r\n";
-		}
-		while (message.find("\n") != std::string::npos && message.find("\r") != std::string::npos) {
-			commandParser(userIt->second, message.substr(0, message.find("\r")), userIt->first,
-						  pollId);
-			message = message.substr(message.find("\n") + 1, message.length());
-		}
-		memset(buffer, 0, 1024);
-		buffer_len = recv(userPoll[pollId].fd, buffer, 1024, MSG_DONTWAIT);
-		message += buffer;
-	}
-	commandParser(userIt->second, message, userIt->first, pollId);
+	getCommand(userIt->second, message, pollId, buffer_len, buffer);
 	return 1;
 }
 
