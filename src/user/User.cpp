@@ -23,18 +23,18 @@ void User::setOperatorPrivilage(std::string channelName, bool setTo) {
 }
 
 void User::userRemovedFromServerMsg(User &user, User &usersIt) {
-	for (std::map<std::string, bool>::iterator channelsIt = channels.begin(); channelsIt != channels.end(); channelsIt++) {
+	for (std::map<std::string, bool>::iterator channelsIt = channels.begin();
+		 channelsIt != channels.end(); channelsIt++) {
 		if (user.isInChannel(channelsIt->first) && usersIt.isInChannel(channelsIt->first))
 			if (usersIt.getNickName().compare(user.getNickName()) != 0)
 				send_message_to_server(usersIt.getUserFd(), 4, user.getNickName().c_str(), P,
-										   channelsIt->first.c_str(), COL, RMVDBYMARV);
+									   channelsIt->first.c_str(), COL, RMVDBYMARV);
 	}
 }
 
 bool User::isInvitedToChannel(std::string channelName) {
-	for (unsigned long i = 0; i < invitedChannels.size(); i++) {
+	for (unsigned long i = 0; i < invitedChannels.size(); i++)
 		if (invitedChannels[i].compare(channelName) == 0) return true;
-	}
 	return false;
 }
 

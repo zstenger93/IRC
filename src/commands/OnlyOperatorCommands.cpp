@@ -33,8 +33,6 @@ void User::inviteUser(std::map<int, User>& users, std::string addUserName, std::
 	}
 	userIt->second.invitedChannels.push_back(channelName);
 	send_message_to_server(senderFd, 4, RICK, PRIVMSG, channelName.c_str(), COL, DIDINV);
-	// send_message_to_server(userIt->first, 3, RICK, RPL_INVITING,
-	// 					   userIt->second.getNickName().c_str(), channelName.c_str());
 	std::map<int, User>::iterator senderIt;
 	senderIt = users.find(senderFd);
 	send_message_to_server(userIt->first, 3, senderIt->second.getNickName(), "INVITE",

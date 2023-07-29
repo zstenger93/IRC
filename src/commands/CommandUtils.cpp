@@ -51,8 +51,8 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 	return false;
 }
 
-// checks if there is a channel or that user is inside of channel, if not returns an error else continiues execution process of cases
-
+// checks if there is a channel or that user is inside of channel, if not returns an error else
+// continiues execution process of cases
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 	if (channelIt == channels.end()) {
@@ -68,6 +68,7 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	}
 	return true;
 }
+
 /*
 case 0:
  send message to the users in side of the selected channel
@@ -79,7 +80,6 @@ case 3:
 sends message that the users has become an op
 case 4:
 sends message that the users no longer is an op
-
 */
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
@@ -162,8 +162,7 @@ bool Server::isModeValid(std::string mode) {
 
 void Server::addMode(Channel& channel, User& user, std::string mode, std::string msg) {
 	mode = mode.substr(1);
-	if (mode.compare("o") == 0)
-		addModeO(user, msg);
+	if (mode.compare("o") == 0) addModeO(user, msg);
 	if (mode.compare("k") == 0 || mode.compare("l") == 0) {
 		if (Parser::getWordCount(msg) != 4)
 			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);

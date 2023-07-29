@@ -65,6 +65,7 @@ void Server::sendFiles(std::map<int, User> users, std::string message, int userF
 void Server::sendMessage(std::string message, std::map<int, User>& users, int userFd, int pollId,
 						 pollfd uPoll[CONNECTIONS], int uCount) {
 	std::map<int, User>::iterator userIt = users.find(userFd);
+
 	if (extractArgument(1, message, -1)[0] != '#') {
 		std::string messageTo = extractArgument(1, message, -1);
 		if (messageTo.empty() == true) {
