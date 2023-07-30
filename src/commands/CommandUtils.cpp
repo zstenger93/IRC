@@ -149,10 +149,18 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 	}
 	if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) != 3)
 		return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
-	if (mode.compare("k") == 0)
-		channel.setChannelPassword(extractArgument(3, msg, 4));
-	else if (mode.compare("l") == 0)
+	if (mode.compare("k") == 0) {
+		std::string pw = extractArgument(3, msg, 4);
+		if (pw.length() > 8)
+			return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG,
+										  channel.getChannelName().c_str(), COL, PW_LONG);
+		channel.setChannelPassword(pw);
+	} else if (mode.compare("l") == 0) {
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
+		if (channel.getUserLimit() < 1 || channel.getUserLimit() > 6)
+			return send_message_to_server(user.getUserFd(), 4, RICK, PRIVMSG,
+										  channel.getChannelName().c_str(), COL, WRONG_ULIMIT);
+	}
 	channel.addMode(mode, true);
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channel.getChannelName()) == true)

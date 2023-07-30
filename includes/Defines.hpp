@@ -76,9 +76,11 @@
 #define NOSTEELIN "We do not steel user data #awkwardface"
 #define FOFF "Today's motto is f*ck off, you won't break it"
 #define ALREADYOPER "\0034The user is already an operator.\0030"
+#define WRONG_ULIMIT "\0034Userlimit can be set from 1 to 5.\0030"
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
+#define PW_LONG "\0034Password is too long. Limit is 8 characters.\0030"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 #define ALREADYTAKEN "\0034The nickname is already in use, choose another one.\0030"
 

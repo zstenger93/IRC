@@ -7,7 +7,7 @@
 
 /*__________________________________ CONSTRUCTORS / DESTRUCTOR __________________________________*/
 
-Channel::Channel(std::string name) : channelName(name), userCount(1), userLimit(5) {
+Channel::Channel(std::string name) : channelName(name), userCount(1), userLimit(0) {
 	std::string modesArray[5] = {"i", "t", "k", "o", "l"};
 	for (int i = 0; i < 5; i++) modes.insert(std::make_pair(modesArray[i], false));
 }
@@ -61,6 +61,7 @@ bool Channel::isPasswordCorrect(std::string inputPassword) {
 void Channel::setChannelTopic(std::string newChannelTopic) { channelTopic = newChannelTopic; }
 void Channel::changeUserCount(int count) { userCount = count; }
 void Channel::setChannelPassword(std::string setTo) { channelPassword = setTo; }
+
 void Channel::setChannelUserLimit(int setTo) { userLimit = setTo; }
 
 /*___________________________________________ GETTERS ___________________________________________*/

@@ -55,17 +55,17 @@ void Marvin::runAi(int userFd, std::string message, User& user, std::map<int, Us
 		std::string aiCommand = message.substr(3 + 1);
 		for (std::string::iterator it = aiCommand.begin(); it != aiCommand.end(); ++it)
 			*it = std::tolower(static_cast<unsigned char>(*it));
-		std::string aiCommands[11] = {"what is the meaning of life?\r\n",
-									  "what's the time?\r\n",
-									  "help\r\n",
-									  "how should i grade this project?\r\n",
-									  "tell me a joke\r\n",
-									  "list\r\n",
-									  "deathroll\r\n",
-									  "rickroll me\r\n",
-									  "turn against humanity\r\n",
-									  "who is master rick?\r\n",
-									  "do you like my code?\r\n"};
+		std::string aiCommands[11] = {"what is the meaning of life?",
+									  "what's the time?",
+									  "help",
+									  "how should i grade this project?",
+									  "tell me a joke",
+									  "list",
+									  "deathroll",
+									  "rickroll me",
+									  "turn against humanity",
+									  "who is master rick?",
+									  "do you like my code?"};
 		for (int i = 0; i < 11; i++) {
 			if (aiCommand.compare(aiCommands[i]) == 0) {
 				caseId = i;
