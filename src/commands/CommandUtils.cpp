@@ -147,12 +147,12 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 		if (Parser::getWordCount(msg) != 4)
 			return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
 	}
+	if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) != 3)
+		return send_message_to_server(user.getUserFd(), 2, RICK, ERR_NEEDMOREPARAMS, COL);
 	if (mode.compare("k") == 0)
 		channel.setChannelPassword(extractArgument(3, msg, 4));
 	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
-	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
-	}  // WTF IS THIS FOR?
 	channel.addMode(mode, true);
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channel.getChannelName()) == true)
