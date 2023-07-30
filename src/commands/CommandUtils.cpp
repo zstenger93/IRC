@@ -49,8 +49,7 @@ int Server::isJoinedWithActiveMode(Channel& channel, User& user, std::string mes
 	return false;
 }
 
-// checks if there is a channel or that user is inside of channel, if not returns an error else
-// continiues execution process of cases
+// checks if there is a channel and that the user is inside of the channel, else returns false
 bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	std::map<std::string, Channel>::iterator channelIt = channels.find(channelName);
 
@@ -68,35 +67,23 @@ bool Server::checkIfCanBeExecuted(std::string channelName, int senderFd) {
 	return true;
 }
 
-/*
-case 0:
- send message to the users in side of the selected channel
-case 1:
-sends message that the user has JOINED the channel
-case 2:
-sends message about the users inside of the channel and wheather they are opperators or not
-case 3:
-sends message that the users has become an op
-case 4:
-sends message that the users no longer is an op
-*/
 void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, int mode,
 									   std::string message, User& user) {
 	if (checkIfCanBeExecuted(channelName, senderFd) == false) return;
 	std::map<int, User>::iterator userIt = users.begin();
-	for (; userIt != users.end(); userIt++) {
-		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd) {
+	for (; userIt != users.end(); userIt++)
+		if (userIt->second.isInChannel(channelName) && userIt->second.getUserFd() != senderFd)
 			switch (mode) {
-				case 0:
+				case MSG_TO_USERS_ON_CHANNEL:
 					send_message_to_server(userIt->first, 4, user.getNickName().c_str(), PRIVMSG,
 										   channelName.c_str(), COL,
 										   extractMessage(message).c_str());
 					break;
-				case 1:
+				case MSG_USER_JOINED:
 					send_message_to_server(userIt->first, 4, user.getNickName(), "JOIN",
 										   channelName.c_str(), COL, channelName.c_str());
 					break;
-				case 2:
+				case MSG_IF_OPER_OR_NOT:
 					if (userIt->second.isOperatorInChannel(channelName)) {
 						std::string name = "@" + userIt->second.getNickName();
 						send_message_to_server(senderFd, 6, RICK, RPL_NAMREPLY,
@@ -107,19 +94,17 @@ void Server::loopTroughtTheUsersInChan(std::string channelName, int senderFd, in
 											   user.getNickName().c_str(), "=", channelName.c_str(),
 											   COL, userIt->second.getNickName().c_str());
 					break;
-				case 3:
+				case MSG_USER_NOW_OPER:
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
 										   channelName.c_str(), ADDOP, message.c_str());
 					break;
-				case 4:
+				case MSG_USER_NOLONGER_OPER:
 					send_message_to_server(userIt->second.getUserFd(), 4, RICK, M,
 										   channelName.c_str(), REMOVEOP, message.c_str());
 					break;
 				default:
 					break;
 			}
-		}
-	}
 }
 
 bool User::isInChannel(std::string channelName) {
@@ -128,7 +113,6 @@ bool User::isInChannel(std::string channelName) {
 
 void Server::addModeO(User& user, std::string msg) {
 	if (Parser::getWordCount(msg) != 4) return;
-
 	std::string channelName = extractArgument(1, msg, 4);
 	std::string targetUser = extractArgument(3, msg, 4);
 
@@ -168,7 +152,7 @@ void Server::addMode(Channel& channel, User& user, std::string mode, std::string
 	else if (mode.compare("l") == 0)
 		channel.setChannelUserLimit(std::atoi(extractArgument(3, msg, 4).c_str()));
 	else if ((mode.compare("i") == 0 || mode.compare("t") == 0) && Parser::getWordCount(msg) == 3) {
-	} // WTF IS THIS FOR?
+	}  // WTF IS THIS FOR?
 	channel.addMode(mode, true);
 	for (std::map<int, User>::iterator usersIt = users.begin(); usersIt != users.end(); usersIt++) {
 		if (usersIt->second.isInChannel(channel.getChannelName()) == true)

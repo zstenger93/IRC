@@ -110,6 +110,37 @@ class Server {
 		virtual ~CustomException() throw();
 	};
 
+	enum cmd_list {
+		NOTHING,
+		MESSAGE,
+		JOIN_CHANNEL,
+		LEAVE_CHANNEL,
+		KICK,
+		INVITE,
+		QUIT,
+		SET_NICK,
+		LIST_CHANNELS,
+		CHANNEL_MODE,
+		CHANNEL_TOPIC,
+		CAP_MSG_FROM_CLIENT,
+		AUTO_JOIN_GENERAL,
+		ADMIN_SHUTDOWN_SERVER,
+		LIST_EVERYONE_ON_SERVER,
+		PING_LATENCY_CHECK,
+		MESSAGE_OF_THE_DAY,
+		WHO_IS_USER,
+		BOT,
+		SET_USERNAME
+	};
+
+	enum msg_types {
+		MSG_TO_USERS_ON_CHANNEL,
+		MSG_USER_JOINED,
+		MSG_IF_OPER_OR_NOT,
+		MSG_USER_NOW_OPER,
+		MSG_USER_NOLONGER_OPER
+	};
+
    private:
 	// sockets
 	bool serverState;
