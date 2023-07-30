@@ -1,3 +1,4 @@
 *.o
 ircserv
 objects/
+.DS_Store

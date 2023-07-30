@@ -42,53 +42,51 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 	}
 	std::cout << RECIEVED << command << FULLMSG << msg << EXEC << caseId << std::endl;
 	switch (caseId) {
-		case 0:
+		case NOTHING:
 			break;
-		case 1:
+		case MESSAGE:
 			if (pos == std::string::npos)
 				sendMessage(msg, users, fd, pollId, userPoll, onlineUserCount);
 			else
 				sendFiles(users, msg, fd);
 			break;
-		case 2:
+		case JOIN_CHANNEL:
 			if (Parser::getWordCount(msg) == 2)
 				handleJoin(msg, user, extractArgument(1, msg, 2));
 			else
 				handleJoin(msg, user, extractArgument(1, msg, 3));
 			break;
-		case 3:
+		case LEAVE_CHANNEL:
 			user.leaveChannel(users, user, extractArgument(1, msg, -1), 0);
 			break;
-		case 4:
+		case KICK:
 			user.kickUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
-		case 5:
+		case INVITE:
 			user.inviteUser(users, extractArgument(2, msg, 3), extractArgument(1, msg, 3), fd);
 			break;
-		case 6:
+		case QUIT:
 			sendUserRemoved(user);
 			removeUser(pollId);
 			break;
-		case 7:
+		case SET_NICK:
 			setNick(user, extractArgument(1, msg, 2), msg);
 			break;
-		case 8:
+		case LIST_CHANNELS:
 			listChannels(user.getNickName());
 			break;
-		case 9:
+		case CHANNEL_MODE:
 			mode(msg, fd);
 			break;
-		case 10:
+		case CHANNEL_TOPIC:
 			channelTopic(msg, extractArgument(1, msg, -1), fd);
 			break;
-		case 11:
-			// CAP
+		case CAP_MSG_FROM_CLIENT:
 			break;
-		case 12:
-			// to automaticly join to general after providing the right /PASS
+		case AUTO_JOIN_GENERAL:
 			handleJoin(msg, user, "#General");
 			break;
-		case 13:
+		case ADMIN_SHUTDOWN_SERVER:
 			if (Parser::getWordCount(msg) == 3)
 				shutdown(msg);
 			else
@@ -96,22 +94,22 @@ void Server::commandParser(User& user, std::string msg, int fd, int pollId) {
 									   user.getNickName().c_str(),
 									   extractArgument(0, msg, -1).c_str(), COL);
 			break;
-		case 14:
+		case LIST_EVERYONE_ON_SERVER:
 			who(fd, msg);
 			break;
-		case 15:
+		case PING_LATENCY_CHECK:
 			user.ping(msg, fd);
 			break;
-		case 16:
+		case MESSAGE_OF_THE_DAY:
 			motd(fd, extractArgument(2, msg, 3));
 			break;
-		case 17:
+		case WHO_IS_USER:
 			whois(fd, msg);
 			break;
-		case 18:
+		case BOT:
 			bot.runAi(fd, msg, user, users, pollId, userPoll, onlineUserCount);
 			break;
-		case 19:
+		case SET_USERNAME:
 			setUserName(user, extractArgument(1, msg, 2), msg);
 			break;
 		default:

@@ -2,6 +2,7 @@
 
 int main(int argc, char **argv) {
 	Server server;
+
 	try {
 		Server server(argc, argv);
 		while (server.shouldReset()) {

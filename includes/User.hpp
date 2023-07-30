@@ -26,13 +26,13 @@ class User {
 	bool isInvitedToChannel(std::string channelName);
 	bool isOperatorInChannel(std::string channelName);
 	void joinChannel(User& user, std::string name, int op);
+	void userRemovedFromServerMsg(User& user, User& usersIt);
 	void setOperatorPrivilage(std::string channelName, bool setTo);
-	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName, int mode);
 	void kickUser(std::map<int, User>& users, std::string kickUserName, std::string channelName,
 				  int senderFd);
 	void inviteUser(std::map<int, User>& users, std::string addUserName, std::string channelName,
 					int senderFd);
-	void userRemovedFromServerMsg(User &user, User &usersIt);
+	void leaveChannel(std::map<int, User>& users, User& user, std::string channelName, int mode);
 
    private:
 	std::string userName;
