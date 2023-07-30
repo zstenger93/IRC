@@ -30,13 +30,13 @@
 # define    ERR_INVITEONLYCHAN		"473"
 # define    ERR_BADCHANNELKEY		"475"
 // Server Defaults
+#define     COL                     ":"
+#define     JOIN                    "JOIN"
+#define     JOIN_SERVER             " JOIN "
+#define     SERVER                  "server"
+#define     COMMAND                 "command"
+#define     PRIVMSG                 "PRIVMSG"
 # define	SRV_QUIT				"You RickRolled out of the server."
 # define	SRV_KICK				"THIS IS SPARTAAA. You have been kicked."
-#define     COL                     ":"
-#define     JOIN_SERVER             " JOIN "
-#define     PRIVMSG                 "PRIVMSG"
-#define     JOIN                    "JOIN"
-#define     COMMAND                 "command"
-#define     SERVER                  "server"
 
 #endif

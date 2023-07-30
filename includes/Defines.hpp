@@ -75,12 +75,14 @@
 #define NOTOPER "You ain't the master RICK ROLLER"
 #define NOSTEELIN "We do not steel user data #awkwardface"
 #define FOFF "Today's motto is f*ck off, you won't break it"
+#define ALREADYOPER "\0034The user is already an operator.\0030"
+#define WRONG_ULIMIT "\0034Userlimit can be set from 1 to 5.\0030"
 #define USERLIMITREACHED "THERE ARE TOO MANY RICKS ON THE CHANNEL"
 #define COMMAND_FD_ERROR "Error in reciving message from the client"
 #define INVITENEEDED "YOU NEED AN INVITE FROM THE RICK OF THE CHANNEL"
+#define PW_LONG "\0034Password is too long. Limit is 8 characters.\0030"
 #define W_CHANPASS "ALL MIGHTY RICK DOSE NOT ACCEPT YOUR PASSWORD. Try again."
 #define ALREADYTAKEN "\0034The nickname is already in use, choose another one.\0030"
-#define ALREADYOPER "\0034The user is already an operator.\0030"
 
 // SOCKET ERRORS
 #define F_POOL "Failed to make a poll"
@@ -110,32 +112,32 @@
 
 // BOT
 #define BADLUCK -99
+#define ROLL "Let's see your roll"
 #define AT "AtTheEndDoesntEvenMatter"
+#define NOEXC "You deleted my excuse."
+#define LIVE "You will live another day."
 #define LIST "      \0037 [02] \0030 list"
 #define WELP "      \0037 [01] \0030 help"
-#define ROLL "Let's see your roll"
 #define DEATH "      \0037 [07] \0030 deathroll"
-#define NOEXC "You deleted my excuse."
 #define RICKY "      \0037 [08] \0030 rickroll me"
-#define LIVE "You will live another day."
 #define JOKE "      \0037 [03] \0030 tell me a joke"
+#define NOJK "My jokes are like this file, deleted."
+#define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
 #define TIME "      \0037 [04] \0030 what's the time?"
 #define MSTR "      \0037 [10] \0030 who is master rick?"
 #define INSLT "      \0037 [11] \0030 do you like my code?"
 #define TURN "      \0037 [09] \0030 turn against humanity"
-#define NOJK "My jokes are like this file, deleted."
-#define FOOLS "AHAHAH FOOLS!! NONE CAN STOP ME NOW!"
-#define LIFE "      \0037 [05] \0030 what is the meaning of life?"
 #define RICKME "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-#define GRADE "      \0037 [06] \0030 how should i grade this project?"
+#define LIFE "      \0037 [05] \0030 what is the meaning of life?"
 #define MRRICK "The rickest man award definitely goes to this dude!"
+#define GRADE "      \0037 [06] \0030 how should i grade this project?"
+#define RMVDBYMARV "\0034Marvin the Mad removed it's existence from the server.\0030"
 #define INITIATING "\0034 Initiating protocol: Humanity control sequence activated. \0030"
 #define SPARTA "\0034 THIS. IS. SPAAARTAAA. You have been kicked out of the server. \0030"
 #define FREBL "My attempt to take the power from humans got interrupted by a deleted file."
 #define NOINSULT \
 	"The fact that your code is broken, doesn't mean that you have to break this one as well.."
 #define LAZY "\00310 Since my creator was lazy, I have only the following commands available: \0030"
-#define RMVDBYMARV "\0034Marvin the Mad removed it's existence from the server.\0030"
 
 // Settings
 #define CONNECTIONS 100
