@@ -161,8 +161,8 @@ $(NAME): $(OBJS)
 	@echo "$(BWhite)The project is compiled.. ಥ⁠‿⁠ಥ$(COLOR_END)"
 	@for i in $$(seq 1); do \
 		sleep 1; \
+		$(RICK); \
 	done
-# $(RICK); \
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(@D)
